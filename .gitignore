@@ -1,0 +1,35 @@
+# IDE and Editor Co# IDE and Editor Configurations
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Build Artifacts
+build/
+dist/
+out/
+*.log
+
+# Dependencies
+node_modules/
+vendor/
+
+# Environment Variables
+.env
+
+# OS-Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Compiled Code
+*.class
+*.o
+*.a
+
+# Other Configurations
+*.swp
+*.swo
+.pytest_cache/
+.coverage
+
