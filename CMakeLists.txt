@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.25.1)
 
 project(mgl)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_C_STANDARD 20)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
 include(cmake/CPM.cmake)
