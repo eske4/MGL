@@ -21,6 +21,6 @@ clean:
 test:
 	cd $(BUILD_DIR)/tests && ctest --output-on-failure
 
-
+# Run the executable generated from build
 run:
 	cd $(BUILD_DIR)/app && ./mgl
