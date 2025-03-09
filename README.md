@@ -1,4 +1,4 @@
-# MGL - MaP Generation Language
+# MGL - Map Generation Language
 
 This is a repository for the second semester of the Computer Science master's degree.
 
