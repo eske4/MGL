@@ -33,3 +33,6 @@ desktop.ini
 .pytest_cache/
 .coverage
 
+compile_commands.json
+.cache
+CPM_modules/
