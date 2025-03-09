@@ -15,8 +15,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # auto complete for nvim
 
 include(cmake/CPM.cmake)
-
-CPMAddPackage("gh:google/googletest@1.15.2")
+include(cmake/Packages.cmake)
 
 add_subdirectory(configured)
 add_subdirectory(tests)
