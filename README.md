@@ -1,4 +1,4 @@
-#MGL
+# MGL
 
 This is a repository for the second semester of the Computer Science master's degree.
 
