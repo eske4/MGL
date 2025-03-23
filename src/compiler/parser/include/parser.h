@@ -4,9 +4,10 @@
 extern "C" {
 #endif
 
-int tokenize(const char *input);
+int parse(const char* input);
 
 #ifdef __cplusplus
 }
 #endif
+
 
