@@ -34,7 +34,7 @@ WHITESPACE          [ \t\n\r]+
 MAP                 Map
 ROOM                Room
 CONNECT             Connect
-ORD                 "=="|"<="|">="|"<"|">"|"AND"|"OR"
+ORD                 "<="|">="|"<"|">"|"AND"|"OR"
 EQ                 "=="|"!="
 DIRECTED_EDGE       "->"
 BIDIRECTIONAL_EDGE  "<->"

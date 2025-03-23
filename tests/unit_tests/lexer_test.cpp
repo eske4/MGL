@@ -43,13 +43,17 @@ TEST(UnitTestToken, Identifier) {
 }
 
 TEST(UnitTestToken, OrdOperator) {
-    EXPECT_EQ(tokenize("=="), TK_ORD_OPERATOR) << "== wasn't recognized as an operator";
     EXPECT_EQ(tokenize("<="), TK_ORD_OPERATOR) << "<= wasn't recognized as an operator";
     EXPECT_EQ(tokenize(">="), TK_ORD_OPERATOR) << ">= wasn't recognized as an operator";
     EXPECT_EQ(tokenize("<"), TK_ORD_OPERATOR) << "< wasn't recognized as an operator";
     EXPECT_EQ(tokenize(">"), TK_ORD_OPERATOR) << "> wasn't recognized as an operator";
     EXPECT_EQ(tokenize("AND"), TK_ORD_OPERATOR) << "AND wasn't recognized as an operator";
     EXPECT_EQ(tokenize("OR"), TK_ORD_OPERATOR) << "OR wasn't recognized as an operator";
+}
+
+TEST(UnitTestToken, EqOperator) {
+    EXPECT_EQ(tokenize("=="), TK_EQ_OPERATOR) << "<= wasn't recognized as an operator";
+    EXPECT_EQ(tokenize("!="), TK_EQ_OPERATOR) << "<= wasn't recognized as an operator";
 }
 
 TEST(UnitTestToken, GraphOperators) {
