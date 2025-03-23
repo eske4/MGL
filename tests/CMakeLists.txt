@@ -1,3 +1,4 @@
 enable_testing()
 
 add_subdirectory(unit_tests)
+add_subdirectory(integration_tests)
