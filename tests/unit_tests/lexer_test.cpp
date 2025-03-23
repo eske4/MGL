@@ -76,9 +76,6 @@ TEST(UnitTestToken, Comment) {
     EXPECT_EQ(tokenize("# This is a comment"), 0) << "# This is a comment should be ignored as a comment";
 }
 
-
-// Testing invalid tokens
-
 TEST(UnitTestToken, InvalidSyntax) {
     EXPECT_EQ(tokenize(""), 0) << "Empty string should be recognized as invalid syntax";
 }
