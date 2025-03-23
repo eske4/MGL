@@ -102,9 +102,6 @@ connect_func:
     TK_IDENTIFIER 
     TK_RIGHT_PAREN 
     TK_SEMICOLON
-    {
-        printf("Connected: %s -> %s\n", $3, $5);
-    }
 ;
 %%
 
