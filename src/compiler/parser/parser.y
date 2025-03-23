@@ -51,13 +51,61 @@ extern char* yytext;
 
 %%
 
-connect_func:
-    TK_CONNECT TK_LEFT_PAREN TK_IDENTIFIER TK_DIRECTED_EDGE TK_IDENTIFIER TK_RIGHT_PAREN TK_SEMICOLON
-    {
-        printf("Connected: %s -> %s\n", $3, $5);  // Example of action: Print connection
-    }
-    ;
+prog:
+    map_decl
+    |
+    map_imp
+;
 
+map_decl:
+    TK_MAP
+    TK_IDENTIFIER
+    TK_LEFT_BRACE
+    rooms
+    connect_funcs
+    TK_RIGHT_BRACE
+;
+
+map_imp:
+    TK_MAP
+    TK_IDENTIFIER
+    TK_SEMICOLON
+    rooms
+    connect_funcs
+;
+
+rooms:
+    room
+    rooms
+    |
+    /* Empty */
+;
+
+room:
+    TK_ROOM
+    TK_IDENTIFIER
+    TK_SEMICOLON
+;
+
+connect_funcs:
+    connect_func
+    connect_funcs
+    |
+    /* Empty */
+;
+
+connect_func:
+    TK_CONNECT 
+    TK_LEFT_PAREN 
+    TK_IDENTIFIER 
+    TK_DIRECTED_EDGE 
+    TK_IDENTIFIER 
+    TK_RIGHT_PAREN 
+    TK_SEMICOLON
+    {
+        printf("Connected: %s -> %s\n", $3, $5);
+    }
+;
 %%
 
 int yyerror(char *s)
