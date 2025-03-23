@@ -11,6 +11,8 @@ all: build
 build:
 	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && cmake .. && cmake --build .
+	ln -sf "build/compile_commands.json"
+	$(MAKE) test
 
 # Clean the build directory
 clean:
