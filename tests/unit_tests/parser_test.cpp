@@ -8,8 +8,9 @@
 // Testing valid tokens like keywords and literals
 
 
-TEST(ParserTest_SyntaxError_Test, TestBody) {
-    EXPECT_EQ(parse("123"), PARSER_SUCCEEDED);  // 1 typically indicates a syntax error in Bison
+TEST(ParserTest, Connect) {
+    EXPECT_EQ(parse("Connect(Entrance -> Hallway);"), PARSER_SUCCEEDED);  // 1 typically indicates a syntax error in Bison
+    EXPECT_NE(parse("Connect(Entrance Hallway);"), PARSER_SUCCEEDED);  // 1 typically indicates a syntax error in Bison
 }
 
 

@@ -36,14 +36,16 @@
 #define TK_COMMENT 269
 #define TK_LEFT_BRACE 270
 #define TK_RIGHT_BRACE 271
-#define TK_SEMICOLON 272
+#define TK_LEFT_PAREN 272
+#define TK_RIGHT_PAREN 273
+#define TK_SEMICOLON 274
 
 // ----------------------------------------
 // Invalid or unknown token types
 // ----------------------------------------
 
-#define TK_INVALID_INTEGER 273
-#define TK_INVALID_FLOAT 274
-#define TK_INVALID_STRING 275
-#define TK_INVALID_IDENTIFIER 276
-#define TK_INVALID 277
+#define TK_INVALID_INTEGER 275
+#define TK_INVALID_FLOAT 276
+#define TK_INVALID_STRING 277
+#define TK_INVALID_IDENTIFIER 278
+#define TK_INVALID 279

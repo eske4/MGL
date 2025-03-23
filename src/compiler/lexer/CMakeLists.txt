@@ -15,3 +15,5 @@ target_include_directories(Lexer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(LexerWBison PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${BISON_DIR})
 target_link_libraries(LexerWBison PRIVATE Parser)
 target_compile_definitions(LexerWBison PUBLIC __BISON__)
+
+add_dependencies(LexerWBison Parser)

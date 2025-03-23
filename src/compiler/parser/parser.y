@@ -33,6 +33,8 @@ extern char* yytext;
 %token <str> TK_COMMENT
 %token <str> TK_LEFT_BRACE
 %token <str> TK_RIGHT_BRACE
+%token <str> TK_LEFT_PAREN
+%token <str> TK_RIGHT_PAREN
 %token <str> TK_SEMICOLON
 %token <str> TK_INVALID_INTEGER
 %token <str> TK_INVALID_FLOAT
@@ -49,9 +51,11 @@ extern char* yytext;
 
 %%
 
-number:
-    TK_INTEGER { printf("Integer: %d\n", yylval.num); }
-    | TK_FLOAT { printf("Float: %f\n", yylval.flt); }
+connect_func:
+    TK_CONNECT TK_LEFT_PAREN TK_IDENTIFIER TK_DIRECTED_EDGE TK_IDENTIFIER TK_RIGHT_PAREN TK_SEMICOLON
+    {
+        printf("Connected: %s -> %s\n", $3, $5);  // Example of action: Print connection
+    }
     ;
 
 %%

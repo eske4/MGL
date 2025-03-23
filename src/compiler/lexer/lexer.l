@@ -43,6 +43,8 @@ NEWLINE             \n
 SEMICOLON           \;
 LEFT_BRACE          \{
 RIGHT_BRACE         \}
+LEFT_PAREN          \(
+RIGHT_PAREN         \)
 IDENTIFIER          [a-zA-Z_][a-zA-Z0-9_]*
 
 %%
@@ -70,6 +72,8 @@ IDENTIFIER          [a-zA-Z_][a-zA-Z0-9_]*
 
 {LEFT_BRACE} { return process_token(TK_LEFT_BRACE);}
 {RIGHT_BRACE} { return process_token(TK_RIGHT_BRACE);}
+{LEFT_PAREN} { return process_token(TK_LEFT_PAREN);}
+{RIGHT_PAREN} { return process_token(TK_RIGHT_PAREN);}
 {SEMICOLON} { return process_token(TK_SEMICOLON);}
 
 {INVALID_IDENTIFIER} { return process_token(TK_INVALID_IDENTIFIER);}
