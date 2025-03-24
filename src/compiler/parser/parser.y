@@ -61,8 +61,7 @@ map_decl:
     TK_MAP
     TK_IDENTIFIER
     TK_LEFT_BRACE
-    rooms
-    connect_funcs
+    stmts
     TK_RIGHT_BRACE
 ;
 
@@ -70,28 +69,24 @@ map_imp:
     TK_MAP
     TK_IDENTIFIER
     TK_SEMICOLON
-    rooms
-    connect_funcs
+    stmts
 ;
 
-rooms:
-    room
-    rooms
+stmts:
+    stmts
+    stmt
     |
     /* Empty */
 ;
+
+stmt:
+    room
+    | connect_func
 
 room:
     TK_ROOM
     TK_IDENTIFIER
     TK_SEMICOLON
-;
-
-connect_funcs:
-    connect_func
-    connect_funcs
-    |
-    /* Empty */
 ;
 
 connect_func:

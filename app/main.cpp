@@ -1,4 +1,5 @@
 #include "lexer.h"
+#include "parser.h"
 #include "config.c"
 #include <iostream>
 
@@ -7,10 +8,17 @@ int main() {
     printf("Project Version: %s\n", project_version);
 
 
-    const char *input = "yeet";
-    int token = tokenize(input);  // Call the tokenize function
+    const char *input = "Map TutorialDungeon { Room Entrance; Room Hallway; Connect (Entrance -> Hallway); }";
 
-    std::cout << "Token is " << token << std::endl;  // Print the token
+    // Testing parser here.
+    int result = parse(input);
+
+    std::cout << "Parsing result: " << result << std::endl;
+
+    // Testing the lexer directly:
+    // int token = tokenize(input);
+
+    // std::cout << "Token is " << token << std::endl;  // Print the token
     return 0;
 }
 

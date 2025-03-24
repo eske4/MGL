@@ -9,6 +9,7 @@ TEST(ParserIntegrationTest, MapDecl) {
     // Valid map declarations
     EXPECT_EQ(parse("Map map { Connect(Entrance -> Hallway); }"), PARSER_SUCCEEDED);
     EXPECT_EQ(parse("Map map { Room name; }"), PARSER_SUCCEEDED);
+    EXPECT_EQ(parse("Map map {  Room name; Connect(Entrance -> Hallway); Room name2;}"), PARSER_SUCCEEDED);
     
     // Extra spaces
     EXPECT_EQ(parse("Map map {Connect(Entrance -> Hallway); }"), PARSER_SUCCEEDED);  // Missing spaces
