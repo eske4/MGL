@@ -18,6 +18,6 @@ include(cmake/CPM.cmake)
 include(cmake/Packages.cmake)
 
 add_subdirectory(configured)
-add_subdirectory(tests)
 add_subdirectory(src)
+add_subdirectory(tests)
 add_subdirectory(app)

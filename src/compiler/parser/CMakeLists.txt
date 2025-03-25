@@ -6,8 +6,8 @@ set(BISON_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/parser.h)
 
 # Define the Bison target to generate parser.c and parser.h
 bison_target(
-  Parser ${BISON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/parser.c
-  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.h
+  Parser ${BISON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
+  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.h
 )
 
 # Add the parser as a static library
@@ -20,7 +20,7 @@ target_include_directories(
 )
 
 # Link the LexerWBison library (ensure that LexerWBison is already built elsewhere)
-target_link_libraries(Parser PRIVATE LexerWBison)
+target_link_libraries(Parser PRIVATE Error_Handler Lexer)
 
 # If needed, you can pass the output directory of the generated Bison files to the parent scope
 set(BISON_DIR

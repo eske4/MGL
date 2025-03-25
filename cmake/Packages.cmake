@@ -1,9 +1,11 @@
 message("Fetching packages")
 
 CPMAddPackage("gh:google/googletest@1.15.2")
+find_package(FLEX 2.6.4 EXACT REQUIRED)
+find_package(BISON 3.8.2 EXACT REQUIRED)
 
-find_package(FLEX REQUIRED)
-find_package(BISON REQUIRED)
+message(STATUS "FLEX version: ${FLEX_VERSION}")
+message(STATUS "BISON version: ${BISON_VERSION}")
 
 if(NOT FLEX_FOUND)
   message(

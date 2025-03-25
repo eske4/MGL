@@ -1,11 +1,22 @@
 #include <gtest/gtest.h>
 #include "parser.h"
+#include "error_handler.h"
 
 #define PARSER_SUCCEEDED 0
 #define PARSER_FAILED 1
 #define MEMORY_FAILED 2
 
-TEST(ParserIntegrationTest, MapDecl) {
+class ParserIntegrationTest : public testing::Test {
+ protected:
+  void SetUp() override {
+      setTestMode(true);
+  }
+
+};
+
+
+
+TEST_F(ParserIntegrationTest, MapDecl) {
     // Valid map declarations
     EXPECT_EQ(parse("Map map { Connect(Entrance -> Hallway); }"), PARSER_SUCCEEDED);
     EXPECT_EQ(parse("Map map { Room name; }"), PARSER_SUCCEEDED);
@@ -27,7 +38,7 @@ TEST(ParserIntegrationTest, MapDecl) {
     // Missing or extra spaces
 }
 
-TEST(ParserIntegrationTest, MapImp) {
+TEST_F(ParserIntegrationTest, MapImp) {
     // Valid imperative map declaration with rooms and connections
     EXPECT_EQ(parse("Map map; Room name; Room name2; Connect(name1 -> name2);"), PARSER_SUCCEEDED);
 
@@ -43,7 +54,7 @@ TEST(ParserIntegrationTest, MapImp) {
     EXPECT_EQ(parse("Map map; Room name; Connect(name1 -> name2"), PARSER_FAILED);  // Missing closing parenthesis in Connect
 }
 
-TEST(ParserIntegrationTest, Connect) {
+TEST_F(ParserIntegrationTest, Connect) {
     // Valid connect declarations
     EXPECT_EQ(parse("Map map; Connect(Entrance -> Hallway);"), PARSER_SUCCEEDED);
     EXPECT_EQ(parse("Map map; Connect(Room1 -> Room2);"), PARSER_SUCCEEDED);
@@ -52,10 +63,10 @@ TEST(ParserIntegrationTest, Connect) {
     // Invalid connect declarations (syntax errors)
     EXPECT_EQ(parse("Map map; Connect(Entrance Hallway);"), PARSER_FAILED); // Missing '->'
     EXPECT_EQ(parse("Connect(Entrance Hallway);"), PARSER_FAILED); // Missing 'Map'
-    EXPECT_EQ(parse("Map map; ConnectEntrance --> Hallway);"), PARSER_FAILED); // Typo in 'Connect'
-    EXPECT_EQ(parse("Map map; Connect(Entrance --> Hallway;"), PARSER_FAILED); // Missing closing parenthesis
-    EXPECT_EQ(parse("Map; Connect(Entrance --> Hallway;"), PARSER_FAILED); // Missing map declaration
-    EXPECT_EQ(parse("Map map Connect(Entrance --> Hallway;"), PARSER_FAILED); // Missing semicolon after map declaration
+    EXPECT_EQ(parse("Map map; ConnectEntrance -> Hallway);"), PARSER_FAILED); // Typo in 'Connect'
+    EXPECT_EQ(parse("Map map; Connect(Entrance -> Hallway;"), PARSER_FAILED); // Missing closing parenthesis
+    EXPECT_EQ(parse("Map; Connect(Entrance -> Hallway;"), PARSER_FAILED); // Missing map declaration
+    EXPECT_EQ(parse("Map map Connect(Entrance -> Hallway;"), PARSER_FAILED); // Missing semicolon after map declaration
 
     // Missing or extra spaces in connect
     EXPECT_EQ(parse("Map map ; Connect(Entrance -> Hallway);"), PARSER_SUCCEEDED);  // Extra space should be allowed
@@ -66,7 +77,7 @@ TEST(ParserIntegrationTest, Connect) {
     EXPECT_EQ(parse("Map map; Connect(Entrance -> Hallway;)"), PARSER_FAILED);  // Extra semicolon
 }
 
-TEST(ParserIntegrationTest, Room) {
+TEST_F(ParserIntegrationTest, Room) {
     // Valid room declaration
     EXPECT_EQ(parse("Map map; Room name;"), PARSER_SUCCEEDED);
     EXPECT_EQ(parse("Map map; Room entrance; Room hallway;"), PARSER_SUCCEEDED);
