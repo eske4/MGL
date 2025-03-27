@@ -5,6 +5,8 @@
 #include "error_handler.h"
 #include "lexer.h"
 #include "parser.tab.h"
+#include <float.h>
+#include <limits.h> 
 
 int process_token(int type);
 void assign_yylval(const char *lexeme, int type);
@@ -75,8 +77,28 @@ int process_token(int type) {
 
 void assign_yylval(const char *lexeme, int type) {
     switch (type) {
-        case TK_INTEGER: yylval.num = atoi(lexeme); break;
-        case TK_FLOAT: yylval.flt = atof(lexeme); break;
+        case TK_INTEGER: {
+            char *endptr;
+            errno = 0;  // Reset errno before calling strtol
+            yylval.num = strtol(lexeme, &endptr, 10);
+
+            // Check for errors: invalid characters or overflow/underflow
+            if (errno == ERANGE || *endptr != '\0' || yylval.num > INT_MAX || yylval.num < INT_MIN) {
+                reportError("Integer value too large or invalid", yylineno, 0);
+            }
+            break;
+        }
+        case TK_FLOAT: {
+            char *endptr;
+            errno = 0;  // Reset errno before calling strtof
+            yylval.flt = strtof(lexeme, &endptr);
+
+            // Check for errors: invalid characters or overflow/underflow
+            if (errno == ERANGE || *endptr != '\0' || yylval.flt > FLT_MAX || yylval.flt < -FLT_MAX) {
+                reportError("Float value too large or invalid", yylineno, 0);
+            }
+            break;
+        }
         default: 
             if (strlcpy(yylval.str, lexeme, sizeof(yylval.str)) >= sizeof(yylval.str)) {
                 reportError("Oversized identifier", yylineno, 0);
