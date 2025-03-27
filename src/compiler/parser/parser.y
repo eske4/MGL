@@ -17,7 +17,6 @@ extern char* yytext;
 }
 #endif
 
-
 %}
 
 %token <num> TK_INTEGER
@@ -35,7 +34,7 @@ extern char* yytext;
 %union {
     int num;    // Integer type
     float flt;  // Float type
-    char* str;  // String type
+    char str[21];  // String type
 }
 
 

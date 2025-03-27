@@ -77,7 +77,14 @@ void assign_yylval(const char *lexeme, int type) {
     switch (type) {
         case TK_INTEGER: yylval.num = atoi(lexeme); break;
         case TK_FLOAT: yylval.flt = atof(lexeme); break;
-        default: yylval.str = strdup(lexeme); break;
+        default: 
+            if(strlen(lexeme) > 21){
+                reportError("Oversized identifier", yylineno, 0);
+            } 
+
+            strncpy(yylval.str, lexeme, 21 - 1);
+            yylval.str[21 - 1] = '\0'; 
+            break;
     }
 }
 

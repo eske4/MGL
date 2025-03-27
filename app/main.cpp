@@ -8,7 +8,7 @@ int main() {
     printf("Project Version: %s\n", project_version);
 
 
-    const char *input = "Map TutorialDungeon \n { . Entrance; Room Hallway; Connect (Entrance -> Hallway); }";
+    const char *input = "Map TutorialDungeon \n { Room Entrance; Room Hallway; Connect (Entrance -> Hallway); }";
 
     // Testing parser here.
     int result = parse(input);
