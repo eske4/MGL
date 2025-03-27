@@ -32,7 +32,7 @@ extern char* yytext;
 %token <str> TK_INVALID
 
 %union {
-    int num;    // Integer type
+    long int num;    // Integer type
     float flt;  // Float type
     char str[21];  // String type
 }
