@@ -1,12 +1,15 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "definitions.h"
 
-int tokenize(const char *input);
+typedef struct Token {
+  TokenDef token;
+  union {
+    long intValue; // 32bit int
+    float floatValue;
+    char stringValue[MAX_INPUT_SIZE]; // Limit token size, to prevent memory
+                                      // overload
+  } value;
+} Token;
 
-#ifdef __cplusplus
-}
-#endif
-
+int scan(Token *t);

@@ -1,14 +1,10 @@
-# Set source and header files
-set(FLEX_FILE ${CMAKE_CURRENT_SOURCE_DIR}/lexer.l)
+set(LEXER_SOURCES lexer.c)
 
-# Correctly declare the header files to include in the library
-set(FLEX_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/lexer.h)
+add_library(Lexer ${LEXER_SOURCES})
 
-flex_target(Lexer ${FLEX_FILE} ${CMAKE_CURRENT_BINARY_DIR}/lexer.c COMPILE_FLAGS "-d")
+target_include_directories(
+  Lexer
+  PRIVATE ${COMPILER_COMMON_INCLUDE}
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(Lexer STATIC ${FLEX_Lexer_OUTPUTS} ${FLEX_INCLUDE_FILES})
-
-target_include_directories(Lexer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${BISON_DIR})
-target_link_libraries(Lexer PRIVATE Parser Error_Handler)
-
-add_dependencies(Lexer Parser)
+target_link_libraries(Lexer Compiler_State Error_Handler)

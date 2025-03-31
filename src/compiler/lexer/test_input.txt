@@ -1,0 +1,12 @@
+Map map {
+    Room what;
+    Room cola;
+    
+
+    
+    Connect(yeet -> what);
+    Room _optimusPrime;
+    Connect(your_mama <-> your_father);
+
+}
+

@@ -11,6 +11,7 @@ all: build
 build:
 	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && cmake .. && cmake --build .
+	cp $(CURDIR)/app/test_input.txt $(BUILD_DIR)/app/
 	ln -sf "build/compile_commands.json"
 	$(MAKE) test
 
@@ -25,4 +26,4 @@ test:
 
 # Run the executable generated from build
 run:
-	cd $(BUILD_DIR)/app && ./mgl
+	cd $(BUILD_DIR)/app && ls && ./mgl

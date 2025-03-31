@@ -1,13 +1,7 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "astree.h"
+#include "lexer.h"
 
-int parse(const char* input);
-
-#ifdef __cplusplus
-}
-#endif
-
-
+// Parser functions accepting the current token
+ASTree parse(Token *currentToken); // Parse a primary expression

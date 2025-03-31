@@ -1,0 +1,8 @@
+Map map {
+    Room _yeet;
+
+    Connect(yeet -> what);
+    Room _what;
+    Connect(your_mother -> your_father);
+}
+

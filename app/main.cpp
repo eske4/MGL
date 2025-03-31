@@ -1,24 +1,38 @@
+#include "config.c"
+extern "C" {
+#include "astree.h"
+#include "compiler_state.h"
 #include "lexer.h"
 #include "parser.h"
-#include "config.c"
+}
 #include <iostream>
 
 int main() {
-    printf("Project Name: %s\n", project_name);
-    printf("Project Version: %s\n", project_version);
+  printf("Project Name: %s\n", project_name);
+  printf("Project Version: %s\n", project_version);
 
+  // Token structure to hold the current token
+  csInit();
+  csOpenFile("test_input.txt");
+  Token currentToken;
 
-    const char *input = "Map TutorialDungeonkokok \n { Room Entrance; Room Hallway; Connect (Entrance -> Hallway); }";
+  // Fetch the first token
 
-    // Testing parser here.
-    int result = parse(input);
+  scan(&currentToken);
 
-    std::cout << "Parsing result: " << result << std::endl;
+  // Parse the input and construct the AST
+  ASTree tree = parse(&currentToken);
 
-    // Testing the lexer directly:
-    // int token = tokenize(input);
+  if (tree && tree->head) {
+    printf("Parsing successful!\n");
+    ASTreePrint(tree);
+  } else {
+    printf("Parsing failed!\n");
+  }
 
-    // std::cout << "Token is " << token << std::endl;  // Print the token
-    return 0;
+  // Free the AST
+  ASTFree(tree);
+
+  // std::cout << "Token is " << token << std::endl;  // Print the token
+  return 0;
 }
-
