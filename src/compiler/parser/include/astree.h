@@ -4,7 +4,7 @@
 
 // Node structure for Abstract Syntax Tree (AST)
 typedef struct ASTNode {
-    TokenDef type;  // Enum type to specify node type
+    AbstractTokenDef type;  // Enum type to specify node type
 
     union {
         char stringVal[MAX_INPUT_SIZE];
@@ -29,7 +29,7 @@ void ASTFree(ASTree tree);         // Free all tree nodes and memory
 // Node creation functions for different types of nodes
 ASTNode* ASTCreateMap(ASTree tree, const char* id);
 void ASTCreateRoom(ASTNode *mapNode, const char* id);
-void ASTCreateConnect(ASTNode *mapNode, const char* id, const TokenDef op, const char* id2);
+void ASTCreateConnect(ASTNode *mapNode, const char* id, const AbstractTokenDef op, const char* id2);
 
 ASTNode *ASTCreateIdentifier(const char* value);  // Create identifier leaf node
 // ASTNode *ASTCreateFloat(const char value);  // Add when needed

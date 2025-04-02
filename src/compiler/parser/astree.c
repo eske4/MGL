@@ -7,7 +7,7 @@
 void printNode(ASTNode* node, int depth);
 void ASTAddChild(ASTNode* parentNode, ASTNode* child);
 void ASTResizeChildren(ASTNode* parentNode);
-ASTNode* ASTCreateTerminalNode(TokenDef op);
+ASTNode* ASTCreateTerminalNode(AbstractTokenDef op);
 
 // Function to initialize an ASTree with a root node
 ASTree ASTInit()
@@ -26,7 +26,7 @@ ASTree ASTInit()
 ASTNode* ASTCreateMap(ASTree tree, const char* id)
 {
     ASTNode* mapNode        = calloc(1, sizeof(ASTNode));
-    mapNode->type           = T_MAP;
+    mapNode->type           = AT_MAP;
     mapNode->child_capacity = 0;
     mapNode->child_count    = 0;
     ASTResizeChildren(mapNode);
@@ -54,7 +54,7 @@ void ASTCreateRoom(ASTNode* mapNode, const char* id)
         return;
     }
 
-    roomNode->type = T_ROOM;
+    roomNode->type = AT_ROOM;
     strlcpy(roomNode->data.stringVal, "Room", MAX_INPUT_SIZE - 1);
 
     int child_capacity       = 1;
@@ -72,7 +72,7 @@ void ASTCreateRoom(ASTNode* mapNode, const char* id)
     ASTAddChild(mapNode, roomNode);
 }
 
-void ASTCreateConnect(ASTNode* mapNode, const char* id, const TokenDef op, const char* id2)
+void ASTCreateConnect(ASTNode* mapNode, const char* id, const AbstractTokenDef op, const char* id2)
 {
 
     if (mapNode == NULL)
@@ -87,7 +87,7 @@ void ASTCreateConnect(ASTNode* mapNode, const char* id, const TokenDef op, const
     }
 
     ASTNode* connectNode        = calloc(1, sizeof(ASTNode));
-    connectNode->type           = T_CONNECT;
+    connectNode->type           = AT_CONNECT;
     int new_child_capacity      = 3;
     connectNode->child_count    = 0;
     connectNode->child_capacity = new_child_capacity;
@@ -126,12 +126,12 @@ ASTNode* ASTCreateIdentifier(const char* value)
     idNode->child_count    = 0;
     idNode->child_capacity = 0;
     idNode->children       = NULL;
-    idNode->type           = T_IDENTIFIER;
+    idNode->type           = AT_IDENTIFIER;
 
     return idNode;
 }
 
-ASTNode* ASTCreateTerminalNode(TokenDef op)
+ASTNode* ASTCreateTerminalNode(AbstractTokenDef op)
 {
     // Allocate memory for the new AST node (initialize to 0)
     ASTNode* terminalNode = calloc(1, sizeof(ASTNode));
@@ -194,12 +194,12 @@ void ASTreePrintNode(ASTNode* node, int indent)
     // Print node type and value
     switch (node->type)
     {
-        case T_MAP: printf("Map\n"); break;
-        case T_ROOM: printf("\n    Room\n"); break;
-        case T_CONNECT: printf("\n    Connect%s\n", node->data.stringVal); break;
-        case T_DIRECTED_EDGE: printf("        ->\n"); break;
-        case T_BIDIRECTIONAL_EDGE: printf("        <->\n"); break;
-        case T_IDENTIFIER: printf("        %s\n", node->data.stringVal); break;
+        case AT_MAP: printf("Map\n"); break;
+        case AT_ROOM: printf("\n    Room\n"); break;
+        case AT_CONNECT: printf("\n    Connect%s\n", node->data.stringVal); break;
+        case AT_DIRECTED_EDGE: printf("        ->\n"); break;
+        case AT_BIDIRECTIONAL_EDGE: printf("        <->\n"); break;
+        case AT_IDENTIFIER: printf("        %s\n", node->data.stringVal); break;
         default: break;
     }
 
