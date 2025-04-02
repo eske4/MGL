@@ -8,7 +8,7 @@ extern "C" {
 
 extern bool isTestMode;
 void setTestMode(bool mode);
-int reportError(const char *m, const char *input, size_t l, size_t c);
+int reportLexerError(const char *m, const char *input, size_t l, size_t c);
 
 #ifdef __cplusplus
 }

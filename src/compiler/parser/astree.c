@@ -1,178 +1,250 @@
 #include "astree.h"
+#include "definitions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void printNode(ASTNode *node, int depth);
+void printNode(ASTNode* node, int depth);
+void ASTAddChild(ASTNode* parentNode, ASTNode* child);
+void ASTResizeChildren(ASTNode* parentNode);
+ASTNode* ASTCreateTerminalNode(TokenDef op);
 
 // Function to initialize an ASTree with a root node
-ASTree ASTInit() {
-  // Allocate memory for the ASTree structure (note that ASTree is a pointer)
-  ASTree tree = calloc(1, sizeof(*tree)); // Allocate a pointer to ASTree
-  if (tree == NULL) { // Return NULL if memory allocation failed
-    return NULL;
-  }
+ASTree ASTInit()
+{
+    // Allocate memory for the ASTree structure (note that ASTree is a pointer)
+    ASTree tree = calloc(1, sizeof(*tree)); // Allocate a pointer to ASTree
+    if (tree == NULL)
+        return NULL;
 
-  // Assign the root node to the tree's head
-  tree->head = NULL; // Here we assign the root pointer to tree->head
+    // Assign the root node to the tree's head
+    tree->head = NULL; // Here we assign the root pointer to tree->head
 
-  return tree; // Return the ASTree pointer
+    return tree; // Return the ASTree pointer
 }
 
-ASTNode *ASTCreateNode(Type type, struct ASTNode *left, struct ASTNode *right,
-                       void *value) {
-  struct ASTNode *n;
+ASTNode* ASTCreateMap(ASTree tree, const char* id)
+{
+    ASTNode* mapNode        = calloc(1, sizeof(ASTNode));
+    mapNode->type           = T_MAP;
+    mapNode->child_capacity = 0;
+    mapNode->child_count    = 0;
+    ASTResizeChildren(mapNode);
 
-  // Malloc a new ASTnode
-  n = calloc(1, sizeof(*n));
-  if (n == NULL) {
-    exit(1);
-  }
-  // Copy in the field values and return it
-  n->type = type;
-  n->left = left;
-  n->right = right;
+    ASTAddChild(mapNode, ASTCreateIdentifier(id));
 
-  if (value != NULL) {
-    switch (type) {
-    case TYPE_IDENTIFIER:
-      n->value.stringVal =
-          strdup((char *)value); // For identifiers, copy the string
-      break;
-    case TYPE_INTEGER_LITERAL:
-      n->value.intValue = (int)n->value.intValue; // For integers
-      break;
-    case TYPE_FLOAT_LITERAL:
-      n->value.floatValue = (float)n->value.intValue; // For integers
+    return mapNode;
+}
 
-      break;
-    default:
-      n->value.stringVal = NULL; // Default to NULL if the value isn't handled
-      break;
+void ASTCreateRoom(ASTNode* mapNode, const char* id)
+{
+    if (!mapNode)
+    {
+        return;
     }
-  } else {
-    n->value.stringVal = NULL; // If value is NULL, set it to NULL
-  }
 
-  return (n);
+    if (mapNode->child_count >= mapNode->child_capacity)
+    {
+        ASTResizeChildren(mapNode);
+    }
+
+    ASTNode* roomNode = calloc(1, sizeof(ASTNode));
+    if (roomNode == NULL)
+    {
+        return;
+    }
+
+    roomNode->type = T_ROOM;
+    strlcpy(roomNode->data.stringVal, "Room", MAX_INPUT_SIZE - 1);
+
+    int child_capacity       = 1;
+    roomNode->child_count    = 0;
+    roomNode->child_capacity = 1;
+    roomNode->children       = calloc(child_capacity, sizeof(ASTNode*));
+
+    if (roomNode->children == NULL)
+    {
+        free(roomNode); // Free room node if allocation fails
+        return;
+    }
+
+    ASTAddChild(roomNode, ASTCreateIdentifier(id));
+    ASTAddChild(mapNode, roomNode);
 }
 
-ASTNode *ASTCreateLeaf(Type op, void *value) {
-  return ASTCreateNode(op, NULL, NULL, NULL);
+void ASTCreateConnect(ASTNode* mapNode, const char* id, const TokenDef op, const char* id2)
+{
+
+    if (mapNode == NULL)
+    {
+        return;
+    }
+
+    if (mapNode->child_count >= mapNode->child_capacity)
+    {
+
+        ASTResizeChildren(mapNode);
+    }
+
+    ASTNode* connectNode        = calloc(1, sizeof(ASTNode));
+    connectNode->type           = T_CONNECT;
+    int new_child_capacity      = 3;
+    connectNode->child_count    = 0;
+    connectNode->child_capacity = new_child_capacity;
+    connectNode->children       = calloc(new_child_capacity, sizeof(ASTNode*));
+
+    if (connectNode->children == NULL)
+    {
+        free(connectNode);
+        return;
+    }
+
+    // Add children to the Connect Structure
+    ASTAddChild(connectNode, ASTCreateIdentifier(id));
+    ASTAddChild(connectNode, ASTCreateTerminalNode(op));
+    ASTAddChild(connectNode, ASTCreateIdentifier(id2));
+
+    ASTAddChild(mapNode, connectNode);
 }
 
-// Helper function to free a node and its children
-void ASTFreeNode(ASTNode *node) {
-  if (node == NULL)
-    return;
+// Create an Identifier leaf node in the AST
+ASTNode* ASTCreateIdentifier(const char* value)
+{
+    // Allocate memory for the new AST node (initialize to 0)
+    ASTNode* idNode = calloc(1, sizeof(ASTNode));
 
-  // Recursively free left and right children first
-  ASTFreeNode(node->left);
-  ASTFreeNode(node->right);
+    if (idNode == NULL)
+    {
+        // Handle memory allocation failure if needed
+        free(idNode);
+        return NULL;
+    }
 
-  // If the node's value is a string (like identifier), free it
-  if (node->value.stringVal != NULL) {
-    free(node->value.stringVal);
-  }
+    // Ensure the string fits into the fixed-size array (truncate if needed)
+    strlcpy(idNode->data.stringVal, value, MAX_INPUT_SIZE - 1);
 
-  // Finally, free the node itself
-  free(node);
+    idNode->child_count    = 0;
+    idNode->child_capacity = 0;
+    idNode->children       = NULL;
+    idNode->type           = T_IDENTIFIER;
+
+    return idNode;
 }
 
-// Main function to free the ASTree (tree structure itself)
-void ASTFree(ASTree tree) {
-  if (tree == NULL)
-    return;
+ASTNode* ASTCreateTerminalNode(TokenDef op)
+{
+    // Allocate memory for the new AST node (initialize to 0)
+    ASTNode* terminalNode = calloc(1, sizeof(ASTNode));
 
-  // Free the nodes starting from the head of the tree
-  ASTFreeNode(tree->head);
+    if (terminalNode == NULL)
+    {
+        // Handle memory allocation failure if needed
+        return NULL;
+    }
 
-  // After freeing the nodes, free the tree structure itself
-  free(tree);
+    terminalNode->type           = op;
+    terminalNode->child_count    = 0;
+    terminalNode->children       = NULL;
+    terminalNode->child_capacity = 0;
 
-  // Set the tree pointer to NULL to avoid dangling pointers
-  tree = NULL;
+    return terminalNode;
 }
 
-// Value leafs
-ASTNode *ASTCreateIdentifier(char value[]) {
-  return ASTCreateNode(TYPE_IDENTIFIER, NULL, NULL, value);
+void ASTAddChild(ASTNode* parentNode, ASTNode* child)
+{
+    if (!parentNode)
+        return;
+
+    if (!child)
+    {
+        return;
+    }
+
+    if (parentNode->child_count >= parentNode->child_capacity)
+    {
+        printf("Not enough capacity to add a child.\n");
+        return;
+    }
+    parentNode->children[parentNode->child_count] = child;
+    parentNode->child_count += 1;
 }
 
-// Leafs for structures and operations
-ASTNode *ASTCreateMap(ASTNode *left, ASTNode *right) {
-  return ASTCreateNode(TYPE_MAP, left, right, NULL);
+void ASTResizeChildren(ASTNode* parentNode)
+{
+    int new_capacity       = (parentNode->child_capacity == 0) ? 2 : parentNode->child_capacity * 1.5;
+    ASTNode** new_children = realloc(parentNode->children, new_capacity * sizeof(ASTNode*));
+
+    if (new_children == NULL)
+    {
+        printf("Failed to resize children array!\n");
+        return;
+    }
+
+    parentNode->children       = new_children;
+    parentNode->child_capacity = new_capacity; // Update capacity
 }
 
-ASTNode *ASTCreateRoom(ASTNode *left) {
-  return ASTCreateNode(TYPE_ROOM, left, NULL, NULL);
+void ASTreePrintNode(ASTNode* node, int indent)
+{
+    if (!node)
+        return;
+
+    // Print indentation
+
+    // Print node type and value
+    switch (node->type)
+    {
+        case T_MAP: printf("Map\n"); break;
+        case T_ROOM: printf("\n    Room\n"); break;
+        case T_CONNECT: printf("\n    Connect%s\n", node->data.stringVal); break;
+        case T_DIRECTED_EDGE: printf("        ->\n"); break;
+        case T_BIDIRECTIONAL_EDGE: printf("        <->\n"); break;
+        case T_IDENTIFIER: printf("        %s\n", node->data.stringVal); break;
+        default: break;
+    }
+
+    // Recursively print children with correct indentation
+    for (int i = 0; i < node->child_count; i++)
+    {
+        ASTreePrintNode(node->children[i], indent);
+    }
 }
 
-// Function to create an Arrow node (->) between identifiers
-ASTNode *ASTCreateDirectedEdge(ASTNode *left, ASTNode *right) {
-  return ASTCreateNode(TYPE_DIRECTED_EDGE, left, right, NULL);
+// Print the entire AST
+void ASTreePrint(ASTree tree)
+{
+    if (!tree || !tree->head)
+        return;
+    ASTreePrintNode(tree->head, 0);
 }
 
-ASTNode *ASTCreateBidirectionalEdge(ASTNode *left, ASTNode *right) {
-  return ASTCreateNode(TYPE_BIDIRECTIONAL_EDGE, left, right, NULL);
+void ASTFreeNode(ASTNode* node)
+{
+    if (!node)
+        return;
+
+    // Recursively free child nodes
+    for (int i = 0; i < node->child_count; i++)
+    {
+        ASTFreeNode(node->children[i]);
+    }
+
+    // Free the children array
+    free(node->children);
+
+    // Free the node itself
+    free(node);
 }
 
-ASTNode *ASTCreateExpressionChain(ASTNode *left, ASTNode *right) {
-  return ASTCreateNode(TYPE_EXPRESSION_CHAIN, left, right, NULL);
-}
+// Free the entire AST
+void ASTFree(ASTree tree)
+{
+    if (!tree)
+        return;
 
-void ASTreePrint(ASTree tree) {
-  if (tree == NULL || tree->head == NULL) {
-    return;
-  }
+    // Free all nodes starting from the root
+    ASTFreeNode(tree->head);
 
-  // Start the recursive traversal from the root node
-  printNode(tree->head, 0);
-}
-
-// Helper function to print individual nodes recursively in a side-by-side tree
-// format
-void printNode(ASTNode *node, int depth) {
-  if (node == NULL) {
-    for (int i = 0; i < depth; i++)
-      printf("    ");
-    printf("└── NULL\n");
-    return;
-  }
-
-  // Print indentation for hierarchy
-  for (int i = 0; i < depth; i++)
-    printf("│   ");
-
-  // Print node type and details
-  switch (node->type) {
-  case TYPE_MAP:
-    printf("MAP\n");
-    break;
-  case TYPE_ROOM:
-    printf("ROOM\n");
-    break;
-  case TYPE_DIRECTED_EDGE:
-    printf("DIRECTED\n");
-    break;
-  case TYPE_BIDIRECTIONAL_EDGE:
-    printf("BIDIRECTIONAL\n");
-    break;
-
-  case TYPE_IDENTIFIER:
-    printf("IDENTIFIER %s\n",
-           node->value.stringVal ? node->value.stringVal : "NULL");
-    return; // Identifiers are leaf nodes, so no need to recurse further
-  case TYPE_EXPRESSION_CHAIN:
-    break;
-  default:
-    printf("UNKNOWN (%d)\n", node->type); // Debugging unexpected node types
-    break;
-  }
-
-  // Recursively print child nodes
-  if (node->left)
-    printNode(node->left, depth + 1);
-  if (node->right)
-    printNode(node->right, depth + 1);
+    // Free the tree structure itself
+    free(tree);
 }

@@ -8,7 +8,7 @@ void setTestMode(bool mode) {
   isTestMode = mode; // Set the global variable
 }
 
-int reportError(const char *message, const char *input, size_t line,
+int reportLexerError(const char *message, const char *input, size_t line,
                 size_t column) {
   // Check if the message is NULL
   if (message == nullptr) {

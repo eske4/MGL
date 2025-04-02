@@ -6,155 +6,163 @@
 #include "lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-ASTNode *mapExpr(Token *currentToken);
-ASTNode *parseExpr(Token *currentToken);
-ASTNode *roomExpr(Token *currentToken);
-ASTNode *connectExpr(Token *currentToken);
-int consumeToken(Token *currentToken, TokenDef expectedTokenType);
-void reportParserError(const char *token);
+ASTNode* mapExpr(ASTree tree, Token* currentToken);
+void buildMapExpr(ASTNode* mapNode, Token* currentToken);
+void roomExpr(ASTNode* mapNode, Token* currentToken);
+void connectExpr(ASTNode* mapNode, Token* currentToken);
+int consumeToken(Token* currentToken, TokenDef expectedTokenType);
+void reportParserError(const char* token);
 
-ASTree parse(Token *currentToken) {
-  ASTree tree = ASTInit(); // Initialize AST
-  ASTNode *mapLeaf = mapExpr(currentToken);
-  tree->head = mapLeaf;
-  return tree; // Return the constructed AST
+ASTree parse(Token* currentToken)
+{
+    ASTree tree      = ASTInit(); // Initialize AST
+    ASTNode* mapNode = mapExpr(tree, currentToken);
+    tree->head       = mapNode;
+    return tree; // Return the constructed AST
 }
 
-ASTNode *mapExpr(Token *currentToken) {
+ASTNode* mapExpr(ASTree tree, Token* currentToken)
+{
+    if (!consumeToken(currentToken, T_MAP))
+    {
+        reportParserError("Map");
+        return NULL;
+    }
 
-  if (!consumeToken(currentToken, T_MAP)) {
-    reportParserError("Map");
-    return NULL;
-  }
+    const char* id = strdup(currentToken->value.stringValue);
 
-  ASTNode *mapNameNode = ASTCreateIdentifier(currentToken->value.stringValue);
+    if (!consumeToken(currentToken, T_IDENTIFIER))
+    {
+        printf("Error: No identifier");
+        reportParserError("identifier");
+        return NULL;
+    }
 
-  if (!consumeToken(currentToken, T_IDENTIFIER)) {
-    printf("Error: No identifier");
-    reportParserError("identifier");
-    return NULL;
-  }
+    ASTNode* mapNode = ASTCreateMap(tree, id);
 
-  if (!consumeToken(currentToken, T_LBRACKET)) {
-    reportParserError("{");
-    return NULL;
-  }
+    if (!consumeToken(currentToken, T_LBRACE))
+    {
+        reportParserError("{");
+        return NULL;
+    }
 
-  ASTNode *firstExprNode = parseExpr(currentToken);
+    buildMapExpr(mapNode, currentToken);
 
-  if (!consumeToken(currentToken, T_RBRACKET)) {
-    reportParserError("}");
-    return NULL;
-  }
+    if (!consumeToken(currentToken, T_RBRACE))
+    {
+        reportParserError("}");
+        return NULL;
+    }
 
-  return ASTCreateMap(mapNameNode, firstExprNode);
+    return mapNode;
 }
 
-ASTNode *parseExpr(Token *currentToken) {
-  if (currentToken->token == T_RBRACKET || currentToken->token == T_EOF) {
-    return NULL;
-  }
+void buildMapExpr(ASTNode* mapNode, Token* currentToken)
+{
+    if (currentToken->token == T_RBRACE || currentToken->token == T_EOF)
+    {
+        return;
+    }
 
-  ASTNode *node = NULL;
+    switch (currentToken->token)
+    {
+        case T_ROOM: roomExpr(mapNode, currentToken); break;
+        case T_CONNECT: connectExpr(mapNode, currentToken); break;
+        default: reportParserError("Unexpected");
+    }
 
-  switch (currentToken->token) {
-  case T_ROOM:
-    node = roomExpr(currentToken);
-    break;
-  case T_CONNECT:
-    node = connectExpr(currentToken); // parse connect expressions
-    break;
-  default:
-    reportParserError("Unexpected");
-  }
-
-  // After parsing the current node, check the next token to continue the
-  // expression chain.
-  ASTNode *nextNode = parseExpr(currentToken);
-
-  return ASTCreateExpressionChain(
-      node, nextNode); // Return the current node with its linked right child
+    buildMapExpr(mapNode, currentToken);
 }
 
-ASTNode *roomExpr(Token *currentToken) {
-  ASTNode *left = NULL;
-  ASTNode *right = NULL;
+void roomExpr(ASTNode* mapNode, Token* currentToken)
+{
+    if (!consumeToken(currentToken, T_ROOM)) // Consumes "room"
+    {
+        reportParserError("Room");
+        return;
+    }
 
-  if (!consumeToken(currentToken, T_ROOM)) {
-    reportParserError("Room");
-    return NULL;
-  }
+    const char* id = strdup(currentToken->value.stringValue); // Identifier expected
+    printf("%s", id);
 
-  left = ASTCreateIdentifier(currentToken->value.stringValue);
+    if (!consumeToken(currentToken, T_IDENTIFIER)) // Should consume the identifier
+    {
+        reportParserError("identifier was in room");
+        return;
+    }
 
-  if (!consumeToken(currentToken, T_IDENTIFIER)) {
-    reportParserError("identifier");
-    return NULL;
-  }
+    if (!consumeToken(currentToken, T_SEMICOLON)) // Consumes ";"
+    {
+        reportParserError(";");
+        return;
+    }
 
-  if (!consumeToken(currentToken, T_SEMICOLON)) {
-    reportParserError(";");
-    return NULL;
-  }
-
-  return ASTCreateRoom(left); // Create and return a room AST node
+    ASTCreateRoom(mapNode, id); // Create and return a room AST node
 }
 
-ASTNode *connectExpr(Token *currentToken) {
-  if (!consumeToken(currentToken, T_CONNECT) ||
-      !consumeToken(currentToken, T_LPAREN)) {
-    reportParserError("(");
-    return NULL;
-  }
+void connectExpr(ASTNode* mapNode, Token* currentToken)
+{
+    if (!consumeToken(currentToken, T_CONNECT) || !consumeToken(currentToken, T_LPAREN))
+    {
+        reportParserError("(");
+        return;
+    }
 
-  ASTNode *left = ASTCreateIdentifier(currentToken->value.stringValue);
-  if (!consumeToken(currentToken, T_IDENTIFIER)) {
-    reportParserError("Identifier");
-    return NULL;
-  }
+    const char* id = strdup(currentToken->value.stringValue);
 
-  Type edgeType = (currentToken->token == T_DIRECTED_EDGE) ? TYPE_DIRECTED_EDGE
-                  : (currentToken->token == TYPE_BIDIRECTIONAL_EDGE)
-                      ? TYPE_BIDIRECTIONAL_EDGE
-                      : -1;
+    if (!consumeToken(currentToken, T_IDENTIFIER))
+    {
+        reportParserError("Identifier");
+        return;
+    }
 
-  if (edgeType == -1) {
-    reportParserError("-> or <->");
-    return NULL;
-  }
+    TokenDef op = currentToken->token;
 
-  scan(currentToken); // Consume edge token
+    if (op != T_DIRECTED_EDGE && op != T_BIDIRECTIONAL_EDGE)
+    {
+        reportParserError("-> or <->");
+        return;
+    }
 
-  ASTNode *right = ASTCreateIdentifier(currentToken->value.stringValue);
-  if (!consumeToken(currentToken, T_IDENTIFIER)) {
-    reportParserError("identifier");
-    return NULL;
-  }
+    scan(currentToken); // Consume edge token
 
-  if (!consumeToken(currentToken, T_RPAREN) ||
-      !consumeToken(currentToken, T_SEMICOLON)) {
-    reportParserError(") followed by ;");
-    return NULL;
-  }
+    const char* id2 = strdup(currentToken->value.stringValue);
 
-  return (edgeType == TYPE_DIRECTED_EDGE)
-             ? ASTCreateDirectedEdge(left, right)
-             : ASTCreateBidirectionalEdge(left, right);
+    if (!consumeToken(currentToken, T_IDENTIFIER))
+    {
+        reportParserError("identifier was in connect");
+        return;
+    }
+
+    if (!consumeToken(currentToken, T_RPAREN) || !consumeToken(currentToken, T_SEMICOLON))
+    {
+        reportParserError(") followed by ;");
+        return;
+    }
+
+    ASTCreateConnect(mapNode, id, op, id2);
 }
 
-int consumeToken(Token *currentToken, TokenDef expectedTokenType) {
-  if (currentToken == NULL) {
-    reportError("Token is empty", "", cs.line, cs.column);
-  }
-  if (currentToken->token == expectedTokenType) {
-    // Pass currentToken to scan, no need to use '&'
-    scan(currentToken); // Update the current token using the lexer
-    return 1;           // Successfully consumed the token
-  }
-  return 0; // Failed to consume token
+int consumeToken(Token* currentToken, TokenDef expectedTokenType)
+{
+    if (currentToken == NULL)
+    {
+        reportLexerError("Token is empty", "", cs.line, cs.column);
+    }
+
+    if (currentToken->token == expectedTokenType)
+    {
+        // Pass currentToken to scan, no need to use '&'
+        scan(currentToken); // Update the current token using the lexer
+        return 1;           // Successfully consumed the token
+    }
+
+    return 0; // Failed to consume token
 }
 
-void reportParserError(const char *token) {
-  reportError("Parser error: Bad token expected: ", token, cs.line, cs.column);
+void reportParserError(const char* token)
+{
+    reportLexerError("Parser error: Bad token expected: ", token, cs.line, cs.column);
 }

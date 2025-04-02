@@ -11,8 +11,8 @@ typedef enum {
   T_MAP,                // Map
   T_ROOM,               // Room
   T_CONNECT,            // Connect
-  T_LBRACKET,           // [
-  T_RBRACKET,           // ]
+  T_LBRACE,           // [
+  T_RBRACE,           // ]
   T_LPAREN,             // (
   T_RPAREN,             // )
   T_DIRECTED_EDGE,      // ->
@@ -22,17 +22,4 @@ typedef enum {
   T_EOF
 } TokenDef;
 
-typedef enum {
-  TYPE_IDENTIFIER,
-  TYPE_MAP,
-  TYPE_ROOM,
-  TYPE_CONNECT,
-  TYPE_DIRECTED_EDGE,
-  TYPE_BIDIRECTIONAL_EDGE,
-  TYPE_EXPRESSION_CHAIN, // <-- Enabling chaining Room and Connect inside Map
-                         // can
-                         // be used for more later
-  TYPE_INTEGER_LITERAL,
-  TYPE_STRING_LITERAL,
-  TYPE_FLOAT_LITERAL
-} Type;
+
