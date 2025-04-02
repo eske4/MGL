@@ -128,7 +128,7 @@ int match_identifier(Token* t, char c)
         return set_token(t, T_IDENTIFIER, buffer);
     }
 
-    reportLexerError("Lexer error: Unrecognised character ", &c, cs.line, cs.column);
+    reportLexerError(&c, cs.line, cs.column);
     return 0;
 }
 

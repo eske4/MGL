@@ -13,7 +13,7 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken);
 void roomExpr(ASTNode* mapNode, Token* currentToken);
 void connectExpr(ASTNode* mapNode, Token* currentToken);
 int consumeToken(Token* currentToken, TokenDef expectedTokenType);
-void reportParserError(const char* token);
+void errorHelper(const char* expected_token, const Token* obtained_token);
 
 ASTree parse(Token* currentToken)
 {
@@ -26,35 +26,22 @@ ASTree parse(Token* currentToken)
 ASTNode* mapExpr(ASTree tree, Token* currentToken)
 {
     if (!consumeToken(currentToken, T_MAP))
-    {
-        reportParserError("Map");
-        return NULL;
-    }
+        errorHelper("Map", currentToken);
 
     const char* id = strdup(currentToken->value.stringValue);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
-    {
-        printf("Error: No identifier");
-        reportParserError("identifier");
-        return NULL;
-    }
+        errorHelper("identifier", currentToken);
 
     ASTNode* mapNode = ASTCreateMap(tree, id);
 
     if (!consumeToken(currentToken, T_LBRACE))
-    {
-        reportParserError("{");
-        return NULL;
-    }
+        errorHelper("{", currentToken);
 
     buildMapExpr(mapNode, currentToken);
 
     if (!consumeToken(currentToken, T_RBRACE))
-    {
-        reportParserError("}");
-        return NULL;
-    }
+        errorHelper("}", currentToken);
 
     return mapNode;
 }
@@ -70,7 +57,7 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken)
     {
         case T_ROOM: roomExpr(mapNode, currentToken); break;
         case T_CONNECT: connectExpr(mapNode, currentToken); break;
-        default: reportParserError("Unexpected");
+        default: errorHelper("Map | Room", currentToken);
     }
 
     buildMapExpr(mapNode, currentToken);
@@ -79,25 +66,15 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken)
 void roomExpr(ASTNode* mapNode, Token* currentToken)
 {
     if (!consumeToken(currentToken, T_ROOM)) // Consumes "room"
-    {
-        reportParserError("Room");
-        return;
-    }
+        errorHelper("Room", currentToken);
 
     const char* id = strdup(currentToken->value.stringValue); // Identifier expected
-    printf("%s", id);
 
     if (!consumeToken(currentToken, T_IDENTIFIER)) // Should consume the identifier
-    {
-        reportParserError("identifier was in room");
-        return;
-    }
+        errorHelper("identifier", currentToken);
 
     if (!consumeToken(currentToken, T_SEMICOLON)) // Consumes ";"
-    {
-        reportParserError(";");
-        return;
-    }
+        errorHelper(";", currentToken);
 
     ASTCreateRoom(mapNode, id); // Create and return a room AST node
 }
@@ -105,42 +82,27 @@ void roomExpr(ASTNode* mapNode, Token* currentToken)
 void connectExpr(ASTNode* mapNode, Token* currentToken)
 {
     if (!consumeToken(currentToken, T_CONNECT) || !consumeToken(currentToken, T_LPAREN))
-    {
-        reportParserError("(");
-        return;
-    }
+        errorHelper("(", currentToken);
 
     const char* id = strdup(currentToken->value.stringValue);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
-    {
-        reportParserError("Identifier");
-        return;
-    }
+        errorHelper("Identifier", currentToken);
 
     TokenDef op = currentToken->token;
 
     if (op != T_DIRECTED_EDGE && op != T_BIDIRECTIONAL_EDGE)
-    {
-        reportParserError("-> or <->");
-        return;
-    }
+        errorHelper("-> | <->", currentToken);
 
     scan(currentToken); // Consume edge token
 
     const char* id2 = strdup(currentToken->value.stringValue);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
-    {
-        reportParserError("identifier was in connect");
-        return;
-    }
+        errorHelper("identifier", currentToken);
 
     if (!consumeToken(currentToken, T_RPAREN) || !consumeToken(currentToken, T_SEMICOLON))
-    {
-        reportParserError(") followed by ;");
-        return;
-    }
+        errorHelper(") + ;", currentToken);
 
     ASTCreateConnect(mapNode, id, op, id2);
 }
@@ -149,7 +111,7 @@ int consumeToken(Token* currentToken, TokenDef expectedTokenType)
 {
     if (currentToken == NULL)
     {
-        reportLexerError("Token is empty", "", cs.line, cs.column);
+        fprintf(stderr, "Expected a token but got NULL");
     }
 
     if (currentToken->token == expectedTokenType)
@@ -162,7 +124,9 @@ int consumeToken(Token* currentToken, TokenDef expectedTokenType)
     return 0; // Failed to consume token
 }
 
-void reportParserError(const char* token)
+void errorHelper(const char* expected_token, const Token* obtained_token)
 {
-    reportLexerError("Parser error: Bad token expected: ", token, cs.line, cs.column);
+    const char* o_input = obtained_token->value.stringValue;
+
+    reportParserError(expected_token, o_input, cs.line, cs.column);
 }
