@@ -1,8 +1,10 @@
 #include "lexer.h"
 #include "compiler_state.h"
+#include "definitions.h"
 #include "error_handler.h"
 #include <ctype.h>
 #include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -72,64 +74,90 @@ static int next(void)
 static int skip(void)
 {
     int c;
-    while ((c = next()) && strchr(" \t\n\r\f", c))
+    while ((c = next()) && isspace(c))
         ;
     return c;
 }
 
-static int match_sequence(int c, const char* seq, TokenDef tokenType, Token* t)
+int match_keyword(Token* currentToken, const char* in)
 {
-    const char* ptr = seq;
-
-    // Go through each character in the sequence
-    while (*ptr)
+    size_t keyword_count = sizeof(keyword_map) / sizeof(keyword_map[0]);
+    for (int i = 0; i < keyword_count; i++)
     {
-        if (c != *ptr)
+        if (strcmp(in, keyword_map[i].name) == 0)
         {
-            // If there's a mismatch, backtrack and return failure
-            putback(c);
-            return 0;
-        }
+            set_token(currentToken, keyword_map[i].token, keyword_map[i].name);
 
-        // Move to the next character in the sequence
-        ptr++;
-        if (*ptr)
-        {
-            c = next(); // Fetch the next character if we're not at the end
+            return 1;
         }
     }
-
-    // If we've gone through the entire sequence successfully
-    return set_token(t, tokenType, seq);
+    return 0;
 }
 
-int match_identifier(Token* t, char c)
+int is_delimiter(int c) // Removed unused 'Token* t'
 {
-    int i = 0;
-    char buffer[sizeof(t->value.stringValue)];
-
-    if (isalpha(c) || c == '_')
+    switch (c)
     {
-        do
-        {
-            if (i < sizeof(buffer) - 1)
-            {
-                buffer[i++] = c;
-            }
-            else
-            {
-                break;
-            }
-            c = next();
-        } while (isalnum(c) || c == '_');
+        case ';':
+        case '(':
+        case ')':
+        case '{':
+        case '}': return 1;
+    }
+    return 0;
+}
 
-        buffer[i] = '\0';
-        putback(c);
-        return set_token(t, T_IDENTIFIER, buffer);
+int match_identifier(Token* t, int c)
+{
+
+    int i                       = 0;
+    char buffer[MAX_INPUT_SIZE] = {0};
+    int isIdentifier            = 1;
+    int isDelimiter             = 0;
+    int isKeyword               = 0;
+
+    while (!strchr(" \t\n\r\f", c) && i < MAX_INPUT_SIZE - 1)
+    {
+        buffer[i++] = c;
+
+        if (is_delimiter(c))
+        {
+            isDelimiter = 1;
+            break;
+        }
+
+        c = next();
+
+        if (is_delimiter(c))
+        {
+            putback(c);
+            isDelimiter = 1;
+            break;
+        }
+
+        if (!(isalnum(c) || c == '_') && !isspace(c)) // It's not an id if the value is not alpha, numeric or _ and ignore whitespace
+            isIdentifier = 0;
     }
 
-    reportLexerError(&c, cs.line, cs.column);
-    return 0;
+    buffer[i] = '\0'; // Null-terminate the string
+
+    // Print the token buffer
+    strlcpy(t->value.stringValue, buffer, MAX_INPUT_SIZE - 1);
+
+    // Check if the buffer matches any keyword
+    isKeyword = match_keyword(t, buffer);
+
+    if (!isKeyword && isIdentifier)
+    {
+        set_token(t, T_IDENTIFIER, buffer);
+        putback(c);
+        return t->token;
+    }
+
+    if (!isDelimiter && !isKeyword && !isIdentifier && c != EOF)
+        return reportLexerError(buffer, cs.line, cs.column);
+
+    return t->token;
 }
 
 int scan(Token* t)
@@ -138,20 +166,6 @@ int scan(Token* t)
         printf("Lexer could not find input");
 
     int c = skip();
-    switch (c)
-    {
-        case 'R': return match_sequence(c, "Room", T_ROOM, t); break;
-        case 'M': return match_sequence(c, "Map", T_MAP, t); break;
-        case 'C': return match_sequence(c, "Connect", T_CONNECT, t); break;
-        case '-': return match_sequence(c, "->", T_DIRECTED_EDGE, t); break;
-        case '<': return match_sequence(c, "<->", T_BIDIRECTIONAL_EDGE, t); break;
 
-        case ';': return set_token(t, T_SEMICOLON, ";"); break;
-        case '{': return set_token(t, T_LBRACE, "{"); break;
-        case '}': return set_token(t, T_RBRACE, "}"); break;
-        case '(': return set_token(t, T_LPAREN, "("); break;
-        case ')': return set_token(t, T_RPAREN, ")"); break;
-        case EOF: return 0;
-        default: return match_identifier(t, c);
-    }
+    return match_identifier(t, c);
 }

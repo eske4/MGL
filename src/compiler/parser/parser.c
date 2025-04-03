@@ -57,7 +57,7 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken)
     {
         case T_ROOM: roomExpr(mapNode, currentToken); break;
         case T_CONNECT: connectExpr(mapNode, currentToken); break;
-        default: errorHelper("Map | Room", currentToken);
+        default: errorHelper("Connect | Room", currentToken);
     }
 
     buildMapExpr(mapNode, currentToken);

@@ -5,7 +5,6 @@ extern "C" {
 #include "lexer.h"
 #include "parser.h"
 }
-#include <iostream>
 
 int main() {
   printf("Project Name: %s\n", project_name);
@@ -13,7 +12,7 @@ int main() {
 
   // Token structure to hold the current token
   csInit();
-  csOpenFile("test_input.txt");
+  csOpenFile("/home/eske/Documents/git/MGL/app/test_input.txt");
   Token currentToken;
 
   // Fetch the first token

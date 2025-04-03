@@ -1,8 +1,8 @@
 Map map {
-    Room _room;
+    Room Ree;
 
     Connect(_room -> _what);
-    Room _what;
-    Connect(parent -> child);
-}
+    Room _hey;
+    Connect(_parent_ -> child);
 
+}
