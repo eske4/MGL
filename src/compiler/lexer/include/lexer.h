@@ -17,12 +17,6 @@ typedef struct {
     const TokenDef token;
 } keyword;
 
-typedef struct {
-    const char symbol;
-    const TokenDef token;
-} delimiter;
-
-
 static const keyword keyword_map[] = {
     {"Map", T_MAP},
     {"Room", T_ROOM},
