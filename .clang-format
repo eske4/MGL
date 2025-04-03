@@ -1,6 +1,7 @@
 Language: C
 BasedOnStyle: LLVM
 
+# Formatting and indentation settings...
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: true
@@ -20,11 +21,11 @@ AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: No
-BreakBeforeBraces: Allman # Braces style more common in C
+BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: AfterColon
 ColumnLimit: 180
-CompactNamespaces: false # Not necessary in C
+CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: false
@@ -37,7 +38,7 @@ SortIncludes: false
 SortUsingDeclarations: false
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
-SpaceAfterTemplateKeyword: true # This can be removed for C
+SpaceAfterTemplateKeyword: true
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
@@ -55,5 +56,20 @@ UseTab: Never
 
 AllowShortEnumsOnASingleLine: false
 BraceWrapping:
-  AfterEnum: false # This is more relevant to C++ but can stay
-NamespaceIndentation: None # C doesn't use namespaces
+  AfterEnum: false
+NamespaceIndentation: None
+
+# Set clang-tidy options
+ClangTidy:
+  Checks: "-*,clang-analyzer-*,modernize-*,-modernize-use-nullptr" # Enable specific checks and disable others
+  WarningsAsErrors: "*" # Make all warnings be treated as errors (optional, remove if you want more flexibility)
+  HeaderFilterRegex: ".*" # Apply clang-tidy checks to all headers
+  FormatStyle: none # Don't change the formatting to match clang-tidy's style
+
+# Additional Diagnostic Adjustments
+Log: error # Set the log level to only show errors
+Diagnostics:
+  --show-macro-results: false # Disable showing macro results in diagnostics
+  --clang-tidy: true # Ensure clang-tidy is enabled but controlled by the Checks list
+  --background-index: true # Keep background indexing enabled for better performance
+
