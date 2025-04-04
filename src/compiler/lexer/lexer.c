@@ -120,6 +120,8 @@ int match_identifier(Token* t, int c)
     {
         buffer[i++] = c;
 
+            fprintf(stderr, "I got here");
+
         if (is_delimiter(c))
         {
             isDelimiter = 1;

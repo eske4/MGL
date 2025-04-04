@@ -1,5 +1,6 @@
 #include "compiler_state.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 CompilerState cs;
 
@@ -18,8 +19,8 @@ int csOpenFile(const char* filename)
     cs.infile = fopen(filename, "r");
     if (cs.infile == NULL)
     {
-        printf("Error opening file");
-        return -1; // Return -1 to indicate failure
+        fprintf(stderr, "Error opening file");
+        exit(1);
     }
 
     cs.line    = 1;

@@ -12,7 +12,7 @@ int main() {
 
   // Token structure to hold the current token
   csInit();
-  csOpenFile("/home/eske/Documents/git/MGL/app/test_input.txt");
+  csOpenFile("test_input.txt");
   Token currentToken;
 
   // Fetch the first token
