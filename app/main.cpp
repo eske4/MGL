@@ -4,6 +4,7 @@ extern "C" {
 #include "compiler_state.h"
 #include "lexer.h"
 #include "parser.h"
+#include "type_checker.h"
 }
 
 int main() {
@@ -25,6 +26,12 @@ int main() {
   if (tree && tree->head) {
     printf("Parsing successful!\n");
     ASTreePrint(tree);
+      //type checking
+      if (typeCheck(tree)) {
+          printf("\nType check passed!\n");
+      } else {
+          printf("\nType check failed.\n");
+      }
   } else {
     printf("Parsing failed!\n");
   }

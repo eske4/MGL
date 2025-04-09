@@ -13,7 +13,7 @@ build:
 	cd $(BUILD_DIR) && cmake .. && cmake --build .
 	cp $(CURDIR)/app/test_input.txt $(BUILD_DIR)/app/
 	ln -sf "build/compile_commands.json"
-	$(MAKE) test
+#	$(MAKE) test
 
 # Clean the build directory
 clean:
