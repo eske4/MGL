@@ -3,6 +3,7 @@
 #include "compiler_state.h"
 #include "definitions.h"
 #include "error_handler.h"
+#include "declaration_tracker.h"
 #include "lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +21,7 @@ ASTree parse(Token* currentToken)
     ASTree tree      = ASTInit(); // Initialize AST
     ASTNode* mapNode = mapExpr(tree, currentToken);
     tree->head       = mapNode;
+    AnalyseAST(tree);
     return tree; // Return the constructed AST
 }
 
