@@ -1,4 +1,5 @@
 #include "declaration_tracker.h"
+#include "type_table.h"
 #include "definitions.h"
 #include "stdio.h"
 #include <string.h>
