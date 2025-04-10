@@ -56,8 +56,11 @@ void TraverseAST(const ASTNode* node, const TypeTable table){
         case AT_CONNECT:
             const TypeTableEntry *id = TTFind(table, node->children[0]->data.stringVal);
             const TypeTableEntry *id2 = TTFind(table, node->children[2]->data.stringVal);
-            if(!id || !id2) fprintf(stderr, "Parser Error: Connecting undeclared rooms\n"); exit(1);
-        default: break;
+            if(!id || !id2) {
+                TTFree(table); 
+                fprintf(stderr, "Parser Error: Connecting undeclared rooms\n"); 
+                exit(1);
+            }         default: break;
     }
 
     for(int i = 0; i < node->child_count; i++){
