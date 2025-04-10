@@ -21,7 +21,8 @@ void TraverseAST(const ASTNode* node, const TypeTable table){
                 TTFree(table); 
                 fprintf(stderr, "Parser Error: Connecting undeclared rooms\n"); 
                 exit(1);
-            }         default: break;
+            }         
+        default: break;
     }
 
     for(int i = 0; i < node->child_count; i++){
