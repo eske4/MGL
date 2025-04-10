@@ -56,7 +56,7 @@ void TraverseAST(const ASTNode* node, const TypeTable table){
         case AT_CONNECT:
             const TypeTableEntry *id = TTFind(table, node->children[0]->data.stringVal);
             const TypeTableEntry *id2 = TTFind(table, node->children[2]->data.stringVal);
-            if(!id || !id2) fprintf(stderr, "Connect in wrong order\n"); exit(1);
+            if(!id || !id2) fprintf(stderr, "Parser Error: Connecting undeclared rooms\n"); exit(1);
         default: break;
     }
 
