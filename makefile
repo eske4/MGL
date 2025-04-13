@@ -22,7 +22,8 @@ clean:
 
 # Run the tests (if you have tests set up with CTest)
 test:
-	cd $(BUILD_DIR)/tests && ctest --output-on-failure
+	# cd $(BUILD_DIR)/tests && ctest --output-on-failure
+	@echo "No tests defined."
 
 # Run the executable generated from build
 run:

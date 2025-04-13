@@ -4,6 +4,7 @@ extern "C" {
 #include "compiler_state.h"
 #include "lexer.h"
 #include "parser.h"
+#include "ir_generator.h"
 }
 
 int main() {
@@ -29,8 +30,16 @@ int main() {
     printf("Parsing failed!\n");
   }
 
+  // Generate IR code from the AST.
+  IRArray ir;
+  compileToIR(tree, &ir);
+  printIR(&ir);
+
   // Free the AST
   ASTFree(tree);
+
+  // Free IR
+  freeIRArray(&ir);
 
   // std::cout << "Token is " << token << std::endl;  // Print the token
   return 0;

@@ -2,6 +2,7 @@
 
 
 #include <stddef.h>
+#include <stdbool.h>
 
 extern bool isTestMode;
 void setTestMode(bool mode);
