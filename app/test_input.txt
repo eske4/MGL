@@ -4,6 +4,6 @@ Map map {
     Room _hey;
     Room _yo;
 
-    Connect(_hey -> _yo);
+    Connect(_hey -> _yo2);
 
 }

@@ -131,5 +131,5 @@ void errorHelper(const char* expected_token, const Token* obtained_token)
 {
     const char* o_input = obtained_token->value;
 
-    reportParserError(expected_token, o_input, cs.line, cs.column);
+    reportParserError(expected_token, o_input, findLoc(obtained_token->pos));
 }

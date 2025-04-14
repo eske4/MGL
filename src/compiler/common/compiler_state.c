@@ -45,3 +45,29 @@ int csIsFileOpen()
 {
     return cs.infile != NULL;
 }
+
+CLoc findLoc(int pos) {
+    CLoc loc = { .line = 1, .column = 1 };
+
+    if (!cs.infile || pos < 0) {
+        return loc; // fallback: start of file
+    }
+
+    rewind(cs.infile);
+
+    for (int i = 0; i < pos; i++) {
+        int c = fgetc(cs.infile);
+        if (c == EOF) {
+            break; // stop if end of file reached early
+        }
+        if (c == '\n') {
+            loc.line++;
+            loc.column = 1;
+        } else {
+            loc.column++;
+        }
+    }
+
+    return loc;
+}
+

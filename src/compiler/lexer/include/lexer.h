@@ -28,4 +28,3 @@ static const keyword keyword_map[] = {
 };
 
 int scan(Token *t);
-CLoc findErrorLoc(int pos);

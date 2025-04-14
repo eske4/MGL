@@ -1,4 +1,5 @@
 #include "error_handler.h"
+#include "definitions.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -11,15 +12,15 @@ void setTestMode(bool mode)
 }
 
 // Helper function to print error messages
-static void printError(const char* type, const char* message, size_t line, size_t column)
+static void printError(const char* type, const char* message, CLoc loc)
 {
     if (!message)
     {
-        fprintf(stderr, "%s error: <unknown error> at line %zu, column %zu\n", type, line, column);
+        fprintf(stderr, "%s error: <unknown error> at line %d, column %d\n", type, loc.line, loc.column);
     }
     else
     {
-        fprintf(stderr, "%s error: %s at line %zu, column %zu\n", type, message, line, column);
+        fprintf(stderr, "%s error: %s at line %d, column %d\n", type, message, loc.line, loc.column);
     }
 
     if (!isTestMode)
@@ -28,14 +29,14 @@ static void printError(const char* type, const char* message, size_t line, size_
     }
 }
 
-int reportLexerError(const char* input, size_t line, size_t column)
+int reportLexerError(const char* input, CLoc loc)
 {
-    printError("Lexer", input, line, column);
+    printError("Lexer", input, loc);
 
     return -1; // Return error code instead of forcing termination
 }
 
-int reportParserError(const char* expected_token, const char* obtained_token, size_t line, size_t column)
+int reportParserError(const char* expected_token, const char* obtained_token, CLoc loc)
 {
     char buffer[256]; // Buffer to hold formatted error message
 
@@ -48,7 +49,9 @@ int reportParserError(const char* expected_token, const char* obtained_token, si
         snprintf(buffer, sizeof(buffer), "expected token: %s, but got: %s", expected_token, obtained_token);
     }
 
-    printError("Parser", buffer, line, column);
+    printError("Parser", buffer, loc);
 
     return -1;
 }
+
+

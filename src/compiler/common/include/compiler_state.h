@@ -1,5 +1,6 @@
 #pragma once
 #include <stdio.h>
+#include "definitions.h"
 
 typedef struct {
   FILE *infile; // The input file
@@ -16,3 +17,5 @@ void csInit();                        // Initialize compiler state
 int csOpenFile(const char *filename); // Open file for processing
 void csFree();                        // Free resources
 int csIsFileOpen();
+CLoc findLoc(int pos);
+

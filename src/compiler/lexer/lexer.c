@@ -130,8 +130,9 @@ int match_identifier(Token* t, int c)
         return t->token;
     }
 
-    if (!isDelimiter && !isKeyword && !isIdentifier && c != EOF)
-        return reportLexerError(buffer, cs.line, cs.column);
+    if (!isDelimiter && !isKeyword && !isIdentifier && c != EOF){
+        return reportLexerError(buffer, findLoc(cs.pos));
+    }
 
     return t->token;
 }
@@ -146,18 +147,4 @@ int scan(Token* t)
     return match_identifier(t, c);
 }
 
-CLoc findErrorLoc(int pos){
-    int column = 1;
-    int line = 1;
-    rewind(cs.infile);
-    for(int i = 0; i < pos; i++){
-        int c = fgetc(cs.infile);
-        if(c == '\n'){
-            ++line;
-            column = 1;
-        }
-        else
-            ++column;
-    }
-    return (CLoc){.line = line, .column = column};
-}
+
