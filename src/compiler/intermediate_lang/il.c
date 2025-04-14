@@ -2,16 +2,16 @@
 #include "astree.h"
 #include "instr_table.h"
 
-void InstrToAST(ASTNode *node, InstructionTable table);
+void astToInstr(ASTNode *node, InstructionTable table);
 
 InstructionTable initIT(ASTree tree){
     // Initialize the instruction table
     InstructionTable table = InstrInit();
-    InstrToAST(tree->head, table);
+    astToInstr(tree->head, table);
     return table;
 }
 
-void InstrToAST(ASTNode *node, InstructionTable table){
+void astToInstr(ASTNode *node, InstructionTable table){
     if(!node) return; // Check for null node
 
     // Declare the Instruction variable once here, outside of the switch-case
@@ -50,7 +50,7 @@ void InstrToAST(ASTNode *node, InstructionTable table){
 
     // Recursively traverse all child nodes
     for(int i = 0; i < node->child_count; i++){
-        InstrToAST(node->children[i], table);
+        astToInstr(node->children[i], table);
     }
 }
 
