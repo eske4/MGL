@@ -4,12 +4,8 @@
 
 typedef struct Token {
   TokenDef token;
-  union {
-    long intValue; // 32bit int
-    float floatValue;
-    char stringValue[MAX_INPUT_SIZE]; // Limit token size, to prevent memory
-                                      // overload
-  } value;
+  int pos;
+  char value[MAX_INPUT_SIZE]; // Limit token size, to prevent memory
 } Token;
 
 typedef struct {
@@ -32,3 +28,4 @@ static const keyword keyword_map[] = {
 };
 
 int scan(Token *t);
+CLoc findErrorLoc(int pos);

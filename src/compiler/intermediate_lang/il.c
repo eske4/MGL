@@ -21,8 +21,8 @@ void astToInstr(ASTNode *node, InstructionTable table){
     switch(node->type){
         case AT_MAP:
             // Ensure the first child has a valid string value
-            if (node->children[0] && node->children[0]->data.stringVal) {
-                char *args[] = { node->children[0]->data.stringVal };
+            if (node->children[0] && node->children[0]->data) {
+                char *args[] = { node->children[0]->data };
                 instr = InstrMake(IR_DECL_MAP, args, 1);
                 InstrAdd(table, instr);
             }
@@ -30,8 +30,8 @@ void astToInstr(ASTNode *node, InstructionTable table){
             
         case AT_ROOM:
             // Ensure the first child has a valid string value
-            if (node->children[0] && node->children[0]->data.stringVal) {
-                char *args[] = { node->children[0]->data.stringVal };
+            if (node->children[0] && node->children[0]->data) {
+                char *args[] = { node->children[0]->data };
                 instr = InstrMake(IR_DECL_ROOM, args, 1);
                 InstrAdd(table, instr);
             }
@@ -39,9 +39,9 @@ void astToInstr(ASTNode *node, InstructionTable table){
 
         case AT_CONNECT:
             // Ensure the first and third children have valid string values
-            if (node->children[0] && node->children[0]->data.stringVal && 
-                node->children[2] && node->children[2]->data.stringVal) {
-                char *args[] = { node->children[0]->data.stringVal, node->children[2]->data.stringVal };
+            if (node->children[0] && node->children[0]->data && 
+                node->children[2] && node->children[2]->data) {
+                char *args[] = { node->children[0]->data, node->children[2]->data };
                 instr = InstrMake(IR_DECL_CONNECT, args, 2);
                 InstrAdd(table, instr);
             }

@@ -3,7 +3,6 @@
 #include "definitions.h"
 #include "error_handler.h"
 #include <ctype.h>
-#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,31 +13,8 @@ int set_token(Token* t, TokenDef type, const char* value)
         return 0;
 
     t->token = type;
-
-    switch (type)
-    {
-        case T_INTEGER:
-        {
-            char* endptr;
-            errno       = 0;
-            long intVal = strtol(value, &endptr, 10);
-            if (errno == ERANGE || *endptr)
-                return 0;
-            t->value.intValue = intVal;
-            break;
-        }
-        case T_FLOAT:
-        {
-            char* endptr;
-            errno          = 0;
-            float floatVal = strtof(value, &endptr);
-            if (errno == ERANGE || *endptr)
-                return 0;
-            t->value.floatValue = floatVal;
-            break;
-        }
-        default: strlcpy(t->value.stringValue, value, sizeof(t->value.stringValue)); break;
-    }
+    t->pos = cs.pos;
+    strlcpy(t->value, value, sizeof(t->value));
     return 1;
 }
 
@@ -142,7 +118,7 @@ int match_identifier(Token* t, int c)
     buffer[i] = '\0'; // Null-terminate the string
 
     // Print the token buffer
-    strlcpy(t->value.stringValue, buffer, MAX_INPUT_SIZE - 1);
+    strlcpy(t->value, buffer, MAX_INPUT_SIZE - 1);
 
     // Check if the buffer matches any keyword
     isKeyword = match_keyword(t, buffer);
@@ -168,4 +144,20 @@ int scan(Token* t)
     int c = skip();
 
     return match_identifier(t, c);
+}
+
+CLoc findErrorLoc(int pos){
+    int column = 1;
+    int line = 1;
+    rewind(cs.infile);
+    for(int i = 0; i < pos; i++){
+        int c = fgetc(cs.infile);
+        if(c == '\n'){
+            ++line;
+            column = 1;
+        }
+        else
+            ++column;
+    }
+    return (CLoc){.line = line, .column = column};
 }

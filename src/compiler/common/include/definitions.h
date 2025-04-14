@@ -31,4 +31,7 @@ typedef enum {
   AT_IDENTIFIER = T_IDENTIFIER,                    // Variable/function name
 } AbstractTokenDef;
 
-
+typedef struct CLoc {
+    int line;
+    int column;
+} CLoc;

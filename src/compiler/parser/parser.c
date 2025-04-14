@@ -25,15 +25,16 @@ ASTree parse(Token* currentToken)
 
 ASTNode* mapExpr(ASTree tree, Token* currentToken)
 {
+    int mapPos = currentToken->pos;
     if (!consumeToken(currentToken, T_MAP))
         errorHelper("Map", currentToken);
 
-    const char* id = strdup(currentToken->value.stringValue);
+    const char* id = strdup(currentToken->value);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
         errorHelper("identifier", currentToken);
 
-    ASTNode* mapNode = ASTCreateMap(tree, id);
+    ASTNode* mapNode = ASTCreateMap(tree, id, mapPos);
 
     if (!consumeToken(currentToken, T_LBRACE))
         errorHelper("{", currentToken);
@@ -65,10 +66,11 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken)
 
 void roomExpr(ASTNode* mapNode, Token* currentToken)
 {
+    int roomPos = currentToken->pos;
     if (!consumeToken(currentToken, T_ROOM)) // Consumes "room"
         errorHelper("Room", currentToken);
 
-    const char* id = strdup(currentToken->value.stringValue); // Identifier expected
+    const char* id = strdup(currentToken->value); // Identifier expected
 
     if (!consumeToken(currentToken, T_IDENTIFIER)) // Should consume the identifier
         errorHelper("identifier", currentToken);
@@ -76,15 +78,16 @@ void roomExpr(ASTNode* mapNode, Token* currentToken)
     if (!consumeToken(currentToken, T_SEMICOLON)) // Consumes ";"
         errorHelper(";", currentToken);
 
-    ASTCreateRoom(mapNode, id); // Create and return a room AST node
+    ASTCreateRoom(mapNode, id, roomPos); // Create and return a room AST node
 }
 
 void connectExpr(ASTNode* mapNode, Token* currentToken)
 {
+    int connectPos = currentToken->pos;
     if (!consumeToken(currentToken, T_CONNECT) || !consumeToken(currentToken, T_LPAREN))
         errorHelper("(", currentToken);
 
-    const char* id = strdup(currentToken->value.stringValue);
+    const char* id = strdup(currentToken->value);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
         errorHelper("Identifier", currentToken);
@@ -96,7 +99,7 @@ void connectExpr(ASTNode* mapNode, Token* currentToken)
 
     scan(currentToken); // Consume edge token
 
-    const char* id2 = strdup(currentToken->value.stringValue);
+    const char* id2 = strdup(currentToken->value);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
         errorHelper("identifier", currentToken);
@@ -104,7 +107,7 @@ void connectExpr(ASTNode* mapNode, Token* currentToken)
     if (!consumeToken(currentToken, T_RPAREN) || !consumeToken(currentToken, T_SEMICOLON))
         errorHelper(") + ;", currentToken);
 
-    ASTCreateConnect(mapNode, id, op, id2);
+    ASTCreateConnect(mapNode, id, op, id2, connectPos);
 }
 
 int consumeToken(Token* currentToken, TokenDef expectedTokenType)
@@ -126,7 +129,7 @@ int consumeToken(Token* currentToken, TokenDef expectedTokenType)
 
 void errorHelper(const char* expected_token, const Token* obtained_token)
 {
-    const char* o_input = obtained_token->value.stringValue;
+    const char* o_input = obtained_token->value;
 
     reportParserError(expected_token, o_input, cs.line, cs.column);
 }

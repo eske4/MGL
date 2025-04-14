@@ -13,13 +13,13 @@ void TraverseAST(const ASTNode* node, const SymbolTable table){
 
     switch(node->type){
         case AT_MAP:
-            TTAdd(table, node->children[0]->data.stringVal, node->type); break;
+            TTAdd(table, node->children[0]->data, node->type); break;
 
         case AT_ROOM:
-            checkRoom(table, node->children[0]->data.stringVal);
-            TTAdd(table, node->children[0]->data.stringVal, node->type); break;
+            checkRoom(table, node->children[0]->data);
+            TTAdd(table, node->children[0]->data, node->type); break;
         case AT_CONNECT:
-            checkConnection(node->children[0]->data.stringVal, node->children[2]->data.stringVal, table);
+            checkConnection(node->children[0]->data, node->children[2]->data, table);
         default: break;
     }
 

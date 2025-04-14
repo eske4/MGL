@@ -22,9 +22,10 @@ ASTree ASTInit()
     return tree; // Return the ASTree pointer
 }
 
-ASTNode* ASTCreateMap(ASTree tree, const char* id)
+ASTNode* ASTCreateMap(ASTree tree, const char* id, int pos)
 {
     ASTNode* mapNode        = calloc(1, sizeof(ASTNode));
+    mapNode->pos            = pos;
     mapNode->type           = AT_MAP;
     mapNode->child_capacity = 0;
     mapNode->child_count    = 0;
@@ -35,7 +36,7 @@ ASTNode* ASTCreateMap(ASTree tree, const char* id)
     return mapNode;
 }
 
-void ASTCreateRoom(ASTNode* mapNode, const char* id)
+void ASTCreateRoom(ASTNode* mapNode, const char* id, int pos)
 {
     if (!mapNode)
     {
@@ -54,9 +55,10 @@ void ASTCreateRoom(ASTNode* mapNode, const char* id)
     }
 
     roomNode->type = AT_ROOM;
-    strlcpy(roomNode->data.stringVal, "Room", MAX_INPUT_SIZE - 1);
+    strlcpy(roomNode->data, "Room", MAX_INPUT_SIZE - 1);
 
     int child_capacity       = 1;
+    roomNode->pos            = pos;
     roomNode->child_count    = 0;
     roomNode->child_capacity = 1;
     roomNode->children       = calloc(child_capacity, sizeof(ASTNode*));
@@ -71,7 +73,7 @@ void ASTCreateRoom(ASTNode* mapNode, const char* id)
     ASTAddChild(mapNode, roomNode);
 }
 
-void ASTCreateConnect(ASTNode* mapNode, const char* id, const AbstractTokenDef op, const char* id2)
+void ASTCreateConnect(ASTNode* mapNode, const char* id, const AbstractTokenDef op, const char* id2, int pos)
 {
 
     if (mapNode == NULL)
@@ -86,6 +88,7 @@ void ASTCreateConnect(ASTNode* mapNode, const char* id, const AbstractTokenDef o
     }
 
     ASTNode* connectNode        = calloc(1, sizeof(ASTNode));
+    connectNode->pos            = pos;
     connectNode->type           = AT_CONNECT;
     int new_child_capacity      = 3;
     connectNode->child_count    = 0;
@@ -120,7 +123,7 @@ ASTNode* ASTCreateIdentifier(const char* value)
     }
 
     // Ensure the string fits into the fixed-size array (truncate if needed)
-    strlcpy(idNode->data.stringVal, value, MAX_INPUT_SIZE - 1);
+    strlcpy(idNode->data, value, MAX_INPUT_SIZE - 1);
 
     idNode->child_count    = 0;
     idNode->child_capacity = 0;
@@ -195,10 +198,10 @@ void ASTreePrintNode(ASTNode* node, int indent)
     {
         case AT_MAP: printf("Map\n"); break;
         case AT_ROOM: printf("\n    Room\n"); break;
-        case AT_CONNECT: printf("\n    Connect%s\n", node->data.stringVal); break;
+        case AT_CONNECT: printf("\n    Connect%s\n", node->data); break;
         case AT_DIRECTED_EDGE: printf("        ->\n"); break;
         case AT_BIDIRECTIONAL_EDGE: printf("        <->\n"); break;
-        case AT_IDENTIFIER: printf("        %s\n", node->data.stringVal); break;
+        case AT_IDENTIFIER: printf("        %s\n", node->data); break;
         default: break;
     }
 
