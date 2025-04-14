@@ -1,4 +1,4 @@
-set(PARSER_SOURCES parser.c astree.c type_table.c declaration_tracker.c)
+set(PARSER_SOURCES parser.c astree.c)
 
 add_library(Parser ${PARSER_SOURCES})
 target_include_directories(

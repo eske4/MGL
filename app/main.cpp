@@ -4,6 +4,8 @@ extern "C" {
 #include "compiler_state.h"
 #include "lexer.h"
 #include "parser.h"
+#include "type_checker.h"
+#include "ir.h"
 }
 
 int main() {
@@ -28,6 +30,11 @@ int main() {
   } else {
     printf("Parsing failed!\n");
   }
+
+  TypeCheck(tree);
+  InstructionTable instrTable = initInstructionTable(tree);
+  IRPrint(instrTable);
+
 
   // Free the AST
   ASTFree(tree);

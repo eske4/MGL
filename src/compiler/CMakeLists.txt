@@ -1,3 +1,5 @@
 add_subdirectory(common)
-add_subdirectory(parser)
 add_subdirectory(lexer)
+add_subdirectory(parser)
+add_subdirectory(type_checker)
+add_subdirectory(ir)
