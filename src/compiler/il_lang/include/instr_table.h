@@ -7,7 +7,7 @@ typedef enum {
 } InstructionCode;
 
 typedef struct {
-    InstructionCode IRCode;    // instruction opcode as a string, e.g. "add", "mov", "jmp"
+    InstructionCode InstrCode;    // instruction opcode as a string, e.g. "add", "mov", "jmp"
     char **args;    // array of strings like ["x", "y", "z"]
     int argc;       // number of args
 } Instruction;
@@ -19,10 +19,10 @@ typedef struct {
 
 } *InstructionTable;
 
-InstructionTable IRInit();
-Instruction IRMakeInstr(InstructionCode IRCode, char **args, int argc);
-void IRAddInstr(InstructionTable table, Instruction instr);
-void IRFree(InstructionTable table);
-void IRPrint(InstructionTable table);
+InstructionTable InstrInit();
+Instruction InstrMake(InstructionCode IRCode, char **args, int argc);
+void InstrAdd(InstructionTable table, Instruction instr);
+void InstrFree(InstructionTable table);
+void InstrPrint(InstructionTable table);
 
 

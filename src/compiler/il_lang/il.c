@@ -1,12 +1,12 @@
-#include "ir.h"
+#include "il.h"
 #include "astree.h"
 #include "instr_table.h"
 
 void InstrToAST(ASTNode *node, InstructionTable table);
 
-InstructionTable initInstructionTable(ASTree tree){
+InstructionTable initIT(ASTree tree){
     // Initialize the instruction table
-    InstructionTable table = IRInit();
+    InstructionTable table = InstrInit();
     InstrToAST(tree->head, table);
     return table;
 }
@@ -23,8 +23,8 @@ void InstrToAST(ASTNode *node, InstructionTable table){
             // Ensure the first child has a valid string value
             if (node->children[0] && node->children[0]->data.stringVal) {
                 char *args[] = { node->children[0]->data.stringVal };
-                instr = IRMakeInstr(IR_DECL_MAP, args, 1);
-                IRAddInstr(table, instr);
+                instr = InstrMake(IR_DECL_MAP, args, 1);
+                InstrAdd(table, instr);
             }
             break;
             
@@ -32,8 +32,8 @@ void InstrToAST(ASTNode *node, InstructionTable table){
             // Ensure the first child has a valid string value
             if (node->children[0] && node->children[0]->data.stringVal) {
                 char *args[] = { node->children[0]->data.stringVal };
-                instr = IRMakeInstr(IR_DECL_ROOM, args, 1);
-                IRAddInstr(table, instr);
+                instr = InstrMake(IR_DECL_ROOM, args, 1);
+                InstrAdd(table, instr);
             }
             break;
 
@@ -42,8 +42,8 @@ void InstrToAST(ASTNode *node, InstructionTable table){
             if (node->children[0] && node->children[0]->data.stringVal && 
                 node->children[2] && node->children[2]->data.stringVal) {
                 char *args[] = { node->children[0]->data.stringVal, node->children[2]->data.stringVal };
-                instr = IRMakeInstr(IR_DECL_CONNECT, args, 2);
-                IRAddInstr(table, instr);
+                instr = InstrMake(IR_DECL_CONNECT, args, 2);
+                InstrAdd(table, instr);
             }
             break;
     }

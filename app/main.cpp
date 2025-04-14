@@ -5,7 +5,8 @@ extern "C" {
 #include "lexer.h"
 #include "parser.h"
 #include "type_checker.h"
-#include "ir.h"
+#include "il.h"
+#include "code_gen.h"
 }
 
 int main() {
@@ -32,8 +33,10 @@ int main() {
   }
 
   TypeCheck(tree);
-  InstructionTable instrTable = initInstructionTable(tree);
-  IRPrint(instrTable);
+  InstructionTable instrTable = initIT(tree);
+  InstrPrint(instrTable);
+
+  generate_assembly(instrTable);
 
 
   // Free the AST
