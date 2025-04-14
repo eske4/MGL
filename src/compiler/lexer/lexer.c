@@ -96,6 +96,9 @@ int match_identifier(Token* t, int c)
     {
         buffer[i++] = c;
 
+        if (!(isalnum(c) || c == '_') && !isspace(c)) // It's not an id if the value is not alpha, numeric or _ and ignore whitespace
+            isIdentifier = 0;
+
         if (is_delimiter(c))
         {
             isDelimiter = 1;
@@ -111,8 +114,6 @@ int match_identifier(Token* t, int c)
             break;
         }
 
-        if (!(isalnum(c) || c == '_') && !isspace(c)) // It's not an id if the value is not alpha, numeric or _ and ignore whitespace
-            isIdentifier = 0;
     }
 
     buffer[i] = '\0'; // Null-terminate the string
@@ -130,9 +131,8 @@ int match_identifier(Token* t, int c)
         return t->token;
     }
 
-    if (!isDelimiter && !isKeyword && !isIdentifier && c != EOF){
+    if (!isDelimiter && !isKeyword && !isIdentifier && c != EOF)
         return reportLexerError(buffer, findLoc(cs.pos));
-    }
 
     return t->token;
 }

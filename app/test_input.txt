@@ -1,9 +1,9 @@
 Map map {
-    Room Ree;
+    Room _Ree;
 
     Room _hey;
     Room _yo;
 
-    Connect(_hey -> _yo2);
+    Connect(_hey -> _yo);
 
 }
