@@ -1,14 +1,12 @@
 #include "type_checker.h"
-#include "compiler_state.h"
+#include "error_handler.h"
 #include "look_up_tables.h"
 #include "definitions.h"
-#include "stdio.h"
-#include <stdlib.h>
 #include <string.h>
 
 void checkRoom(SymbolTable table, const char *id, const ASTNode *node);
 void checkConnection(char *id, char *id2, SymbolTable table, const ASTNode *node);
-void reportError(const ASTNode *node);
+void reportSemanticError(ErrorCode err, int pos, const char* msg);
 
 void TraverseAST(const ASTNode* node, const SymbolTable table){
     if(!node) return;
@@ -39,9 +37,8 @@ void TypeCheck(const ASTree tree){
 
 void checkRoom(SymbolTable table, const char *id, const ASTNode* node){
     const SymbolTableEntry *val = TTLookUp(table, id);
-    if(val != NULL){
-        reportError(node);
-    }
+    if(val != NULL)
+        reportSemanticError(ERR_SEMANTIC, node->pos, "Room is already declared");
 }
 
 void checkConnection(char *id, char *id2, SymbolTable table, const ASTNode* node){
@@ -49,30 +46,21 @@ void checkConnection(char *id, char *id2, SymbolTable table, const ASTNode* node
     const SymbolTableEntry *id2Ref = TTLookUp(table, id2);
 
 
-    if(!idRef || !id2Ref){
-        reportError(node);
-        fprintf(stderr, "Type error: Connecting undeclared rooms\n"); 
-        exit(1);
-    }
+    if(!idRef || !id2Ref)
+        reportSemanticError(ERR_SEMANTIC, node->pos, "Cant connect undeclared Room reference");
 
-    if(idRef->token != AT_ROOM || id2Ref->token != AT_ROOM){
-        reportError(node);
-        fprintf(stderr, "%d %d", idRef->token, id2Ref->token);
-        fprintf(stderr, "Type error: Expected a Room type but got something else\n");
-        exit(1);
-    }
+    if(idRef->token != AT_ROOM || id2Ref->token != AT_ROOM)
+        reportSemanticError(ERR_TYPE, node->pos, "Expected Room types");
 
-    if(strcmp(idRef->id, id2Ref->id) == 0){
-        reportError(node);
+    if(strcmp(idRef->id, id2Ref->id) == 0)
+        reportSemanticError(ERR_SEMANTIC, node->pos, "Can't connect a Room to itself");
 
-    }
 
 
 }
 
-void reportError(const ASTNode *node){
-    CLoc loc = findLoc(node->pos);
-    fprintf(stderr, "Type error at line %d in column %d", loc.line, loc.column);
-    exit(1);
+void reportSemanticError(ErrorCode err, int pos, const char* msg){
+    const char *message[] = {msg};
+    reportError(err, pos, message, 1);
 }
 

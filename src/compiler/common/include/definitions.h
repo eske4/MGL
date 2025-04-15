@@ -1,9 +1,9 @@
 #pragma once
 #include <stddef.h>
 
-#define MAX_INPUT_SIZE                                                         \
-  30 // Input to set max token length preventing user to overload compiler fx
-     // identifier with length of 2k
+#define MAX_INPUT_SIZE 30 
+// Input to set max token length preventing user to overload compiler fx
+// identifier with length of 2k
 
 typedef enum {
   T_INTEGER,            // int
@@ -31,7 +31,4 @@ typedef enum {
   AT_IDENTIFIER = T_IDENTIFIER,                    // Variable/function name
 } AbstractTokenDef;
 
-typedef struct CLoc {
-    int line;
-    int column;
-} CLoc;
+

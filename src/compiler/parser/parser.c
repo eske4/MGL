@@ -1,11 +1,9 @@
 #include "parser.h"
 #include "astree.h"
-#include "compiler_state.h"
 #include "definitions.h"
 #include "error_handler.h"
 #include "lexer.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 ASTNode* mapExpr(ASTree tree, Token* currentToken);
@@ -13,7 +11,7 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken);
 void roomExpr(ASTNode* mapNode, Token* currentToken);
 void connectExpr(ASTNode* mapNode, Token* currentToken);
 int consumeToken(Token* currentToken, TokenDef expectedTokenType);
-void errorHelper(const char* expected_token, const Token* obtained_token);
+void reportParserError(const char* expected_token, const Token* obtained_token);
 
 ASTree parse(Token* currentToken)
 {
@@ -27,22 +25,22 @@ ASTNode* mapExpr(ASTree tree, Token* currentToken)
 {
     int mapPos = currentToken->pos;
     if (!consumeToken(currentToken, T_MAP))
-        errorHelper("Map", currentToken);
+        reportParserError("Map", currentToken);
 
     const char* id = strdup(currentToken->value);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
-        errorHelper("identifier", currentToken);
+        reportParserError("identifier", currentToken);
 
     ASTNode* mapNode = ASTCreateMap(tree, id, mapPos);
 
     if (!consumeToken(currentToken, T_LBRACE))
-        errorHelper("{", currentToken);
+        reportParserError("{", currentToken);
 
     buildMapExpr(mapNode, currentToken);
 
     if (!consumeToken(currentToken, T_RBRACE))
-        errorHelper("}", currentToken);
+        reportParserError("}", currentToken);
 
     return mapNode;
 }
@@ -58,7 +56,7 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken)
     {
         case T_ROOM: roomExpr(mapNode, currentToken); break;
         case T_CONNECT: connectExpr(mapNode, currentToken); break;
-        default: errorHelper("Connect | Room", currentToken);
+        default: reportParserError("Connect | Room", currentToken);
     }
 
     buildMapExpr(mapNode, currentToken);
@@ -68,15 +66,15 @@ void roomExpr(ASTNode* mapNode, Token* currentToken)
 {
     int roomPos = currentToken->pos;
     if (!consumeToken(currentToken, T_ROOM)) // Consumes "room"
-        errorHelper("Room", currentToken);
+        reportParserError("Room", currentToken);
 
     const char* id = strdup(currentToken->value); // Identifier expected
 
     if (!consumeToken(currentToken, T_IDENTIFIER)) // Should consume the identifier
-        errorHelper("identifier", currentToken);
+        reportParserError("identifier", currentToken);
 
     if (!consumeToken(currentToken, T_SEMICOLON)) // Consumes ";"
-        errorHelper(";", currentToken);
+        reportParserError(";", currentToken);
 
     ASTCreateRoom(mapNode, id, roomPos); // Create and return a room AST node
 }
@@ -85,27 +83,27 @@ void connectExpr(ASTNode* mapNode, Token* currentToken)
 {
     int connectPos = currentToken->pos;
     if (!consumeToken(currentToken, T_CONNECT) || !consumeToken(currentToken, T_LPAREN))
-        errorHelper("(", currentToken);
+        reportParserError("(", currentToken);
 
     const char* id = strdup(currentToken->value);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
-        errorHelper("Identifier", currentToken);
+        reportParserError("Identifier", currentToken);
 
     TokenDef op = currentToken->token;
 
     if (op != T_DIRECTED_EDGE && op != T_BIDIRECTIONAL_EDGE)
-        errorHelper("-> | <->", currentToken);
+        reportParserError("-> | <->", currentToken);
 
     scan(currentToken); // Consume edge token
 
     const char* id2 = strdup(currentToken->value);
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
-        errorHelper("identifier", currentToken);
+        reportParserError("identifier", currentToken);
 
     if (!consumeToken(currentToken, T_RPAREN) || !consumeToken(currentToken, T_SEMICOLON))
-        errorHelper(") + ;", currentToken);
+        reportParserError(") + ;", currentToken);
 
     ASTCreateConnect(mapNode, id, op, id2, connectPos);
 }
@@ -127,9 +125,9 @@ int consumeToken(Token* currentToken, TokenDef expectedTokenType)
     return 0; // Failed to consume token
 }
 
-void errorHelper(const char* expected_token, const Token* obtained_token)
+void reportParserError(const char* expected_token, const Token* obtained_token)
 {
     const char* o_input = obtained_token->value;
-
-    reportParserError(expected_token, o_input, findLoc(obtained_token->pos));
+    const char *msg[] = {"Expected ", expected_token, " but got: ", o_input};
+    reportError(ERR_PARSER, obtained_token->pos, msg, 4);
 }

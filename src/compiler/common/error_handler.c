@@ -1,57 +1,37 @@
 #include "error_handler.h"
-#include "definitions.h"
+#include "compiler_state.h"
+#include "safe_strings.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
-bool isTestMode = false; // Global test mode flag
+int isTestMode = false; // Global test mode flag
 
-void setTestMode(bool mode)
+void setTestMode(int mode)
 {
     isTestMode = mode;
 }
 
-// Helper function to print error messages
-static void printError(const char* type, const char* message, CLoc loc)
-{
-    if (!message)
-    {
-        fprintf(stderr, "%s error: <unknown error> at line %d, column %d\n", type, loc.line, loc.column);
-    }
-    else
-    {
-        fprintf(stderr, "%s error: %s at line %d, column %d\n", type, message, loc.line, loc.column);
-    }
+const char *const ERROR_LABELS[ERR_COUNT] = {
+    [ERR_UNKNOWN] = "Unknown error",
+    [ERR_LEXER]   = "Lexical error: ",
+    [ERR_PARSER]  = "Syntax error: ",
+    [ERR_SEMANTIC] = "Semantic error: ",
+    [ERR_TYPE]     = "Type error: "
+};
 
-    if (!isTestMode)
-    {
-        exit(EXIT_FAILURE);
+int reportError(ErrorCode code, int pos, const char *strings[], size_t msgc) {
+    if(isTestMode) return code;
+
+    char msg[MAX_ERROR_LENGTH] = {0};
+    int status = safe_multi_strcat(msg, strings, msgc, MAX_ERROR_LENGTH);
+    CLoc loc = findLoc(pos);
+    if(status == -1){
+        fprintf(stderr, "Failed to build the error message");
     }
+   
+    fprintf(stderr, "%d:%d: %s %s\n", loc.line, loc.column, ERROR_LABELS[code], msg);
+
+    exit(1);
 }
-
-int reportLexerError(const char* input, CLoc loc)
-{
-    printError("Lexer", input, loc);
-
-    return -1; // Return error code instead of forcing termination
-}
-
-int reportParserError(const char* expected_token, const char* obtained_token, CLoc loc)
-{
-    char buffer[256]; // Buffer to hold formatted error message
-
-    if (!expected_token || !obtained_token)
-    {
-        snprintf(buffer, sizeof(buffer), "NULL token provided");
-    }
-    else
-    {
-        snprintf(buffer, sizeof(buffer), "expected token: %s, but got: %s", expected_token, obtained_token);
-    }
-
-    printError("Parser", buffer, loc);
-
-    return -1;
-}
-
-

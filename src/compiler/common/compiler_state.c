@@ -6,11 +6,8 @@ CompilerState cs;
 
 void csInit()
 {
-    cs.line    = 1;
-    cs.pos     = 0;
-    cs.column  = 0;
-    cs.line    = 1;
-    cs.putback = -1;
+    cs.pos     = 1;
+    cs.putback = 0;
     cs.infile  = NULL;
 }
 
@@ -19,12 +16,10 @@ int csOpenFile(const char* filename)
     cs.infile = fopen(filename, "r");
     if (cs.infile == NULL)
     {
-        fprintf(stderr, "Error opening file");
+        perror("Error opening file");
         exit(1);
     }
 
-    cs.line    = 1;
-    cs.column  = 0;
     cs.pos     = 0;
     cs.putback = 0;
 

@@ -1,4 +1,5 @@
 #include "astree.h"
+#include "safe_strings.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,7 +56,7 @@ void ASTCreateRoom(ASTNode* mapNode, const char* id, int pos)
     }
 
     roomNode->type = AT_ROOM;
-    strlcpy(roomNode->data, "Room", MAX_INPUT_SIZE - 1);
+    safe_strcpy(roomNode->data, "Room", MAX_INPUT_SIZE - 1);
 
     int child_capacity       = 1;
     roomNode->pos            = pos;
@@ -123,7 +124,7 @@ ASTNode* ASTCreateIdentifier(const char* value)
     }
 
     // Ensure the string fits into the fixed-size array (truncate if needed)
-    strlcpy(idNode->data, value, MAX_INPUT_SIZE - 1);
+    safe_strcpy(idNode->data, value, MAX_INPUT_SIZE - 1);
 
     idNode->child_count    = 0;
     idNode->child_capacity = 0;

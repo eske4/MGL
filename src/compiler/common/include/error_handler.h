@@ -1,9 +1,26 @@
 #pragma once
 
 #include <stddef.h>
-#include "definitions.h"
 
-extern bool isTestMode;
-void setTestMode(bool mode);
-int reportLexerError(const char *input,  CLoc loc);
-int reportParserError(const char *expected_token, const char *obtained_token, CLoc loc); 
+#define MAX_ERROR_LENGTH 256 
+#define MAX_ERROR_PARTS 15
+
+typedef enum {
+    ERR_UNKNOWN = 0,
+    ERR_LEXER,
+    ERR_PARSER,
+    ERR_SEMANTIC,
+    ERR_TYPE,
+    ERR_COUNT // Always has to be at the bottom of this enum
+} ErrorCode;
+
+typedef struct CLoc {
+    int line;
+    int column;
+} CLoc;
+
+extern const char *const ERROR_LABELS[ERR_COUNT];
+extern int isTestMode;
+
+void setTestMode(int mode);
+int reportError(ErrorCode code, int pos, const char *strings[], size_t msgc);

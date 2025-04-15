@@ -2,25 +2,28 @@
 #include "compiler_state.h"
 #include "definitions.h"
 #include "error_handler.h"
+#include "safe_strings.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int set_token(Token* t, TokenDef type, const char* value)
+int set_token(Token* t, TokenDef type, const char* value, int pos)
 {
     if (!t || !value || *value == '\0')
         return 0;
 
     t->token = type;
-    t->pos = cs.pos;
-    strlcpy(t->value, value, sizeof(t->value));
-    return 1;
+    t->pos = pos;
+    int status = safe_strcpy(t->value, value, MAX_INPUT_SIZE);
+
+    return status;
 }
 
 static void putback(int c)
 {
     cs.putback = c;
+    cs.pos--;
 }
 
 static int next(void)
@@ -33,15 +36,7 @@ static int next(void)
     }
 
     int c = fgetc(cs.infile);
-    if (c == '\n')
-    {
-        cs.line++;
-        cs.column = 0;
-    }
-    else
-    {
-        cs.column++;
-    }
+
     cs.pos++;
 
     return c;
@@ -50,22 +45,24 @@ static int next(void)
 static int skip(void)
 {
     int c;
-    while ((c = next()) && isspace(c))
-        ;
+    while ((c = next()) && isspace(c));
     return c;
 }
 
-int match_keyword(Token* currentToken, const char* in)
+int match_keyword(Token* currentToken, const char* in, int pos)
 {
+
+    if(in == NULL || currentToken == NULL) return 0;
     size_t keyword_count = sizeof(keyword_map) / sizeof(keyword_map[0]);
     for (int i = 0; i < keyword_count; i++)
     {
         if (strcmp(in, keyword_map[i].name) == 0)
         {
-            set_token(currentToken, keyword_map[i].token, keyword_map[i].name);
+            set_token(currentToken, keyword_map[i].token, keyword_map[i].name, pos);
 
             return 1;
         }
+
     }
     return 0;
 }
@@ -83,25 +80,24 @@ int is_delimiter(int c) // Removed unused 'Token* t'
     return 0;
 }
 
-int match_identifier(Token* t, int c)
+int match_identifier(Token* t, int c, int startPos)
 {
 
     int i                       = 0;
     char buffer[MAX_INPUT_SIZE] = {0};
     int isIdentifier            = 1;
-    int isDelimiter             = 0;
     int isKeyword               = 0;
 
     while (!strchr(" \t\n\r\f", c) && i < MAX_INPUT_SIZE - 1)
     {
         buffer[i++] = c;
 
+
         if (!(isalnum(c) || c == '_') && !isspace(c)) // It's not an id if the value is not alpha, numeric or _ and ignore whitespace
             isIdentifier = 0;
 
         if (is_delimiter(c))
         {
-            isDelimiter = 1;
             break;
         }
 
@@ -110,7 +106,6 @@ int match_identifier(Token* t, int c)
         if (is_delimiter(c))
         {
             putback(c);
-            isDelimiter = 1;
             break;
         }
 
@@ -118,21 +113,31 @@ int match_identifier(Token* t, int c)
 
     buffer[i] = '\0'; // Null-terminate the string
 
-    // Print the token buffer
-    strlcpy(t->value, buffer, MAX_INPUT_SIZE - 1);
-
     // Check if the buffer matches any keyword
-    isKeyword = match_keyword(t, buffer);
+    isKeyword = match_keyword(t, buffer, startPos);
 
-    if (!isKeyword && isIdentifier)
+
+    if(c == EOF){
+        set_token(t, T_EOF, "EOF", startPos);
+        return t->token;
+    }
+
+    if(isKeyword){
+        return t->token;
+    }
+
+    if (isIdentifier)
     {
-        set_token(t, T_IDENTIFIER, buffer);
+        set_token(t, T_IDENTIFIER, buffer, startPos);
         putback(c);
         return t->token;
     }
 
-    if (!isDelimiter && !isKeyword && !isIdentifier && c != EOF)
-        return reportLexerError(buffer, findLoc(cs.pos));
+    if (!isKeyword && !isIdentifier)
+    {
+        const char *msg[] = {"Invalid token: ", buffer};
+        return reportError(ERR_LEXER, startPos, msg, 2); 
+    }
 
     return t->token;
 }
@@ -143,8 +148,8 @@ int scan(Token* t)
         printf("Lexer could not find input");
 
     int c = skip();
-
-    return match_identifier(t, c);
+    int startPos = cs.pos;
+    return match_identifier(t, c, startPos);
 }
 
 

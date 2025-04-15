@@ -1,4 +1,6 @@
 #include "config.c"
+#include "definitions.h"
+#include "safe_strings.h"
 extern "C" {
 #include "astree.h"
 #include "compiler_state.h"
@@ -7,6 +9,7 @@ extern "C" {
 #include "type_checker.h"
 #include "il.h"
 #include "code_gen.h"
+#include "safe_strings.h"
 }
 
 int main() {
@@ -41,6 +44,7 @@ int main() {
 
   // Free the AST
   ASTFree(tree);
+
 
   // std::cout << "Token is " << token << std::endl;  // Print the token
   return 0;
