@@ -2,7 +2,7 @@
 #include "compiler_state.h"
 #include "definitions.h"
 #include "error_handler.h"
-#include "safe_strings.h"
+#include "string_util.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>

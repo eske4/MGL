@@ -1,5 +1,5 @@
 #include "astree.h"
-#include "safe_strings.h"
+#include "string_util.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

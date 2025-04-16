@@ -1,6 +1,6 @@
 #include "error_handler.h"
 #include "compiler_state.h"
-#include "safe_strings.h"
+#include "string_util.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
