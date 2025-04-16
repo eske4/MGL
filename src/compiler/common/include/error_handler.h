@@ -1,9 +1,7 @@
 #pragma once
 
 #include <stddef.h>
-
 #define MAX_ERROR_LENGTH 256 
-#define MAX_ERROR_PARTS 15
 
 typedef enum {
     ERR_UNKNOWN = 0,
