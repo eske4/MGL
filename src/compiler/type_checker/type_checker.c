@@ -45,7 +45,6 @@ void checkConnection(char *id, char *id2, SymbolTable table, const ASTNode* node
     const SymbolTableEntry *idRef = TTLookUp(table, id);
     const SymbolTableEntry *id2Ref = TTLookUp(table, id2);
 
-
     if(!idRef || !id2Ref)
         reportSemanticError(ERR_SEMANTIC, node->pos, "Cant connect undeclared Room reference");
 
@@ -54,9 +53,7 @@ void checkConnection(char *id, char *id2, SymbolTable table, const ASTNode* node
 
     if(strcmp(idRef->id, id2Ref->id) == 0)
         reportSemanticError(ERR_SEMANTIC, node->pos, "Can't connect a Room to itself");
-
-
-
+    
 }
 
 void reportSemanticError(ErrorCode err, int pos, const char* msg){
