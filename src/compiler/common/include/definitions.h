@@ -31,4 +31,4 @@ typedef enum {
   AT_IDENTIFIER = T_IDENTIFIER,                    // Variable/function name
 } AbstractTokenDef;
 
-
+const char assembly_file[MAX_INPUT_SIZE] = "map_gen.asm";
