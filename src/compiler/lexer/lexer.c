@@ -81,7 +81,7 @@ int tokenize(Token* t, int c, int startPos)
         buffer[i++] = c;
 
 
-        if (!(isalnum(c) || c == '_') && !isspace(c)) // It's not an id if the value is not alpha, numeric or _ and ignore whitespace
+        if (!(isalnum(c) || c == '_') && !isspace(c))
             isIdentifier = 0;
 
         if (is_delimiter(c))
