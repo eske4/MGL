@@ -129,10 +129,7 @@ ASTNode* ASTCreateTerminalNode(AbstractTokenDef op)
     ASTNode* terminalNode = calloc(1, sizeof(ASTNode));
 
     if (terminalNode == NULL)
-    {
-        // Handle memory allocation failure if needed
         return NULL;
-    }
 
     terminalNode->type           = op;
     terminalNode->child_count    = 0;
@@ -152,6 +149,7 @@ void ASTAddChild(ASTNode* parentNode, ASTNode* child)
         perror("Not enough capacity to add a child.\n");
         return;
     }
+    
     parentNode->children[parentNode->child_count] = child;
     parentNode->child_count += 1;
 }
@@ -213,9 +211,7 @@ void ASTFreeNode(ASTNode* node)
 
     // Recursively free child nodes
     for (int i = 0; i < node->child_count; i++)
-    {
         ASTFreeNode(node->children[i]);
-    }
 
     // Free the children array
     free(node->children);
