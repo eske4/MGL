@@ -41,6 +41,21 @@ int csIsFileOpen()
     return cs.infile != NULL;
 }
 
+int addStringToFile(const char* str){
+    FILE *temp = tmpfile(); 
+
+    if(!temp) {
+        perror("Failed to create temporary file");
+        return 0;
+    }
+
+    fprintf(temp, str);
+
+    rewind(temp);
+    cs.infile = temp;
+    return 1;
+}
+
 CLoc findLoc(int pos) {
     CLoc loc = { .line = 1, .column = 1 };
 

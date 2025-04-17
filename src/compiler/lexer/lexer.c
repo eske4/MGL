@@ -8,17 +8,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-int set_token(Token* t, TokenDef type, const char* value, int pos)
-{
-    if (!t || !value || *value == '\0')
-        return 0;
+static void putback(int c);
+static int next(void);
+static int skip(void);
 
-    t->token = type;
-    t->pos = pos;
-    int status = safe_strcpy(t->value, value, MAX_INPUT_SIZE);
+int set_token(Token* t, TokenDef type, const char* value, int pos);
+int match_map(const Map map[], const char* key, const int pos, Token* token, const size_t size);
+int tokenize(Token* t, int c, int startPos);
+int is_delimiter(int c);
 
-    return status;
+int scan(Token* t){
+    if (!csIsFileOpen())
+        printf("Lexer could not find input");
+
+    int c = skip();
+    int startPos = cs.pos;
+    return tokenize(t, c, startPos);
 }
+
+////////////////////////////////////////
+///           Move functions         ///
+////////////////////////////////////////
 
 static void putback(int c)
 {
@@ -49,44 +59,15 @@ static int skip(void)
     return c;
 }
 
-int match_keyword(Token* currentToken, const char* in, int pos)
+////////////////////////////////////////
+///           Main logic             ///
+////////////////////////////////////////
+
+int tokenize(Token* t, int c, int startPos)
 {
-
-    if(in == NULL || currentToken == NULL) return 0;
-    size_t keyword_count = sizeof(keyword_map) / sizeof(keyword_map[0]);
-    for (int i = 0; i < keyword_count; i++)
-    {
-        if (strcmp(in, keyword_map[i].name) == 0)
-        {
-            set_token(currentToken, keyword_map[i].token, keyword_map[i].name, pos);
-
-            return 1;
-        }
-
-    }
-    return 0;
-}
-
-int is_delimiter(int c) // Removed unused 'Token* t'
-{
-    switch (c)
-    {
-        case ';':
-        case '(':
-        case ')':
-        case '{':
-        case '}': return 1;
-    }
-    return 0;
-}
-
-int match_identifier(Token* t, int c, int startPos)
-{
-
     int i                       = 0;
     char buffer[MAX_INPUT_SIZE] = {0};
     int isIdentifier            = 1;
-    int isKeyword               = 0;
 
     while (!strchr(" \t\n\r\f", c) && i < MAX_INPUT_SIZE - 1)
     {
@@ -97,9 +78,7 @@ int match_identifier(Token* t, int c, int startPos)
             isIdentifier = 0;
 
         if (is_delimiter(c))
-        {
             break;
-        }
 
         c = next();
 
@@ -114,7 +93,6 @@ int match_identifier(Token* t, int c, int startPos)
     buffer[i] = '\0'; // Null-terminate the string
 
     // Check if the buffer matches any keyword
-    isKeyword = match_keyword(t, buffer, startPos);
 
 
     if(c == EOF){
@@ -122,9 +100,11 @@ int match_identifier(Token* t, int c, int startPos)
         return t->token;
     }
 
-    if(isKeyword){
+    if(match_map(delimiter_map, buffer, startPos, t, delimiter_size))
         return t->token;
-    }
+
+    if(match_map(keyword_map, buffer, startPos, t, keyword_size))
+        return t->token;
 
     if (isIdentifier)
     {
@@ -133,23 +113,48 @@ int match_identifier(Token* t, int c, int startPos)
         return t->token;
     }
 
-    if (!isKeyword && !isIdentifier)
+    const char *msg[] = {"Invalid token: ", buffer};
+    return reportError(ERR_LEXER, startPos, msg, 2); 
+}
+
+////////////////////////////////////////
+///           Helper functions         ///
+////////////////////////////////////////
+
+int is_delimiter(int c) // Removed unused 'Token* t'
+{
+    switch (c)
     {
-        const char *msg[] = {"Invalid token: ", buffer};
-        return reportError(ERR_LEXER, startPos, msg, 2); 
+        case ';':
+        case '(':
+        case ')':
+        case '{':
+        case '}': return 1;
+    }
+    return 0;
+}
+
+
+int match_map(const Map map[], const char* key, const int pos, Token* token, const size_t size){
+    if(key == NULL || token == NULL) return 0;
+    for(int i = 0; i < size; i++){
+        if(strcmp(key, map[i].name) == 0){
+            set_token(token, map[i].token, map[i].name, pos);
+            return 1;
+        }
     }
 
-    return t->token;
+    return 0;
 }
 
-int scan(Token* t)
+int set_token(Token* t, TokenDef type, const char* value, int pos)
 {
-    if (!csIsFileOpen())
-        printf("Lexer could not find input");
+    if (!t || !value || *value == '\0')
+        return 0;
 
-    int c = skip();
-    int startPos = cs.pos;
-    return match_identifier(t, c, startPos);
+    t->token = type;
+    t->pos = pos;
+    int status = safe_strcpy(t->value, value, MAX_INPUT_SIZE);
+
+    return status;
 }
-
-

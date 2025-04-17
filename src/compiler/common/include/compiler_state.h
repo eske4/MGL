@@ -15,5 +15,6 @@ void csInit();                        // Initialize compiler state
 int csOpenFile(const char *filename); // Open file for processing
 void csFree();                        // Free resources
 int csIsFileOpen();
+int addStringToFile(const char* str);
 CLoc findLoc(int pos);
 
