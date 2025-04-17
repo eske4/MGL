@@ -34,6 +34,4 @@ static const Map delimiter_map[] = {
     // Add more delimiter
 };
 
-
-
 int scan(Token *t);
