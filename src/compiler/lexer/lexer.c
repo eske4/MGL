@@ -143,7 +143,6 @@ int match_map(const Map map[], const char* key, const int pos, Token* token, con
             return 1;
         }
     }
-
     return 0;
 }
 
