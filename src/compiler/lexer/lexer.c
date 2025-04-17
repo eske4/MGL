@@ -17,9 +17,17 @@ int match_map(const Map map[], const char* key, const int pos, Token* token, con
 int tokenize(Token* t, int c, int startPos);
 int is_delimiter(int c);
 
+////////////////////////////////////////
+///           Main function          ///
+////////////////////////////////////////
+
+
 int scan(Token* t){
     if (!csIsFileOpen())
-        printf("Lexer could not find input");
+    {
+        perror("Lexer could not find input");
+        return -1;
+    }
 
     int c = skip();
     int startPos = cs.pos;
