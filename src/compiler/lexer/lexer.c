@@ -99,9 +99,6 @@ int tokenize(Token* t, int c, int startPos)
 
     buffer[i] = '\0'; // Null-terminate the string
 
-    // Check if the buffer matches any keyword
-
-
     if(c == EOF){
         set_token(t, T_EOF, "EOF", startPos);
         return t->token;
