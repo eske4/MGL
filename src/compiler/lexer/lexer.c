@@ -137,7 +137,6 @@ int is_delimiter(int c) // Removed unused 'Token* t'
     return 0;
 }
 
-
 int match_map(const Map map[], const char* key, const int pos, Token* token, const size_t size){
     if(key == NULL || token == NULL) return 0;
     for(int i = 0; i < size; i++){
