@@ -21,7 +21,6 @@ int is_delimiter(int c);
 ///           Main function          ///
 ////////////////////////////////////////
 
-
 int scan(Token* t){
     if (!csIsFileOpen())
     {
