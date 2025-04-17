@@ -87,7 +87,6 @@ int tokenize(Token* t, int c, int startPos){
             putback(c);
             break;
         }
-
     }
 
     buffer[i] = '\0'; // Null-terminate the string
