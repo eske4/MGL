@@ -40,20 +40,14 @@ ASTNode* ASTCreateMap(ASTree tree, const char* id, int pos)
 void ASTCreateRoom(ASTNode* mapNode, const char* id, int pos)
 {
     if (!mapNode)
-    {
         return;
-    }
 
     if (mapNode->child_count >= mapNode->child_capacity)
-    {
         ASTResizeChildren(mapNode);
-    }
 
     ASTNode* roomNode = calloc(1, sizeof(ASTNode));
     if (roomNode == NULL)
-    {
         return;
-    }
 
     roomNode->type = AT_ROOM;
     safe_strcpy(roomNode->data, "Room", MAX_INPUT_SIZE - 1);
@@ -78,15 +72,10 @@ void ASTCreateConnect(ASTNode* mapNode, const char* id, const AbstractTokenDef o
 {
 
     if (mapNode == NULL)
-    {
         return;
-    }
 
     if (mapNode->child_count >= mapNode->child_capacity)
-    {
-
         ASTResizeChildren(mapNode);
-    }
 
     ASTNode* connectNode        = calloc(1, sizeof(ASTNode));
     connectNode->pos            = pos;
@@ -155,17 +144,12 @@ ASTNode* ASTCreateTerminalNode(AbstractTokenDef op)
 
 void ASTAddChild(ASTNode* parentNode, ASTNode* child)
 {
-    if (!parentNode)
+    if (!parentNode || !child)
         return;
-
-    if (!child)
-    {
-        return;
-    }
 
     if (parentNode->child_count >= parentNode->child_capacity)
     {
-        printf("Not enough capacity to add a child.\n");
+        perror("Not enough capacity to add a child.\n");
         return;
     }
     parentNode->children[parentNode->child_count] = child;
@@ -179,7 +163,7 @@ void ASTResizeChildren(ASTNode* parentNode)
 
     if (new_children == NULL)
     {
-        printf("Failed to resize children array!\n");
+        perror("Failed to resize children array!\n");
         return;
     }
 
@@ -218,6 +202,7 @@ void ASTreePrint(ASTree tree)
 {
     if (!tree || !tree->head)
         return;
+
     ASTreePrintNode(tree->head, 0);
 }
 
