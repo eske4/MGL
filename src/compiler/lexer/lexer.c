@@ -37,16 +37,13 @@ int scan(Token* t){
 ///           Move functions         ///
 ////////////////////////////////////////
 
-static void putback(int c)
-{
+static void putback(int c){
     cs.putback = c;
     cs.pos--;
 }
 
-static int next(void)
-{
-    if (cs.putback)
-    {
+static int next(void){
+    if (cs.putback){
         int c      = cs.putback;
         cs.putback = 0;
         return c;
@@ -59,8 +56,7 @@ static int next(void)
     return c;
 }
 
-static int skip(void)
-{
+static int skip(void){
     int c;
     while ((c = next()) && isspace(c));
     return c;
@@ -70,8 +66,7 @@ static int skip(void)
 ///           Main logic             ///
 ////////////////////////////////////////
 
-int tokenize(Token* t, int c, int startPos)
-{
+int tokenize(Token* t, int c, int startPos){
     int i                       = 0;
     char buffer[MAX_INPUT_SIZE] = {0};
     int isIdentifier            = 1;
@@ -88,8 +83,7 @@ int tokenize(Token* t, int c, int startPos)
 
         c = next();
 
-        if (is_delimiter(c))
-        {
+        if (is_delimiter(c)){
             putback(c);
             break;
         }
@@ -109,8 +103,7 @@ int tokenize(Token* t, int c, int startPos)
     if(match_map(keyword_map, buffer, startPos, t, keyword_size))
         return t->token;
 
-    if (isIdentifier)
-    {
+    if (isIdentifier){
         set_token(t, T_IDENTIFIER, buffer, startPos);
         putback(c);
         return t->token;
@@ -124,8 +117,7 @@ int tokenize(Token* t, int c, int startPos)
 ///           Helper functions       ///
 ////////////////////////////////////////
 
-int is_delimiter(int c)
-{
+int is_delimiter(int c){
     switch (c)
     {
         case ';':
@@ -148,8 +140,7 @@ int match_map(const Map map[], const char* key, const int pos, Token* token, con
     return 0;
 }
 
-int set_token(Token* t, TokenDef type, const char* value, int pos)
-{
+int set_token(Token* t, TokenDef type, const char* value, int pos){
     if (!t || !value || *value == '\0')
         return 0;
 
