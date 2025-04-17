@@ -71,7 +71,7 @@ int tokenize(Token* t, int c, int startPos){
     char buffer[MAX_INPUT_SIZE] = {0};
     int isIdentifier            = 1;
 
-    while (!strchr(" \t\n\r\f", c) && i < MAX_INPUT_SIZE - 1)
+    while (!isspace(c) && i < MAX_INPUT_SIZE - 1)
     {
         buffer[i++] = c;
 
