@@ -124,7 +124,7 @@ int tokenize(Token* t, int c, int startPos)
 ///           Helper functions       ///
 ////////////////////////////////////////
 
-int is_delimiter(int c) // Removed unused 'Token* t'
+int is_delimiter(int c)
 {
     switch (c)
     {
