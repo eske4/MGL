@@ -138,8 +138,6 @@ int lookup_delimiter(const char* key, const int pos, Token* token){
     return match_map(delimiter_map, key, pos, token, delimiter_size);
 }
 
-
-
 int match_map(const Map map[], const char* key, const int pos, Token* token, const size_t size){
     if(key == NULL || token == NULL) return 0;
     for(int i = 0; i < size; i++){
