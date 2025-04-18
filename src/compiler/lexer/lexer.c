@@ -16,6 +16,8 @@ int set_token(Token* t, TokenDef type, const char* value, int pos);
 int match_map(const Map map[], const char* key, const int pos, Token* token, const size_t size);
 int tokenize(Token* t, int c, int startPos);
 int is_delimiter(int c);
+int lookup_keyword(const char* key, const int pos, Token* token);
+int lookup_delimiter(const char* key, const int pos, Token* token);
 
 ////////////////////////////////////////
 ///           Main function          ///
@@ -96,10 +98,10 @@ int tokenize(Token* t, int c, int startPos){
         return t->token;
     }
 
-    if(match_map(delimiter_map, buffer, startPos, t, delimiter_size))
+    if(lookup_delimiter(buffer, startPos, t))
         return t->token;
 
-    if(match_map(keyword_map, buffer, startPos, t, keyword_size))
+    if(lookup_keyword(buffer, startPos, t))
         return t->token;
 
     if (isIdentifier){
@@ -127,6 +129,16 @@ int is_delimiter(int c){
     }
     return 0;
 }
+
+int lookup_keyword(const char* key, const int pos, Token* token){
+    return match_map(keyword_map, key, pos, token, keyword_size);
+}
+
+int lookup_delimiter(const char* key, const int pos, Token* token){
+    return match_map(delimiter_map, key, pos, token, delimiter_size);
+}
+
+
 
 int match_map(const Map map[], const char* key, const int pos, Token* token, const size_t size){
     if(key == NULL || token == NULL) return 0;
