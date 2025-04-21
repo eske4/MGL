@@ -1,5 +1,6 @@
 #pragma once
 
+//–– Our operation codes, add more as our DSL grows ––
 typedef enum {
     IR_DECL_MAP,
     IR_DECL_ROOM,
@@ -13,7 +14,7 @@ typedef struct {
 } Instruction;
 
 typedef struct {
-    Instruction *entries;
+    Instruction *instructions;
     int count;
     int capacity;
 

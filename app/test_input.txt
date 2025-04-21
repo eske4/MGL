@@ -1,9 +1,8 @@
 Map map {
-    Room _Ree;
-
-    Room _hey;
-    Room _yo;
-
-    Connect(_hey -> _yo);
-
+    Room A;
+    Room B;
+    Connect(A -> B);
+    Room C;
+    Room D;
+    Connect(B <-> D);
 }
