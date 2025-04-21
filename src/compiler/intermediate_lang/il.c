@@ -2,6 +2,13 @@
 #include "astree.h"
 #include "instr_table.h"
 
+void handle_map_node(ASTNode *node, InstructionTable table);
+void handle_room_node(ASTNode *node, InstructionTable table);
+void handle_connect_node(ASTNode *node, InstructionTable table);
+
+void generate_il(ASTNode *node, InstructionTable table);
+
+
 InstructionTable compile_to_il(ASTree tree){
     InstructionTable table = instr_table_init();
     generate_il(tree->head, table);
