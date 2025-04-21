@@ -27,7 +27,7 @@ void generate_assembly(InstructionTable table) {
         if (table->entries[i].InstrCode != IR_DECL_ROOM) continue;
 
         // Allocate and initialize Room
-        Room *currentRoom = malloc(sizeof(Room));
+        Room *currentRoom = calloc(1, sizeof(Room));
         currentRoom->id = table->entries[i].args[0];
         currentRoom->connCount = 0;
 
