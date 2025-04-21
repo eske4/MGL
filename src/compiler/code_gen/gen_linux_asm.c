@@ -71,7 +71,7 @@ void getConnections(InstructionTable table, Room *room, int startIndex) {
 void writeRoomAssembly(Room *room, FILE *file){
     fprintf(file, "\n");
     if(room == NULL || room->id == NULL) return;
-    fprintf(file, "%s:\n", room->id);
+    fprintf(file, "room_%s:\n", room->id);
     fprintf(file, "    db \"%s\", 0\n", room->id);
 }
 void writeConnectAssembly(Room *room, FILE *file) {
@@ -80,7 +80,7 @@ void writeConnectAssembly(Room *room, FILE *file) {
     fprintf(file, "    dq ");
 
     for (int i = 0; i < room->connCount; i++) {
-        fprintf(file, "%s", room->connections[i]);
+        fprintf(file, "room_%s", room->connections[i]);
         if (i < room->connCount - 1) {
             fprintf(file, ", ");
         }
