@@ -2,14 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-InstructionTable InstrInit(){
+
+InstructionTable instr_table_init(){
     InstructionTable table = calloc(1, sizeof(*table));
     table->entries = calloc(1, sizeof(Instruction));
     table->count = 0;
     table->capacity = 0;
     return table;
 }
-Instruction InstrMake(InstructionCode IRCode, char **args, int argc) {
+
+Instruction instr_create(InstructionCode IRCode, char **args, int argc) {
     Instruction instr;
     instr.InstrCode = IRCode;
     instr.argc = argc;
@@ -19,7 +21,8 @@ Instruction InstrMake(InstructionCode IRCode, char **args, int argc) {
     }
     return instr;
 }
-void InstrAdd(InstructionTable table, Instruction instr) {
+
+void instr_add(InstructionTable table, Instruction instr) {
     if (table->count >= table->capacity) {
     table->capacity = table->capacity == 0 ? 2 : table->capacity * 2;
     table->entries = realloc(table->entries, table->capacity * sizeof(Instruction));
@@ -28,11 +31,10 @@ void InstrAdd(InstructionTable table, Instruction instr) {
         exit(1);
     }
 }
-
     table->entries[table->count++] = instr;
 }
 
-void InstrFree(InstructionTable table) {
+void instr_free(InstructionTable table) {
     for (int i = 0; i < table->count; i++) {
         Instruction *instr = &table->entries[i];
         for (int j = 0; j < instr->argc; j++) {
@@ -44,25 +46,24 @@ void InstrFree(InstructionTable table) {
     free(table);  // Free the table itself
 }
 
-void InstrPrint(InstructionTable table) {
+void instr_print(InstructionTable table) {
+    printf("\nIntermediate Language (IL):\n");
     for (int i = 0; i < table->count; i++) {
         Instruction *instr = &table->entries[i];
         switch(instr->InstrCode){
             case IR_DECL_MAP:
-                printf("Map instr %s\n", instr->args[0]); break;
+                printf("IR_DECL_MAP: %s\n", instr->args[0]); break;
                 break;
             case IR_DECL_ROOM:
-                printf("Room instr %s\n", instr->args[0]);
+                printf("IR_DECL_ROOM: %s\n", instr->args[0]);
                 break;
             case IR_DECL_CONNECT:
-                printf("Connect instr ");
+                printf("IR_DECL_CONNECT: ");
                 for (int i = 0; i < instr->argc; i++) {
                     printf("%s ", instr->args[i]);
-                
                 }
                 printf("\n");
                 break;
-
         }
     }
 }

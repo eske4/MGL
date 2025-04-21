@@ -34,14 +34,16 @@ int main() {
   }
 
   TypeCheck(tree);
-  InstructionTable instrTable = initIT(tree);
-  InstrPrint(instrTable);
+  InstructionTable ilTable = compile_to_il(tree);
+  instr_print(ilTable);
 
-  generate_assembly(instrTable);
+  generate_assembly(ilTable);
 
 
   // Free the AST
   ASTFree(tree);
+  // Free IL
+  instr_free(ilTable);
 
 
   // std::cout << "Token is " << token << std::endl;  // Print the token
