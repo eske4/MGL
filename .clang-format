@@ -20,7 +20,7 @@ AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: No
+AlwaysBreakTemplateDeclarations: false
 BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: AfterColon
@@ -58,18 +58,3 @@ AllowShortEnumsOnASingleLine: false
 BraceWrapping:
   AfterEnum: false
 NamespaceIndentation: None
-
-# Set clang-tidy options
-ClangTidy:
-  Checks: "-*,clang-analyzer-*,modernize-*,-modernize-use-nullptr" # Enable specific checks and disable others
-  WarningsAsErrors: "*" # Make all warnings be treated as errors (optional, remove if you want more flexibility)
-  HeaderFilterRegex: ".*" # Apply clang-tidy checks to all headers
-  FormatStyle: none # Don't change the formatting to match clang-tidy's style
-
-# Additional Diagnostic Adjustments
-Log: error # Set the log level to only show errors
-Diagnostics:
-  --show-macro-results: false # Disable showing macro results in diagnostics
-  --clang-tidy: true # Ensure clang-tidy is enabled but controlled by the Checks list
-  --background-index: true # Keep background indexing enabled for better performance
-

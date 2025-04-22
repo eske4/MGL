@@ -1,0 +1,2 @@
+---
+Checks: "*, -cppcoreguidelines-*,-google-*, -modernize-*,-performance-*,-clang-analyzer-*, -altera-unroll-loops, -readability-*, -bugprone-*,-misc-*,-modernize-use-auto,-clang-analyzer-*,-cert-*"

@@ -4,37 +4,41 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Room {
-    char *id;
-    char **connections;
+typedef struct Room
+{
+    char* id;
+    char** connections;
     int connCount;
 } Room;
 
-void getConnections(InstructionTable table, Room *room, int startIndex);
-void writeConnectAssembly(Room *room, FILE *file);
-void writeRoomAssembly(Room *room, FILE *file);
+void getConnections(InstructionTable table, Room* room, int startIndex);
+void writeConnectAssembly(Room* room, FILE* file);
+void writeRoomAssembly(Room* room, FILE* file);
 
+void generate_assembly(InstructionTable table)
+{
+    FILE* file = fopen("map.asm", "w");
 
-void generate_assembly(InstructionTable table) {
-    FILE *file = fopen("map.asm", "w");
-
-    if(table->count >= 1){
+    if (table->count >= 1)
+    {
         fprintf(file, "section .data\n\n");
-
     }
-    
-    for (int i = 0; i < table->count; i++) {
-        if (table->entries[i].InstrCode != IR_DECL_ROOM) continue;
+
+    for (int i = 0; i < table->count; i++)
+    {
+        if (table->entries[i].InstrCode != IR_DECL_ROOM)
+            continue;
 
         // Allocate and initialize Room
-        Room *currentRoom = calloc(1, sizeof(Room));
-        currentRoom->id = table->entries[i].args[0];
+        Room* currentRoom      = calloc(1, sizeof(Room));
+        currentRoom->id        = table->entries[i].args[0];
         currentRoom->connCount = 0;
 
         // Allocate memory for connections
         currentRoom->connections = calloc(MAX_CONNECTIONS, sizeof(char*));
 
-        if (!currentRoom->connections) {
+        if (!currentRoom->connections)
+        {
             perror("Memory allocation failed for connections\n");
             free(currentRoom);
             return;
@@ -50,8 +54,10 @@ void generate_assembly(InstructionTable table) {
     fclose(file);
 }
 
-void getConnections(InstructionTable table, Room *room, int startIndex) {
-    for (int i = startIndex; i < table->count; i++) {
+void getConnections(InstructionTable table, Room* room, int startIndex)
+{
+    for (int i = startIndex; i < table->count; i++)
+    {
         if (table->entries[i].InstrCode != IR_DECL_CONNECT)
             continue;
 
@@ -59,7 +65,8 @@ void getConnections(InstructionTable table, Room *room, int startIndex) {
         if (strcmp(table->entries[i].args[0], room->id) != 0)
             continue;
 
-        if (room->connCount >= MAX_CONNECTIONS) {
+        if (room->connCount >= MAX_CONNECTIONS)
+        {
             fprintf(stderr, "Too many connections for room %s\n", room->id);
             break;
         }
@@ -68,23 +75,28 @@ void getConnections(InstructionTable table, Room *room, int startIndex) {
     }
 }
 
-void writeRoomAssembly(Room *room, FILE *file){
+void writeRoomAssembly(Room* room, FILE* file)
+{
     fprintf(file, "\n");
-    if(room == NULL || room->id == NULL) return;
+    if (room == NULL || room->id == NULL)
+        return;
     fprintf(file, "room_%s:\n", room->id);
     fprintf(file, "    db \"%s\", 0\n", room->id);
 }
-void writeConnectAssembly(Room *room, FILE *file) {
-    if(room == NULL || room->connCount < 1) return;
+void writeConnectAssembly(Room* room, FILE* file)
+{
+    if (room == NULL || room->connCount < 1)
+        return;
 
     fprintf(file, "    dq ");
 
-    for (int i = 0; i < room->connCount; i++) {
+    for (int i = 0; i < room->connCount; i++)
+    {
         fprintf(file, "room_%s", room->connections[i]);
-        if (i < room->connCount - 1) {
+        if (i < room->connCount - 1)
+        {
             fprintf(file, ", ");
         }
     }
     fprintf(file, ", 0\n\n");
-
 }
