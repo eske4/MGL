@@ -49,7 +49,7 @@ int addStringToFile(const char* str){
         return 0;
     }
 
-    fprintf(temp, str);
+    fprintf(temp, "%s", str);
 
     rewind(temp);
     cs.infile = temp;

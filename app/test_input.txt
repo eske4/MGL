@@ -1,7 +1,9 @@
 Map map {
-    Room start;
-    Room kitchen;
-    Connect(start -> kitchen);
-    Room end;
-    Connect(kitchen <-> end);
+    Room A;
+    Room B;
+
+    Connect(A -> B);
+    Room E;
+    Room D;
+    Connect(E -> D);
 }
