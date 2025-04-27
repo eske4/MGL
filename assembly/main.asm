@@ -7,9 +7,24 @@
     %include "handwritten/linux/dfs.asm"
 %endif
 
+%ifdef WINDOWS
+    %include "handwritten/win/core.asm"
+    %include "handwritten/win/stack.asm"
+    %include "handwritten/win/dfs.asm"
+%endif
+
+
+
 section .text
 global _start
 
+%ifdef LINUX
+global _start
+_start:
+%elifdef WINDOWS
+global _main
+_main:
+%endif
 _start:
     call    init_stack              ; Initialize our stack
     call    dfs_traversal           ; Start DFS from the starting room
