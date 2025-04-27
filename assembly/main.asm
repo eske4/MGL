@@ -1,5 +1,6 @@
 %include "generated/map.asm"
 %include "generated/config.asm"
+
 %include "handwritten/core.asm"
 %include "handwritten/stack.asm"
 %include "handwritten/dfs.asm"
