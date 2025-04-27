@@ -1,9 +1,11 @@
 %include "generated/map.asm"
 %include "generated/config.asm"
 
-%include "handwritten/linux/core.asm"
-%include "handwritten/linux/stack.asm"
-%include "handwritten/linux/dfs.asm"
+%ifdef LINUX
+    %include "handwritten/linux/core.asm"
+    %include "handwritten/linux/stack.asm"
+    %include "handwritten/linux/dfs.asm"
+%endif
 
 section .text
 global _start
