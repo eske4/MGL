@@ -1,6 +1,7 @@
 #include "code_gen.h"
 #include "definitions.h"
 #include "instr_table.h"
+#include "assembly.c"
 #include "string_util.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +27,10 @@ void generate_assembly(InstructionTable table)
 void generate_config(InstructionTable table)
 {
 
-    FILE* file     = fopen("config.asm", "w");
+    char fileLoc[MAX_PATH_SIZE] = {0};
+    const char* path[]          = {GENERATED_ASM_DIR, "config.asm"};
+    safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
+    FILE* file     = fopen(fileLoc, "w");
     int room_count = 0;
 
     // Count rooms in the instruction table
@@ -54,7 +58,11 @@ void generate_config(InstructionTable table)
 
 void generate_map(InstructionTable table)
 {
-    FILE* file   = fopen("map.asm", "w");
+    char fileLoc[MAX_PATH_SIZE] = {0};
+    const char* path[]          = {GENERATED_ASM_DIR, "map.asm"};
+    safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
+    FILE* file = fopen(fileLoc, "w");
+
     int hasEntry = 0;
 
     // Check if the table has any entries before proceeding

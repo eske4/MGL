@@ -1,11 +1,9 @@
 #pragma once
 
 #include "instr_table.h"
-#include "definitions.h"
 
 #define MAX_CONNECTIONS 64
-
-#define GENERATED_ASM_DIR ""
+#define MAX_PATH_SIZE 10000
 
 typedef struct Room
 {

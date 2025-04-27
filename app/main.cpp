@@ -1,5 +1,5 @@
 #include "config.c"
-#include "definitions.h"
+
 extern "C" {
 #include "astree.h"
 #include "compiler_state.h"
