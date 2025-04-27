@@ -1,4 +1,5 @@
 #include "config.c"
+#include "file_config.c"
 
 extern "C" {
 #include "astree.h"
@@ -16,7 +17,7 @@ int main() {
 
   // Token structure to hold the current token
   csInit();
-  csOpenFile("test_input.txt");
+  csOpenFile(SOURCE_CODE_DIR);
   Token currentToken;
 
   // Fetch the first token

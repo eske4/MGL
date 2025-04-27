@@ -1,29 +1,30 @@
-# The build directory
+# # The build directory
 BUILD_DIR = build
+ASSEMBLY_DIR = assembly
 
 # Declare build as a phony target to ensure it's always executed
-.PHONY: all build clean test
+.PHONY: all build clean test run
 
 # Default target: configure and build the project
 all: build
 
 # Build the project inside the build directory
 build:
-	mkdir -p $(BUILD_DIR)
-	cd $(BUILD_DIR) && cmake .. && cmake --build .
-	cp $(CURDIR)/app/test_input.txt $(BUILD_DIR)/app/
-	ln -sf "build/compile_commands.json"
-	$(MAKE) test
+	@echo "Building project..."
+	@mkdir -p $(BUILD_DIR)
+	@cd $(BUILD_DIR) && cmake .. && cmake --build .
+	@ln -sf "build/compile_commands.json"
 
 # Clean the build directory
 clean:
-	rm -rf $(BUILD_DIR)
-	echo "Build directory cleaned."
+	@rm -rf $(BUILD_DIR)
+	@echo "Build directory cleaned."
 
 # Run the tests (if you have tests set up with CTest)
 test:
-	cd $(BUILD_DIR)/tests && ctest --output-on-failure
+	@cd $(BUILD_DIR)/tests && ctest --output-on-failure
 
 # Run the executable generated from build
 run:
-	cd $(BUILD_DIR)/app && ls && ./mgl
+	@cd $(BUILD_DIR)/app && ./mgl
+	@cd $(ASSEMBLY_DIR) && $(MAKE) --no-print-directory run

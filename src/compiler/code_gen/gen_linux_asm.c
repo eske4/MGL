@@ -1,7 +1,7 @@
 #include "code_gen.h"
 #include "definitions.h"
 #include "instr_table.h"
-#include "assembly.c"
+#include "file_config.c"
 #include "string_util.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,13 +15,14 @@ void writeRoomAssembly(Room* room, FILE* file);
 
 void generate_assembly(InstructionTable table)
 {
+    printf("\n");
     printf("Generating map...\n");
     generate_map(table);
-    printf("SUCCESSFULLY: generated map\n");
+    printf("SUCCESSFULLY: generated map\n\n");
 
     printf("Generating configs...\n");
     generate_config(table);
-    printf("SUCCESSFULLY: generated configs\n");
+    printf("SUCCESSFULLY: generated configs\n\n");
 }
 
 void generate_config(InstructionTable table)
