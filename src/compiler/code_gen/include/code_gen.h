@@ -5,6 +5,15 @@
 
 #define MAX_CONNECTIONS 64
 
-const char assembly_file[MAX_INPUT_SIZE] = "map_gen";
+#define GENERATED_ASM_DIR ""
+
+typedef struct Room
+{
+    char* id;
+    char** connections;
+    int connCount;
+} Room;
+
+
 
 void generate_assembly(InstructionTable table);
