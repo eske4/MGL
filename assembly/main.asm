@@ -14,13 +14,7 @@
 %endif
 
 section .text
-%ifdef LINUX
 global _start
-_start:
-%elifdef WINDOWS
-global _main
-_main:
-%endif
 _start:
     call    init_stack              ; Initialize our stack
     call    dfs_traversal           ; Start DFS from the starting room
