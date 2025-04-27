@@ -3,7 +3,6 @@ section .data
 
 
 section .text
-global print
 print:
     push    rdi             ; Save original string pointer
 
@@ -18,7 +17,6 @@ print:
 
     ret
 
-global printl
 printl:
     push    rdi             ; Save original argument (string ptr)
     call    print           ; Print the string
@@ -48,7 +46,6 @@ slen:
     ret
 
 
-global exit_program
 exit_program: ; Exits the program
     mov     rax, 60         ; sys_exit (correct number is 60)
     mov     rdi, 0          ; exit status
