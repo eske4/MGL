@@ -1,9 +1,9 @@
 %include "generated/map.asm"
 %include "generated/config.asm"
 
-%include "handwritten/core.asm"
-%include "handwritten/stack.asm"
-%include "handwritten/dfs.asm"
+%include "handwritten/linux/core.asm"
+%include "handwritten/linux/stack.asm"
+%include "handwritten/linux/dfs.asm"
 
 section .text
 global _start
