@@ -13,11 +13,7 @@
     %include "handwritten/win/dfs.asm"
 %endif
 
-
-
 section .text
-global _start
-
 %ifdef LINUX
 global _start
 _start:
