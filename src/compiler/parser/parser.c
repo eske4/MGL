@@ -7,12 +7,14 @@
 #include <string.h>
 
 ASTNode* mapExpr(ASTree tree, Token* currentToken);
+void mapConstrExpr(ASTNode* constrNode, Token* currentToken);
 void buildMapExpr(ASTNode* mapNode, Token* currentToken);
 void roomExpr(ASTNode* mapNode, Token* currentToken);
 void connectExpr(ASTNode* mapNode, Token* currentToken);
 int consumeToken(Token* currentToken, TokenDef expectedTokenType);
 void reportParserError(const char* expected_token, const Token* obtained_token);
 
+// function to parse single token 
 ASTree parse(Token* currentToken)
 {
     ASTree tree      = ASTInit(); // Initialize AST
@@ -20,6 +22,7 @@ ASTree parse(Token* currentToken)
     tree->head       = mapNode;
     return tree; // Return the constructed AST
 }
+
 
 ASTNode* mapExpr(ASTree tree, Token* currentToken)
 {
@@ -31,6 +34,16 @@ ASTNode* mapExpr(ASTree tree, Token* currentToken)
 
     if (!consumeToken(currentToken, T_IDENTIFIER))
         reportParserError("identifier", currentToken);
+
+    if (consumeToken(currentToken, T_LPAREN)) {
+
+        ASTNode* mapConstrNode = ASTCreateMapConstr(tree, id, mapPos);
+
+        mapConstrExpr(mapConstrNode, currentToken);
+
+        if (!consumeToken(currentToken, T_RPAREN))
+        reportParserError(")", currentToken);
+    }
 
     ASTNode* mapNode = ASTCreateMap(tree, id, mapPos);
 
@@ -45,9 +58,38 @@ ASTNode* mapExpr(ASTree tree, Token* currentToken)
     return mapNode;
 }
 
+void mapConstrExpr(ASTNode* constrNode, Token* currentToken){
+    if (currentToken->token == T_RPAREN) 
+    {
+        return;
+    }
+
+    if(consumeToken(currentToken, T_MAP_CONSTR_ROOMS)){ 
+        if(!consumeToken(currentToken, T_EQUAL))
+            reportParserError("=", currentToken);
+        if(!consumeToken(currentToken, T_INTEGER))
+            reportParserError("an Integer", currentToken);
+        if(!consumeToken(currentToken, T_SEMICOLON))
+            reportParserError(";", currentToken);
+    } else if(consumeToken(currentToken, T_MAP_CONSTR_CONNECT)){
+        if(!consumeToken(currentToken, T_EQUAL))
+            reportParserError("=", currentToken);
+        if(!consumeToken(currentToken, T_INTEGER))
+            reportParserError("an Integer", currentToken);
+        if(!consumeToken(currentToken, T_SEMICOLON))
+            reportParserError(";", currentToken);
+    } else {
+        reportParserError("maxRooms | maxConnectPerRoom", currentToken);
+    }; 
+
+    mapConstrExpr(constrNode, currentToken);
+
+}
+
+
 void buildMapExpr(ASTNode* mapNode, Token* currentToken)
 {
-    if (currentToken->token == T_RBRACE || currentToken->token == T_EOF)
+    if (currentToken->token == T_RBRACE || currentToken->token == T_EOF) 
     {
         return;
     }
@@ -61,6 +103,8 @@ void buildMapExpr(ASTNode* mapNode, Token* currentToken)
 
     buildMapExpr(mapNode, currentToken);
 }
+
+
 
 void roomExpr(ASTNode* mapNode, Token* currentToken)
 {

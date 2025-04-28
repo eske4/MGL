@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void putback(int c);
+static void putback(int c); // 
 static int next(void);
 static int skip(void);
 
@@ -34,6 +34,7 @@ int scan(Token* t)
     int c        = skip();
     int startPos = cs.pos;
     return tokenize(t, c, startPos);
+    printf("Lexical analysis successful!\n");
 }
 
 ////////////////////////////////////////
@@ -73,11 +74,26 @@ static int skip(void)
 ///           Main logic             ///
 ////////////////////////////////////////
 
-int tokenize(Token* t, int c, int startPos)
+int tokenize(Token* t, int c, int startPos) //builds token by reading characters 
 {
     int i                       = 0;
     char buffer[MAX_INPUT_SIZE] = {0};
     int isIdentifier            = 1;
+
+    //check if the token is a number
+    if (isdigit(c)) {
+        //build the number 
+        while (isdigit(c) && i < MAX_INPUT_SIZE - 1) {
+            buffer[i++] = c;
+            c = next();
+        }
+        buffer[i] = '\0';  //Null-terminate the string
+
+        //settting token as an integer token
+        set_token(t, T_INTEGER, buffer, startPos);
+        putback(c);  // put back the non-digit character
+        return t->token;
+    }
 
     while (!isspace(c) && i < MAX_INPUT_SIZE - 1)
     {
@@ -119,15 +135,15 @@ int tokenize(Token* t, int c, int startPos)
         return t->token;
     }
 
-    const char* msg[] = {"Invalid token: ", buffer};
-    return reportError(ERR_LEXER, startPos, msg, 2);
+    const char* msg[] = {"Invalid token: '", buffer, "' "};
+    return reportError(ERR_LEXER, startPos, msg, 3);
 }
 
 ////////////////////////////////////////
 ///           Helper functions       ///
 ////////////////////////////////////////
 
-int is_delimiter(int c)
+int is_delimiter(int c) //check if caracter is i a delimiter like ;, (, ), {,}
 {
     switch (c)
     {
@@ -135,19 +151,24 @@ int is_delimiter(int c)
         case '(':
         case ')':
         case '{':
-        case '}': return 1;
-        default: return 0;
+        case '}': 
+        case '=': 
+            return 1;
+        default: 
+            return 0;
     }
 }
 
+//look up if word is a keyword 
 int lookup_keyword(const char* key, const int pos, Token* token)
 {
-    return match_map(keyword_map, key, pos, token, keyword_size);
+    return match_map(keyword_map, key, pos, token, keyword_map_size);
 }
 
+//lookup if word matches a delimter 
 int lookup_delimiter(const char* key, const int pos, Token* token)
 {
-    return match_map(delimiter_map, key, pos, token, delimiter_size);
+    return match_map(delimiter_map, key, pos, token, delimiter_map_size);
 }
 
 int match_map(const Map map[], const char* key, const int pos, Token* token, const size_t size)
@@ -165,6 +186,7 @@ int match_map(const Map map[], const char* key, const int pos, Token* token, con
     return 0;
 }
 
+//fill token struct with token info
 int set_token(Token* t, TokenDef type, const char* value, int pos)
 {
     if (!t || !value || *value == '\0')

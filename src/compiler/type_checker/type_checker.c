@@ -7,11 +7,11 @@
 #include <stdlib.h>
 
 //declaration to let program know these function exist (top-down compiled )
+void checkMap(SymbolTable table, const char *id, const ASTNode *node);
 void checkRoom(SymbolTable table, const char *id, const ASTNode *node);
 void checkRoomsInConnection(char *id, char *id2, SymbolTable table, const ASTNode *node);
 void checkConnection(SymbolTable table, const char *id, const ASTNode *node);
 void reportSemanticError(ErrorCode err, int pos, const char* msg);
-
 
 //function to 
 void TraverseAST(const ASTNode* node, const SymbolTable table){
@@ -62,6 +62,19 @@ void TypeCheck(const ASTree tree){
     TraverseAST(root, table);
     PrintSymbolTable(table); 
     FreeSymbolTable(table);
+}
+
+//ceck if map is part of symboltalbe
+void checkMap(SymbolTable table, const char *id, const ASTNode* node){
+    const SymbolTableEntry *val = LookUpSymbolTable(table, id);
+    if(val != NULL) //if already part of symbol table - report semantic error 
+        if(val->ast_location->type == AT_MAP)
+            reportSemanticError(ERR_SEMANTIC, node->pos, "Map is already declared");
+        else {
+            char msg[128];
+            snprintf(msg, sizeof(msg), "map name is already declared for type: %d", val->ast_location->type);
+            reportSemanticError(ERR_SEMANTIC, node->pos, msg);
+        }
 }
 
 //ceck if room is part of symboltalbe

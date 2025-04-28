@@ -37,6 +37,23 @@ ASTNode* ASTCreateMap(ASTree tree, const char* id, int pos)
     return mapNode;
 }
 
+ASTNode* ASTCreateMapConstr(ASTree tree, const char* id, int pos)
+{
+    ASTNode* mapConstrNode        = calloc(1, sizeof(ASTNode));
+    mapConstrNode->pos            = pos;
+    mapConstrNode->type           = AT_MAP_CONSTR;
+    mapConstrNode->child_capacity = 0;
+    mapConstrNode->child_count    = 0;
+    ASTResizeChildren(mapConstrNode);
+
+    char idConstr[MAX_INPUT_SIZE];
+    snprintf(idConstr, sizeof(idConstr), "%sConstr", id);
+
+    ASTAddChild(mapConstrNode, ASTCreateIdentifier(idConstr));
+
+    return mapConstrNode;
+}
+
 void ASTCreateRoom(ASTNode* mapNode, const char* id, int pos)
 {
     if (!mapNode)
@@ -179,13 +196,14 @@ void ASTreePrintNode(ASTNode* node, int indent)
     // Print node type and value
     switch (node->type)
     {
-        case AT_MAP: printf("Map\n"); break;
+        case AT_MAP: printf("\nMap\n"); break;
+        case AT_MAP_CONSTR: printf("\nMapConstr\n"); break;
         case AT_ROOM: printf("\n    Room\n"); break;
         case AT_CONNECT: printf("\n    Connect%s\n", node->data); break;
         case AT_DIRECTED_EDGE: printf("        ->\n"); break;
         case AT_BIDIRECTIONAL_EDGE: printf("        <->\n"); break;
         case AT_IDENTIFIER: printf("        %s\n", node->data); break;
-        default: break;
+        default: printf("Unknown node type: %d\n", node->type); break;
     }
 
     // Recursively print children with correct indentation

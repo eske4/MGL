@@ -13,8 +13,9 @@ typedef struct {
     const TokenDef token;
 } Map;
 
-const static int keyword_size = 5;
-const static int delimiter_size = 5;
+// REMEMBER TO UPDATE IF ADDING TO KEYWORD_MAP AND DELIMITER_MAP
+const static int keyword_map_size = 7;
+const static int delimiter_map_size = 6;
 
 static const Map keyword_map[] = {
     {"Map", T_MAP},
@@ -22,6 +23,8 @@ static const Map keyword_map[] = {
     {"Connect", T_CONNECT},
     {"->", T_DIRECTED_EDGE},
     {"<->", T_BIDIRECTIONAL_EDGE},
+    {"maxRooms", T_MAP_CONSTR_ROOMS}, 
+    {"maxConnectPerRoom", T_MAP_CONSTR_CONNECT}, 
     // Add more keywords here if needed
 };
 
@@ -31,6 +34,7 @@ static const Map delimiter_map[] = {
     {"{", T_LBRACE},
     {"}", T_RBRACE},
     {";", T_SEMICOLON},
+    {"=", T_EQUAL}, 
     // Add more delimiter
 };
 
