@@ -7,7 +7,7 @@
     %include "handwritten/linux/dfs.asm"
 %endif
 
-%ifdef WINDOWS
+%ifdef WIN
     %include "handwritten/win/core.asm"
     %include "handwritten/win/stack.asm"
     %include "handwritten/win/dfs.asm"
