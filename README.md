@@ -25,13 +25,31 @@ A domain-specific language for procedural map generation with C/C++ compilation 
 ## Usage Workflow
 
 1. Design your map:
-   - Create/edit data/input.MF using the MGL syntax
+   - File location: data/input.MF
+   - Basic syntax:
+Map example {
+    Room A;
+    Room B;
+    Connect(A -> B);
+}
+
+   - Key rules:
+     * Map declaration: Map mapname { ... }
+     * Rooms: Room RoomName;
+     * Connections: 
+       - -> for one-way
+       - <-> for two-way
+     * End all statements with ;
+     * See data/input_example.MF for complete examples
 
 2. Generate assembly:
-   make generate
+make generate
 
 3. Validate map:
-   make run
+make run
+   - Validator checks:
+     * All rooms are connected
+     * No isolated rooms
 
 ## Command Reference
 
