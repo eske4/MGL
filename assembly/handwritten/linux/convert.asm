@@ -6,7 +6,7 @@ section .bss
 
 section .text
 
-; ========================================================================================
+; ===================== INT TO STRING CONVERTER =========================================
 ; Converts a 64-bit unsigned integer to a null-terminated string
 ; Arguments:
 ;   rdi - unsigned 64-bit integer to convert
@@ -50,13 +50,13 @@ int2str:
     pop     rbx
     ret
 
-; ========================================================================================
+; ===================== STRING TO INT CONVERTER =========================================
 ; Converts a null-terminated string to an unsigned 64-bit integer(Only positive numbers)
 ; Arguments:
 ;   rdi - input string
 ; Returns:
 ;   rax - converted number, or -1 on error
-; ========================================================================================
+; =======================================================================================
 
 str2uint:
     ; Save original values for registers

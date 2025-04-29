@@ -7,6 +7,15 @@ section .bss
     input_len equ $-input_buffer
 
 section .text
+
+; ===================== PRINT STRING ===================================================
+; Takes a string input followed by a 0 terminator and prints it
+; Arguments:
+;   rdi - input string
+; Returns:
+;   NONE
+; =======================================================================================
+
 print:
     ; Store registers value before function 
     push rdi                
@@ -29,7 +38,14 @@ print:
     
     ret
 
-; Prints an string followed by newline
+; ===================== PRINT STRING WITH NEWLINE ======================================
+; Same as print but with newline
+; Arguments:
+;   rdi - input string
+; Returns:
+;   NONE
+; =======================================================================================
+
 printl:
     call    print                       ; Print the string
     push    rdi                         ; Save original rdi again (print may have changed it)
@@ -41,7 +57,14 @@ printl:
     pop     rdi                         ; Restore original value
     ret
 
+; ===================== PRINTS A NEWLINE ================================================
 ; Prints a newline
+; Arguments:
+;   NONE
+; Returns:
+;   NONE
+; =======================================================================================
+
 print_line:
     push    rdi
 
@@ -51,7 +74,15 @@ print_line:
     pop     rdi
     ret
 
+; ===================== PRINTS A NEWLINE ================================================
 ; Prints a space
+; Arguments:
+;   NONE
+; Returns:
+;   NONE
+; =======================================================================================
+
+
 print_space:
     push    rdi
 
@@ -62,6 +93,14 @@ print_space:
     ret
 
 
+
+; ===================== PRINTS A NEWLINE ================================================
+; Converts a number into string and prints it
+; Arguments:
+; rdi - number input
+; Returns:
+;   NONE
+; =======================================================================================
 
 print_num:
     ; Save registers value before function
@@ -76,6 +115,16 @@ print_num:
     pop     rsi
     pop     rdi
     ret
+
+; ===================== FETCH STRING LENGTH ============================================
+; This function walks through the string byte-by-byte until it finds the null terminator,
+; then subtracts the original pointer from the final pointer to get the length.
+;
+; Arguments:
+;   rdi - string input
+; Returns:
+;   rax - length of an string
+; =======================================================================================
 
 slen:
     push    rbx
@@ -93,7 +142,16 @@ slen:
     pop     rbx
     ret
 
-; Reads user input (returns buffer address in rax)
+; =============================== READ USER INPUT ========================================
+; Reads a line of input from the user via Linux syscalls.
+;
+; Arguments:
+;   None (fetches from the Linux syscall).
+;
+; Returns:
+;   rax - Address of the buffer containing the user input (null-terminated).
+; =======================================================================================
+
 scan:
     push    rdx
     push    rsi
@@ -114,7 +172,15 @@ scan:
     pop     rdx
     ret
 
-; Exits program with status 0 (same as return 0;)
+; =============================== EXIT ========================================
+; Exit the program with status 1 same as return 1; through Linux Syscall
+;
+; Arguments:
+;   NONE - could add status code input through rdi
+; Returns:
+;   NONE
+; =======================================================================================
+
 exit_program: ; Exits the program
     mov     rax, 60         ; sys_exit (correct number is 60)
     mov     rdi, 0          ; exit status
