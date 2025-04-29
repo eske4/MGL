@@ -13,6 +13,8 @@
     %include "handwritten/win/core.asm"
     %include "handwritten/win/stack.asm"
     %include "handwritten/win/dfs.asm"
+    %include "handwritten/win/graph_walk.asm"
+    %include "handwritten/win/convert.asm"
 %endif
 
 section .text
