@@ -2,6 +2,7 @@
 BUILD_DIR = build
 ASSEMBLY_DIR = assembly
 MAKEFLAGS += --no-print-directory
+
 # Declare build as a phony target to ensure it's always executed
 .PHONY: all build clean test run
 
