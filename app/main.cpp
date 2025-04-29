@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 extern "C" {
-
 #include "compiler.h"
 }
 
