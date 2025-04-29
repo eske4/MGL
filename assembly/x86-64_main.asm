@@ -5,7 +5,7 @@
     %include "handwritten/linux/core.asm"
     %include "handwritten/linux/stack.asm"
     %include "handwritten/linux/dfs.asm"
-    %include "handwritten/linux/manual_graph_walk.asm"
+    %include "handwritten/linux/graph_walk.asm"
     %include "handwritten/linux/convert.asm"
 %endif
 
