@@ -1,10 +1,12 @@
 section .data
+    ; Message shown when listing available rooms
     select_msg:     db "╔════════════════════════════════════════╗", 10
                     db "║        SELECT AVAILABLE ROOMS          ║", 10
                     db "╠════════════════════════════════════════╣", 10
                     db "║ Left: Room Name      Right: Index      ║", 10
                     db "╚════════════════════════════════════════╝", 0
 
+    ; Various messages for different situations
     error:          db "Could not be moved", 0
     no_rooms:       db "No more rooms to explore from here.", 0
     bad_input:      db "Invalid input - please try again", 0
@@ -14,49 +16,49 @@ section .data
 
 section .text
 graph_walk:
-    ; Start at entry
-    mov     rsi, [entry]         ; Starting room address
+    ; Set starting room
+    mov     rsi, [entry]         ; rsi = current room address
 
 .traversal_loop:
-    ; First check if current room has any connections
-    mov     rdi, [rsi + 30]     ; Check first connection
-    test    rdi, rdi
-    jz      .no_connections      ; If no connections, exit
+    ; Grab first connection of current room
+    mov     rdi, [rsi + 30]      
+    test    rdi, rdi             ; Is it null?
+    jz      .no_connections      ; If no connection, we’re done
 
-    call    print_room_options   ; Print available connections
-    call    select_room          ; Get user selection
+    call    print_room_options   ; Show user the room list
+    call    select_room          ; Let them pick one
     cmp     rax, -1
-    je      .exit             ; Quit if select_room returned -1
-    
-    mov     rsi, rax            ; Move to selected room
-    jmp     .traversal_loop     ; Continue traversal
+    je      .exit                ; User chose to quit
+
+    mov     rsi, rax             ; Move to selected room
+    jmp     .traversal_loop      ; Loop again
 
 .no_connections:
     mov     rdi, no_rooms
-    call    printl
+    call    printl               ; Let them know they hit a dead end
 .exit:
     ret
 
 print_room_options:
     push    rsi
     push    rdx
-    
+
     mov     rdi, select_msg
-    call    printl
-    
-    mov     rdx, 0               ; Connection index
-    
+    call    printl               ; Print header with column labels
+
+    mov     rdx, 0               ; Start index at 0
+
 .print_loop:
-    mov     rdi, [rsi + 30 + rdx * 8]  ; Get connection
+    mov     rdi, [rsi + 30 + rdx * 8]  ; Get connection at index
     test    rdi, rdi
-    jz      .done_printing
-    
-    call    print               ; Print room name
+    jz      .done_printing       ; Done when null pointer hit
+
+    call    print                ; Print room name
     mov     rdi, rdx
     call    print_space
-    call    print_num
-    call    print_line
-    
+    call    print_num            ; Print index next to it
+    call    print_line           ; New line
+
     inc     rdx
     jmp     .print_loop
 
@@ -69,43 +71,38 @@ select_room:
     push    rsi
     push    rdi
     push    rbx
-    
-    ; First count how many connections we have
-    xor     rbx, rbx            ; Connection counter
+
+    ; Count how many rooms we can jump to
+    mov     rbx, 0
 .count_connections:
-    mov     rdi, [rsi + 30 + rbx * 8]  ; Get connection
+    mov     rdi, [rsi + 30 + rbx * 8]
     test    rdi, rdi
-    jz      .input_loop         ; Done counting
+    jz      .input_loop
     inc     rbx
     jmp     .count_connections
 
 .input_loop:
-    ; Prints "Type room index here: "
     mov     rdi, input_prompt
-    call    print
+    call    print                ; Ask user for input
 
-    ; Requests input from user
-    call    scan              ; Get input
+    call    scan                 ; Get input string
     mov     rdi, rax
-    call    printl
-    
-    ; Check for 'Q' or 'q' to quit
+
+    ; Check if user typed 'q' or 'Q'
     cmp     byte [rdi], 'Q'
     je      .quit
     cmp     byte [rdi], 'q'
     je      .quit
-    
-    ; Convert string to unsigned int
-    call    str2uint           ; Convert to int (rax)
-    cmp     rax, 0             ; Check if conversion failed (negative)
-    jl      .invalid
-    
-    ; Check if input is within bounds (0 <= rax < rbx)
+
+    call    str2uint             ; Try converting to unsigned integer(Int that can't be negative)
+    cmp     rax, 0
+    jl      .invalid             ; Failed parse = invalid
+
     cmp     rax, rbx
-    jge     .out_of_bounds  ; If >= number of connections, invalid
-    
-    ; Valid selection
-    mov     rax, [rsi + 30 + rax * 8]  ; Get the selected room
+    jge     .out_of_bounds       ; Too high? Invalid
+
+    ; Success — get selected room address
+    mov     rax, [rsi + 30 + rax * 8]
     pop     rbx
     pop     rdi
     pop     rsi
@@ -113,24 +110,23 @@ select_room:
 
 .out_of_bounds:
     push    rdi
-    mov     rdi, oob_msg ; "Index out of range..."
-    call    printl
+    mov     rdi, oob_msg
+    call    printl               ; Tell them to stay in range
     pop     rdi
     jmp     .input_loop
 
 .invalid:
     push    rdi
     mov     rdi, bad_input
-    call    printl
+    call    printl               ; Invalid input warning
     pop     rdi
     jmp     .input_loop
 
 .quit:
     mov     rdi, quit_msg
-    call    printl
-    mov     rax, -1          ; Return -1 to indicate quit
+    call    printl               ; Friendly goodbye
+    mov     rax, -1              ; Signal quit to caller
     pop     rbx
     pop     rdi
     pop     rsi
     ret
-

@@ -3,44 +3,45 @@ section .data
     space db " ", 0
 
 section .bss
-    input_buffer resb 256   ; Reserve 100 bytes for input
+    input_buffer resb 256               ; Reserve 100 bytes for input
     input_len equ $-input_buffer
 
 section .text
 print:
-    push rdi                ; store register in stack
+    ; Store registers value before function 
+    push rdi                
     push rsi                
     push rdx                
     
-    mov rsi, rdi            ; Copy string pointer to RSI
-    call slen               ; Length returned in RAX
+    mov rsi, rdi                        ; Copy string pointer to RSI
+    call slen                           ; Length returned in RAX
     
     ; Prepare syscall
-    mov rdx, rax            ; length
-    mov rdi, 1              ; stdout
-    mov rax, 1              ; sys_write
-    syscall                 ; Do the write with original RDI/RDX restored
+    mov rdx, rax                        ; length
+    mov rdi, 1                          ; stdout
+    mov rax, 1                          ; sys_write
+    syscall                             ; Call linux kernel terminal print command
     
-    ; Restore in reverse order
-    pop rdx                 ; RDX = [rsp+16]
-    pop rsi                 ; RSI = [rsp+8]
-    pop rdi                 ; RDI = [rsp]
+    ; Restore registers values before functions
+    pop rdx                 
+    pop rsi                 
+    pop rdi
     
     ret
 
+; Prints an string followed by newline
 printl:
-    push    rdi             ; Save original argument (string ptr)
-    call    print           ; Print the string
+    call    print                       ; Print the string
+    push    rdi                         ; Save original rdi again (print may have changed it)
 
-    ; Now print a newline
-    push    rdi             ; Save original rdi again (print may have changed it)
-    mov     rdi, newline    ; rdi = address of "\n"
+    ; Prints a newline
+    mov     rdi, newline                ; rdi = address of "\n"
     call    print
-    pop     rdi             ; Restore original rdi
 
-    pop     rdi             ; Restore original value
+    pop     rdi                         ; Restore original value
     ret
 
+; Prints a newline
 print_line:
     push    rdi
 
@@ -50,6 +51,7 @@ print_line:
     pop     rdi
     ret
 
+; Prints a space
 print_space:
     push    rdi
 
@@ -62,54 +64,57 @@ print_space:
 
 
 print_num:
+    ; Save registers value before function
     push    rdi
     push    rsi
 
-    call    int2str
-    mov     rdi, rax
-    call    print
+    call    int2str                     ; Convert to string
+    mov     rdi, rax                    ; Get string value
+    call    print                       ; Print the number string
 
+    ; Restore registers values before functions
     pop     rsi
     pop     rdi
     ret
 
 slen:
-    push    rbx             ; Save callee-saved register
-    mov     rbx, rdi        ; rbx = start of string
+    push    rbx
+    mov     rbx, rdi                    ; remember string start address
 
 .nextchar:
-    cmp     byte [rdi], 0
+    cmp     byte [rdi], 0               ; Check for null terminator
     je      .done
-    inc     rdi
+    inc     rdi                         ; Move to next char
     jmp     .nextchar
 
 .done:
-    sub     rdi, rbx
-    mov     rax, rdi        ; Return result in rax (convention)
+    sub     rdi, rbx                    ; Calculate length
+    mov     rax, rdi                    ; Return result in rax (convention)
     pop     rbx
     ret
 
+; Reads user input (returns buffer address in rax)
 scan:
     push    rdx
     push    rsi
     push    rdi
-
-    ; Read input (sys_read)
-    xor     rax, rax          ; sys_read = 0
-    xor     rdi, rdi          ; stdin = 0
-    mov     rsi, input_buffer
-    mov     rdx, input_len
+    
+    ; Setup linux kernel calls
+    xor     rax, rax                    ; sys_read
+    xor     rdi, rdi                    ; stdin
+    mov     rsi, input_buffer           ; Buffer address
+    mov     rdx, input_len              ; Buffer length
     syscall
-
-    ; Null-terminate and remove newline
-    mov     byte [rsi + rax - 1], 0  ; Overwrite newline with null terminator
-
-    mov     rax, rsi          ; Return buffer address
+    
+    mov     byte [rsi + rax - 1], 0     ; Replace newline with null terminator
+    mov     rax, rsi                    ; Return buffer address
+    
     pop     rdi
     pop     rsi
     pop     rdx
     ret
 
+; Exits program with status 0 (same as return 0;)
 exit_program: ; Exits the program
     mov     rax, 60         ; sys_exit (correct number is 60)
     mov     rdi, 0          ; exit status
