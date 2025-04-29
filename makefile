@@ -25,6 +25,9 @@ test:
 	@cd $(BUILD_DIR)/tests && ctest --output-on-failure
 
 # Run the executable generated from build
-run:
+generate:
 	@cd $(BUILD_DIR)/app && ./mgl
+
+run: 
 	@cd $(ASSEMBLY_DIR) && $(MAKE) --no-print-directory run
+

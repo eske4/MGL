@@ -10,9 +10,10 @@ section .data
     bad_input:      db "Invalid input - please try again", 0
     input_prompt:   db "Enter room index or 'q' to quit: ", 0
     quit_msg:       db "Traversal session ended", 0
+    oob_msg:        db "Index out of range - please enter a valid room index", 0
 
 section .text
-manual_traversal:
+graph_walk:
     ; Start at entry
     mov     rsi, [entry]         ; Starting room address
 
@@ -24,6 +25,8 @@ manual_traversal:
 
     call    print_room_options   ; Print available connections
     call    select_room          ; Get user selection
+    cmp     rax, -1
+    je      .exit             ; Quit if select_room returned -1
     
     mov     rsi, rax            ; Move to selected room
     jmp     .traversal_loop     ; Continue traversal
@@ -31,6 +34,7 @@ manual_traversal:
 .no_connections:
     mov     rdi, no_rooms
     call    printl
+.exit:
     ret
 
 print_room_options:
@@ -64,7 +68,17 @@ print_room_options:
 select_room:
     push    rsi
     push    rdi
+    push    rbx
     
+    ; First count how many connections we have
+    xor     rbx, rbx            ; Connection counter
+.count_connections:
+    mov     rdi, [rsi + 30 + rbx * 8]  ; Get connection
+    test    rdi, rdi
+    jz      .input_loop         ; Done counting
+    inc     rbx
+    jmp     .count_connections
+
 .input_loop:
     ; Prints "Type room index here: "
     mov     rdi, input_prompt
@@ -81,20 +95,28 @@ select_room:
     cmp     byte [rdi], 'q'
     je      .quit
     
-    ; Convert string to int
-    call    str2int           ; Convert to int (rax)
-    cmp     rax, 0            ; Check if conversion failed (str2int should return -1 or similar for non-numbers)
+    ; Convert string to unsigned int
+    call    str2uint           ; Convert to int (rax)
+    cmp     rax, 0             ; Check if conversion failed (negative)
     jl      .invalid
     
-    mov     rdi, [rsi + 30 + rax * 8]
-    test    rdi, rdi
-    jz      .invalid
+    ; Check if input is within bounds (0 <= rax < rbx)
+    cmp     rax, rbx
+    jge     .out_of_bounds  ; If >= number of connections, invalid
     
     ; Valid selection
-    mov     rax, rdi
+    mov     rax, [rsi + 30 + rax * 8]  ; Get the selected room
+    pop     rbx
     pop     rdi
     pop     rsi
     ret
+
+.out_of_bounds:
+    push    rdi
+    mov     rdi, oob_msg ; "Index out of range..."
+    call    printl
+    pop     rdi
+    jmp     .input_loop
 
 .invalid:
     push    rdi
@@ -106,9 +128,9 @@ select_room:
 .quit:
     mov     rdi, quit_msg
     call    printl
-    xor     rax, rax          ; Return NULL to indicate quit
+    mov     rax, -1          ; Return -1 to indicate quit
+    pop     rbx
     pop     rdi
     pop     rsi
     ret
-
 

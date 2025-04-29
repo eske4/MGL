@@ -5,7 +5,7 @@
     %include "handwritten/linux/core.asm"
     %include "handwritten/linux/stack.asm"
     %include "handwritten/linux/dfs.asm"
-    %include "handwritten/linux/man_traversal.asm"
+    %include "handwritten/linux/manual_graph_walk.asm"
     %include "handwritten/linux/convert.asm"
 %endif
 
@@ -21,5 +21,5 @@ _start:
     call    init_stack              ; Initialize our stack
     call    dfs_traversal           ; Start DFS from the starting room
     call    all_room_traversed      ; Check if all rooms were visited
-    call    manual_traversal
+    call    graph_walk
     call    exit_program            ; Exit

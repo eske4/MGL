@@ -2,7 +2,7 @@ section .data
     conv_err: db "Error converting", 0
 
 section .bss
-    int_buffer resb 101   ; 100 digits + null terminator
+    int_buffer resb 1001   ; 100 digits + null terminator
 
 section .text
 int2str:
@@ -12,7 +12,7 @@ int2str:
     push    rdi        ; Save original number
 
     mov     rax, rdi   ; Number to convert
-    mov     rbx, int_buffer + 100  ; Point to the end of the buffer
+    mov     rbx, int_buffer + 1000  ; Point to the end of the buffer
     mov     byte [rbx], 0  ; Null terminator
     mov     rcx, 10        ; Base 10 divisor
 
@@ -40,7 +40,7 @@ int2str:
     pop     rbx
     ret
 
-str2int:
+str2uint:
     push    rdi
     push    rcx
     push    rdx        ; Preserve additional register we'll use

@@ -90,22 +90,24 @@ slen:
     ret
 
 scan:
-    push    rdi
-    push    rsi
     push    rdx
+    push    rsi
+    push    rdi
 
-    mov     rax, 0              ; sys_read
-    mov     rdi, 0              ; stdin
+    ; Read input (sys_read)
+    xor     rax, rax          ; sys_read = 0
+    xor     rdi, rdi          ; stdin = 0
     mov     rsi, input_buffer
     mov     rdx, input_len
     syscall
 
-    mov     rax, input_buffer   ; <<< store address of input_buffer in rax
+    ; Null-terminate and remove newline
+    mov     byte [rsi + rax - 1], 0  ; Overwrite newline with null terminator
 
-    pop     rdx
-    pop     rsi
+    mov     rax, rsi          ; Return buffer address
     pop     rdi
-
+    pop     rsi
+    pop     rdx
     ret
 
 exit_program: ; Exits the program
