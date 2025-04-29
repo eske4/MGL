@@ -74,9 +74,6 @@ make clean
 - Build issues: Verify compiler versions support C++23/C23
 - Runtime problems: Ensure WSL 2 is updated if on Windows
 
-## License and Usage
-This project is available for academic and research purposes. For any other use, please contact the maintainers for permission. The source code and documentation are provided as-is without warranty of any kind.
-
 
 ## Original authors:
 1. [Eske Klintø] - [eske.larsen@gmail.com]
