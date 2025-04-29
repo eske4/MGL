@@ -12,5 +12,6 @@ int main() {
   printf("Project Version: %s\n", project_version);
 
   compile(SOURCE_CODE_DIR);
+  
   return 0;
 }
