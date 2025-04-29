@@ -18,9 +18,9 @@ A domain-specific language for procedural map generation with C/C++ compilation 
   - GNU Make
 
 ### Building from Source
-git clone https://github.com/eske4/MGL.git
-cd MGL
-make build
+- git clone https://github.com/eske4/MGL.git
+- cd MGL
+- make build
 
 ## Usage Workflow
 
