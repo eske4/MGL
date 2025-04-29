@@ -4,6 +4,7 @@ project(
   mgl
   VERSION 1.0.0
   LANGUAGES C CXX
+  DESCRIPTION "A domain-specific language compiler for generating graph-based maps"
 )
 
 set(CMAKE_CXX_STANDARD 23)
@@ -14,8 +15,11 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # auto complete for nvim
 
-include(cmake/CPM.cmake)
-include(cmake/Packages.cmake)
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
+
+include(Build)
+include(CPM)
+include(Packages)
 
 add_subdirectory(configured)
 add_subdirectory(src)

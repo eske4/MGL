@@ -11,7 +11,6 @@ all: build test generate
 
 # Build the project inside the build directory
 build:
-	@echo "Building project..."
 	@mkdir -p $(BUILD_DIR)
 	@cd $(BUILD_DIR) && cmake .. && cmake --build .
 	@ln -sf "build/compile_commands.json"
