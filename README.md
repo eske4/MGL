@@ -7,7 +7,7 @@ A domain-specific language for procedural map generation with C/C++ compilation 
 
 ### Requirements
 - Supported Platforms:
-  - Linux (Ubuntu, Arch Linux)
+  - Linux (Arch Linux, Ubuntu)
   - macOS (Ventura+ recommended)
   - Windows (via WSL 2 with Ubuntu or Arch)
 
