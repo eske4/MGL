@@ -6,7 +6,7 @@ MAKEFLAGS += --no-print-directory
 .PHONY: all build clean test run
 
 # Default target: configure and build the project
-all: build
+all: build test generate
 
 # Build the project inside the build directory
 build:
