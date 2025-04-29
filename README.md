@@ -60,9 +60,8 @@ make clean
 ## License and Usage
 This project is available for academic and research purposes. For any other use, please contact the maintainers for permission. The source code and documentation are provided as-is without warranty of any kind.
 
-## Contact
-For usage permissions or questions:
-- Maintainer: Eske Klintø Larsen
-- Email: eske.larsen@gmail.com
 
+## Maintainers (Contact for permissions)
+1. [Eske Klintø] - [eske.larsen@gmail.com]
+2. [Full Name 2] - [email2@university.edu] 
 
