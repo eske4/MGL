@@ -48,8 +48,7 @@ make generate
 3. Validate map:
 make run
    - Validator checks:
-     * All rooms are connected
-     * No isolated rooms
+     * All rooms are traversible
 
 ## Command Reference
 
