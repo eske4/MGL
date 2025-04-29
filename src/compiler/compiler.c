@@ -1,3 +1,15 @@
+/**
+ * @file compiler.c
+ * @brief Main compilation pipeline with built-in debugging
+ * 
+ * Stages:
+ *   1. Lexing    (debug output in lexer.c)
+ *   2. Parsing   (debug AST print on success)
+ *   3. Typecheck (debug output in type_checker.c)
+ *   4. IL Gen    (debug table print)
+ *   5. Codegen   (outputs assembly directly)
+ */
+
 #include "astree.h"
 #include "compiler_state.h"
 #include "lexer.h"
@@ -6,37 +18,44 @@
 #include "il.h"
 #include "code_gen.h"
 
+/**
+ * @brief Runs the full compiler pipeline with preserved debug outputs
+ * @param input Source file path
+ * 
+ * @note Debug outputs are hardcoded in submodules (void functions).
+ *       Cleanup happens regardless of stage failures.
+ */
 void compile(const char* input)
-{ // Token structure to hold the current token
+{
+    // Initialize compiler state
     csInit();
     csOpenFile(input);
     Token currentToken;
 
-    // Fetch the first token
+    // --- STAGE 1: Lexing ---
+    scan(&currentToken); // Initialize the Lexer
 
-    scan(&currentToken);
-
-    // Parse the input and construct the AST
+    // --- STAGE 2: Parsing ---
     ASTree tree = parse(&currentToken);
-
     if (tree && tree->head)
-    {
-        printf("Parsing successful!\n");
-        ASTreePrint(tree);
-    }
-    else
-    {
-        printf("Parsing failed!\n");
-    }
+        ASTreePrint(tree); // Parser's built-in debug print
 
-    TypeCheck(tree);
+    // --- STAGE 3: Semantic check ---
+    TypeCheck(tree); // TypeChecker prints its own debug info
+    // Move print out to here
+
+    // --- STAGE 4: IL Generation ---
     InstructionTable ilTable = compile_to_il(tree);
-    instr_print(ilTable);
+    instr_print(ilTable); // IL module's debug print
 
-    generate_assembly(ilTable);
+    // Cleanup ASTreee
+    if (tree)
+        ASTFree(tree);
 
-    // Free the AST
-    ASTFree(tree);
-    // Free IL
-    instr_free(ilTable);
+    // --- STAGE 5: Codegen ---
+    generate_assembly(ilTable); // Outputs assembly directly
+
+    // Cleanup IL table
+    if (ilTable)
+        instr_free(ilTable);
 }
