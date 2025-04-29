@@ -10,7 +10,7 @@ int main() {
   printf("Project Name: %s\n", project_name);
   printf("Project Version: %s\n", project_version);
 
-  compile(SOURCE_CODE_DIR);
+  compile(SOURCE_CODE_FILE);
   
   return 0;
 }
