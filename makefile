@@ -1,7 +1,7 @@
 # # The build directory
 BUILD_DIR = build
 ASSEMBLY_DIR = assembly
-
+MAKEFLAGS += --no-print-directory
 # Declare build as a phony target to ensure it's always executed
 .PHONY: all build clean test run
 
@@ -15,6 +15,14 @@ build:
 	@cd $(BUILD_DIR) && cmake .. && cmake --build .
 	@ln -sf "build/compile_commands.json"
 
+# Generates the assembly files through compiler
+generate:
+	@cd $(BUILD_DIR)/app && ./mgl
+
+# Run assembly binary
+run: 
+	@cd $(ASSEMBLY_DIR) && $(MAKE) --no-print-directory run
+
 # Clean the build directory
 clean:
 	@rm -rf $(BUILD_DIR)
@@ -24,10 +32,4 @@ clean:
 test:
 	@cd $(BUILD_DIR)/tests && ctest --output-on-failure
 
-# Run the executable generated from build
-generate:
-	@cd $(BUILD_DIR)/app && ./mgl
-
-run: 
-	@cd $(ASSEMBLY_DIR) && $(MAKE) --no-print-directory run
 
