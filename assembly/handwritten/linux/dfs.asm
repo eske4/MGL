@@ -81,6 +81,7 @@ all_room_traversed:
 .all_visited:
     mov     rdi, success_msg
     call    printl
+    call    print_line
     ret
 
 ; ====================== CONNECTION HANDLING ======================
