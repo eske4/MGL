@@ -12,7 +12,7 @@ Computer Science Master's Project (Second Semester)
   - Windows (via WSL 2 with Ubuntu or Arch)
 
 - Toolchain:
-  - C++23 compatible compiler (GCC 13+ or Clang 16+)
+  - C++23 compatible compiler (GCC >= 14.2.1)
   - C23 compatible compiler
   - CMake >= 3.25.1
   - GNU Make
