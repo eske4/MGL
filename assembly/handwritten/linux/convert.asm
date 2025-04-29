@@ -6,13 +6,13 @@ section .bss
 
 section .text
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ========================================================================================
 ; Converts a 64-bit unsigned integer to a null-terminated string
 ; Arguments:
 ;   rdi - unsigned 64-bit integer to convert
 ; Returns:
 ;   rax - pointer to the resulting null-terminated string in int_buffer
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ========================================================================================
 
 int2str:
     ; Save original values for registers
@@ -50,13 +50,13 @@ int2str:
     pop     rbx
     ret
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ========================================================================================
 ; Converts a null-terminated string to an unsigned 64-bit integer(Only positive numbers)
 ; Arguments:
 ;   rdi - input string
 ; Returns:
 ;   rax - converted number, or -1 on error
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ========================================================================================
 
 str2uint:
     ; Save original values for registers
