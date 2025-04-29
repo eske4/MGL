@@ -41,7 +41,7 @@ A domain-specific language for procedural map generation with C/C++ compilation 
 | make build      | Compiles all C/C++ sources                  |
 | make generate   | Converts input.MF to assembly               |
 | make run        | Executes and validates generated map        |
-| make test       | Runs verification tests                     |
+| make test       | Runs unit and integration tests                     |
 | make clean      | Removes build artifacts                     |
 
 ## Testing
