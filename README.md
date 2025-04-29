@@ -1,7 +1,7 @@
 # MGL - Map Generation Language
 Computer Science Master's Project (Second Semester)
 
-is a simple domain-specific language (DSL) for defining and compiling graph-based map structures. It was developed as a university project using C/C++, with inspiration drawn from how maps are represented in computer games.
+**MGL** is a simple domain-specific language (DSL) for defining and compiling graph-based map structures. It was developed as a university project using C/C++, with inspiration drawn from how maps are represented in computer games.
 
 ## Installation & Setup
 
