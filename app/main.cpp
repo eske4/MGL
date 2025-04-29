@@ -8,6 +8,5 @@ extern "C" {
 
 int main() {
   compile(SOURCE_CODE_FILE);
-  
   return 0;
 }
