@@ -8,7 +8,7 @@ Computer Science Master's Project (Second Semester)
 ### System Requirements
 | Component      | Linux(Arch, Ubuntu)                  | macOS                  | Windows (WSL2)        |
 |---------------|------------------------|------------------------|-----------------------|
-| **Compiler**  | GCC ≥ 14.2.1           | Xcode 15+              | GCC via Ubuntu/Arch   |
+| **Compiler**  | GCC ≥ 14.2.1           | GCC 16+              | GCC via Ubuntu/Arch   |
 | **Assembler**  | NASM ≥ 2.16.03          | NASM ≥ 2.16.03       | NASM via Ubuntu/Arch   |
 | **Build Tools**| CMake ≥ 3.25.1         | CMake ≥ 3.25.1         | CMake ≥ 3.25.1        |
 |               | GNU Make ≥ 4.4.1         | GNU Make ≥ 4.4.1       | GNU Make ≥ 4.4.1        |
