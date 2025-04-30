@@ -21,7 +21,7 @@ graph_walk:
 
 .traversal_loop:
     ; Grab first connection of current room
-    mov     rdi, [rsi + 30]      
+    mov     rdi, [rsi + ID_LEN]      
     test    rdi, rdi             ; Is it null?
     jz      .no_connections      ; If no connection, we’re done
 
@@ -49,7 +49,7 @@ print_room_options:
     mov     rdx, 0               ; Start index at 0
 
 .print_loop:
-    mov     rdi, [rsi + 30 + rdx * 8]  ; Get connection at index
+    mov     rdi, [rsi + ID_LEN + rdx * 8]  ; Get connection at index
     test    rdi, rdi
     jz      .done_printing       ; Done when null pointer hit
 
@@ -102,7 +102,7 @@ select_room:
     jge     .out_of_bounds       ; Too high? Invalid
 
     ; Success — get selected room address
-    mov     rax, [rsi + 30 + rax * 8]
+    mov     rax, [rsi + ID_LEN + rax * 8]
     pop     rbx
     pop     rdi
     pop     rsi
