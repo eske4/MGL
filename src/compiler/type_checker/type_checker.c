@@ -29,14 +29,16 @@ void TraverseAST(const ASTNode* node, const SymbolTable table)
             AddSymbolTable(table, node->children[0]->data, node);
             break;
 
-        case AT_CONNECT: //if AT_ROOM type
+        case AT_CONNECT:{ //if AT_ROOM type
             char* connection_id = calloc(1, strlen(node->children[0]->data) + strlen(node->children[2]->data) + 2);
             sprintf(connection_id, "#%s%s", node->children[0]->data, node->children[2]->data);
 
             checkConnection(table, connection_id, node);
             checkRoomsInConnection(node->children[0]->data, node->children[2]->data, table, node);
             AddSymbolTable(table, connection_id, node);
+        }
         default: break;
+        
     }
 
     for (int i = 0; i < node->child_count; i++)

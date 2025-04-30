@@ -17,6 +17,14 @@
     %include "handwritten/win/convert.asm"
 %endif
 
+%ifdef MAC
+    %include "handwritten/mac/core.asm"
+    %include "handwritten/mac/stack.asm"
+    %include "handwritten/mac/dfs.asm"
+    %include "handwritten/mac/graph_walk.asm"
+    %include "handwritten/mac/convert.asm"
+%endif
+
 section .text
 global _start
 _start:
