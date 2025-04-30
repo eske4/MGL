@@ -5,17 +5,15 @@ Computer Science Master's Project (Second Semester)
 
 ## Installation & Setup
 
-### Requirements
-- Supported Platforms:
-  - Linux (Arch Linux, Ubuntu)
-  - macOS (Ventura+ recommended)
-  - Windows (via WSL 2 with Ubuntu or Arch)
+### System Requirements
+| Component      | Linux                  | macOS                  | Windows (WSL2)        |
+|---------------|------------------------|------------------------|-----------------------|
+| **Compiler**  | GCC ≥ 14.2.1           | Xcode 15+              | GCC via Ubuntu/Arch   |
+| **Build Tools**| CMake ≥ 3.25.1         | CMake ≥ 3.25.1         | CMake ≥ 3.25.1        |
+|               | GNU Make ≥ 4.4.1         | GNU Make ≥ 4.4.1       | GNU Make ≥ 4.4.1        |
+| **Environment**| -                      | Ventura+ recommended   | WSL2 with Ubuntu/Arch |
 
-- Toolchain:
-  - C++23 compatible compiler (GCC >= 14.2.1 TESTED)
-  - C23 compatible compiler
-  - CMake >= 3.25.1
-  - GNU Make
+*Note: All platforms require standard C23/C++23 toolchain support.*
 
 ### Building from Source
 1. git clone https://github.com/eske4/MGL.git
@@ -73,6 +71,9 @@ make clean
 - Map generation errors: Check data/input.MF syntax
 - Build issues: Verify compiler versions support C++23/C23
 - Runtime problems: Ensure WSL 2 is updated if on Windows
+
+## Integration
+Generated assembly (map.asm) can be consumed by other languages. See usage/ directory for C integration examples.
 
 
 ## Original authors:
