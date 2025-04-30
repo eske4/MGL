@@ -6,9 +6,10 @@ Computer Science Master's Project (Second Semester)
 ## Installation & Setup
 
 ### System Requirements
-| Component      | Linux                  | macOS                  | Windows (WSL2)        |
+| Component      | Linux(Arch, Ubuntu)                  | macOS                  | Windows (WSL2)        |
 |---------------|------------------------|------------------------|-----------------------|
 | **Compiler**  | GCC ≥ 14.2.1           | Xcode 15+              | GCC via Ubuntu/Arch   |
+| **Assembler**  | NASM ≥ 2.16.03          | NASM ≥ 2.16.03       | NASM via Ubuntu/Arch   |
 | **Build Tools**| CMake ≥ 3.25.1         | CMake ≥ 3.25.1         | CMake ≥ 3.25.1        |
 |               | GNU Make ≥ 4.4.1         | GNU Make ≥ 4.4.1       | GNU Make ≥ 4.4.1        |
 | **Environment**| -                      | Ventura+ recommended   | WSL2 with Ubuntu/Arch |
@@ -58,6 +59,7 @@ make run
 | make run        | Executes and validates generated map        |
 | make test       | Runs unit and integration tests                     |
 | make clean      | Removes build artifacts                     |
+| `make demo`    | Runs the integration demo (NASM assembly linked with C)   |
 
 ## Testing
 Run the verification suite:
@@ -73,7 +75,21 @@ make clean
 - Runtime problems: Ensure WSL 2 is updated if on Windows
 
 ## Integration
-Generated assembly (map.asm) can be consumed by other languages. See usage/ directory for C integration examples.
+The generated `map.asm` can be consumed by other languages such as C.
+
+Manual compilation example (Linux):
+
+```bash
+nasm -f elf64 map.asm -o map.o
+gcc demo.c map.o -o demo
+```
+
+See the `usage/` directory for integration examples.  
+Example can be run using the command:
+
+```bash
+make demo
+```
 
 
 ## Original authors:
