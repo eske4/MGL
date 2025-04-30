@@ -12,6 +12,7 @@ Computer Science Master's Project (Second Semester)
 | **Assembler**  | NASM ≥ 2.16.03          | NASM ≥ 2.16.03       | NASM via Ubuntu/Arch   |
 | **Build Tools**| CMake ≥ 3.25.1         | CMake ≥ 3.25.1         | CMake ≥ 3.25.1        |
 |               | GNU Make ≥ 4.4.1         | GNU Make ≥ 4.4.1       | GNU Make ≥ 4.4.1        |
+| **Demo Tools**  | Python ≥ 3.13.3         | Python ≥ 3.13.3       | Python ≥ 3.13.3        |
 | **Environment**| -                      | Ventura+ recommended   | WSL2 with Ubuntu/Arch |
 
 *Note: All platforms require standard C23/C++23 toolchain support.*
@@ -23,31 +24,34 @@ Computer Science Master's Project (Second Semester)
 
 ## Usage Workflow
 
-1. Design your map:
-   - File location: data/input.MF
+1. **Design your map**  
+   - File location: `data/input.MF`
    - Basic syntax:
-Map example {
-    Room A;
-    Room B;
-    Connect(A -> B);
-}
-
+     ```
+     Map Example {
+         Room A;
+         Room B;
+         Connect(A -> B);
+     }
+     ```
    - Key rules:
-     * Map declaration: Map mapname { ... }
-     * Rooms: Room RoomName;
-     * Connections: 
-       - -> for one-way
-       - <-> for two-way
-     * End all statements with ;
-     * See data/input_example.MF for complete examples
+     * **Map declaration**: `Map mapname { ... }`
+     * **Rooms**: `Room RoomName;`
+     * **Connections**:  
+       - `->` for one-way  
+       - `<->` for two-way  
+     * End all statements with a semicolon (`;`)
+     * See `data/input_example.MF` for complete examples.
 
-2. Generate assembly:
-make generate
+2. **Generate assembly**  
+   To generate assembly code:  
+   `make generate`
 
-3. Validate map:
-make run
-   - Validator checks:
-     * All rooms are traversible
+3. **Validate map**  
+   Run the validation process:  
+   `make run`  
+   Validator checks:
+   * All rooms are traversable.
 
 ## Command Reference
 
@@ -59,7 +63,8 @@ make run
 | `make run`        | Executes and validates generated map        |
 | `make test`       | Runs unit and integration tests                     |
 | `make clean`      | Removes build artifacts                     |
-| `make demo`    | Runs the integration demo (NASM assembly linked with C)   |
+| `make py_demo`    | Runs Python integration demo (NASM assembly linked with Python)   |
+| `make c_demo`    | Runs C integration demo (NASM assembly linked with C)   |
 
 ## Testing
 Run the verification suite:
@@ -76,25 +81,36 @@ make clean
 
 ## Integration
 
-A C-based integration example is included in the `usage/` directory to demonstrate how the generated `map.asm` can be linked into a working program.
+Example integrations using **C** and **Python** can be found in the `usage/` directory. These demos show how to link the generated `map.asm` file into a working program.
 
-### Run the Example
+### Run the Examples
 
-Use the provided Makefile target:
+To quickly build and run the demos, use the provided Makefile (all can be done from the root project):
 
 ```bash
-make demo
+make c_demo    # Build and run the C demo
+make py_demo   # Build and run the Python demo
 ```
 
 ### Manual Compilation
 
-Alternatively, you can compile it manually from the `usage/` directory:
+Prefer to build it yourself? Here's how to compile everything manually from the `usage/` directory:
 
 1. Linux:
-   
+
+C Integration
 ```bash
 nasm -f elf64 map.asm -o map.o
 gcc demo.c map.o -o demo
+./demo
+```
+
+
+Python Integration
+```bash
+nasm -f elf64 map.asm -o map.o
+gcc -shared map.o -o map.so
+python demo.py
 ```
 
 2. Mac:
