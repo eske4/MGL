@@ -40,3 +40,6 @@ assembly/generated/map.asm
 assembly/generated/config.asm
 assembly/main.out
 assembly/main.o
+usage/c_demo
+usage/map.o
+usage/map.so
