@@ -65,6 +65,35 @@ void generate_map(InstructionTable table)
     safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
     FILE* file = fopen(fileLoc, "w");
 
+    // Check if the table has any entries before proceeding
+    if (table->count >= 1)
+    {
+        fprintf(file, "section .data\n");
+
+        // First collect all room names for the global declaration
+        int roomCount    = 0;
+        char** roomNames = calloc(table->count, sizeof(char*));
+
+        // First pass to collect room names
+        for (int i = 0; i < table->count; i++)
+        {
+            if (table->entries[i].InstrCode == IR_DECL_ROOM)
+            {
+                roomNames[roomCount++] = table->entries[i].args[0];
+            }
+        }
+
+        // Write global declarations
+        fprintf(file, "global entry");
+        for (int i = 0; i < roomCount; i++)
+        {
+            fprintf(file, ", room_%s", roomNames[i]);
+        }
+        fprintf(file, "\n\n");
+
+        free(roomNames);
+    }
+
     int hasEntry = 0;
 
     // Check if the table has any entries before proceeding
@@ -163,7 +192,13 @@ void writeConnectAssembly(Room* room, FILE* file)
 {
     if (room == NULL || room->connCount < 1)
     {
-        fprintf(file, "    dq 0\n\n");
+        fprintf(file, "    dq 0");
+        for (int i = 0; i < MAX_CONNECTIONS - 1; i++)
+        {
+            fprintf(file, ", 0");
+        }
+        fprintf(file, "\n");
+
         return;
     }
 
@@ -177,5 +212,10 @@ void writeConnectAssembly(Room* room, FILE* file)
             fprintf(file, ", ");
         }
     }
-    fprintf(file, ", 0\n\n");
+
+    for (int i = 0; i < MAX_CONNECTIONS - room->connCount; i++)
+    {
+        fprintf(file, ", 0");
+    }
+    fprintf(file, "\n");
 }
