@@ -66,7 +66,7 @@ str2uint:
     mov     rax, 0                  ; Current result
 
 .convert_loop:
-    mov     dl, byte [rdi]          ; Get next character (using DL) DL to ensure right size for int type
+    movzx   edx, byte [rdi]         ; Get next character (using DL) DL to ensure right size for int type
     test    dl, dl                  ; Check for null terminator end of string
     jz      .done                   ; End of string - success
 
