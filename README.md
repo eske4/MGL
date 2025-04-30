@@ -106,14 +106,14 @@ gcc demo.c map.o -o demo
 ```
 
 
-#### Python Integration
+Python Integration
 ```bash
 nasm -f elf64 map.asm -o map.o
 gcc -shared map.o -o map.so
 python demo.py
 ```
 
-2. Mac:
+#### 2. Mac:
    ...
 
 ## Original authors:
