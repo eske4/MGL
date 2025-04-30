@@ -65,7 +65,7 @@ CLoc findLoc(int pos)
         return loc;
 
     rewind(cs.infile);
-    for (int i = 0; i <= pos; i++)
+    for (int i = 0; i < pos; i++)
     {
         int c = fgetc(cs.infile);
         switch (c)

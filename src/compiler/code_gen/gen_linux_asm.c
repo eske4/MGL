@@ -43,7 +43,7 @@ void generate_config(InstructionTable table)
 
     int stack_size = room_count + 1; // Leave room for terminal connection 0
 
-    fprintf(file, "%%define ID_LEN %d\n\n", MAX_INPUT_SIZE);
+    fprintf(file, "%%define ID_LEN %d\n", MAX_INPUT_SIZE);
     fprintf(file, "%%define ROOM_COUNT %d\n\n", room_count);
 
     fprintf(file, "section .data\n\n");
