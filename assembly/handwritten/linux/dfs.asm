@@ -77,7 +77,7 @@ mark_room:
 
 all_room_traversed:
     mov     rax, [visited_count]
-    cmp     rax, [room_count]
+    cmp     rax, ROOM_COUNT
     je      .all_visited
 
     mov     rdi, warning_msg
@@ -102,7 +102,7 @@ get_connections:
     push    rcx
     push    rdi
 
-    mov     rsi, [id_len]
+    mov     rsi, ID_LEN
     lea     rbx, [rdi + rsi]    ; Point to connections list
 
 .process_connection:

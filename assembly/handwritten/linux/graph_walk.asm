@@ -75,7 +75,7 @@ select_room:
     ; Count how many rooms we can jump to
     mov     rbx, 0
 .count_connections:
-    mov     rdi, [rsi + 30 + rbx * 8]
+    mov     rdi, [rsi + ID_LEN + rbx * 8]
     test    rdi, rdi
     jz      .input_loop
     inc     rbx
