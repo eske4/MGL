@@ -96,7 +96,7 @@ make py_demo   # Build and run the Python demo
 
 Prefer to build it yourself? Here's how to compile everything manually from the `usage/` directory:
 
-1. Linux:
+#### 1. Linux:
 
 C Integration
 ```bash
@@ -106,7 +106,7 @@ gcc demo.c map.o -o demo
 ```
 
 
-Python Integration
+#### Python Integration
 ```bash
 nasm -f elf64 map.asm -o map.o
 gcc -shared map.o -o map.so
