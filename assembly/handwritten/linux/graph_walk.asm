@@ -7,7 +7,6 @@ section .data
                     db "╚════════════════════════════════════════╝", 0
 
     ; Various messages for different situations
-    error:          db "Could not be moved", 0
     no_rooms:       db "No more rooms to explore from here.", 0
     bad_input:      db "Invalid input - please try again", 0
     input_prompt:   db "Enter room index or 'q' to quit: ", 0
