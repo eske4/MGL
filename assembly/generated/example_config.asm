@@ -1,7 +1,9 @@
+%define ID_LEN 30
+%define ROOM_COUNT 4
+
+
 section .data
 
-    id_len           dq 30
-    room_count       dq 4
     visited_count    dq 0
 
 section .bss
