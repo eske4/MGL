@@ -1,5 +1,6 @@
 # # The build directory
 BUILD_DIR = build
+DEMO_DIR = build/usage
 ASSEMBLY_DIR = assembly
 MAKEFLAGS += --no-print-directory
 
@@ -31,5 +32,8 @@ clean:
 # Run the tests (if you have tests set up with CTest)
 test:
 	@cd $(BUILD_DIR)/tests && ctest --output-on-failure
+
+demo:
+	@cd $(DEMO_DIR) && ./demo
 
 

@@ -78,7 +78,7 @@ CLoc findLoc(int pos)
                 break;
 
             case '\t': loc.column += 4 - (loc.column - 1) % 4; break;
-            
+
             default: ++loc.column;
         }
     }

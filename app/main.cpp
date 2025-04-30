@@ -1,6 +1,4 @@
-#include "config.c"
 #include "file_config.c"
-#include <stdio.h>
 
 extern "C" {
 #include "compiler.h"

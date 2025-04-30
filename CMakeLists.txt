@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25.1)
 project(
   mgl
   VERSION 1.0.0
-  LANGUAGES C CXX
+  LANGUAGES C CXX ASM_NASM
   DESCRIPTION "A domain-specific language compiler for generating graph-based maps"
 )
 
@@ -25,3 +25,4 @@ add_subdirectory(configured)
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(app)
+add_subdirectory(usage)
