@@ -52,6 +52,10 @@ Computer Science Master's Project (Second Semester)
    `make run`  
    Validator checks:
    * All rooms are traversable.
+  
+4. **Use Generated Assembly**  
+   The assembly code is saved to `data/map.asm`. This file can now be used in other applications as its assembly representation.  
+   You can integrate this `map.asm` file into your project or use it with any tool that supports assembly input. For more information, refer to the integration section.
 
 ## Command Reference
 
