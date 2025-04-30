@@ -53,12 +53,12 @@ make run
 
 | Command          | Description                                  |
 |-----------------|---------------------------------------------|
-| make            | Full pipeline (build -> test -> generate)    |
-| make build      | Compiles all C/C++ sources                  |
-| make generate   | Converts input.MF to assembly               |
-| make run        | Executes and validates generated map        |
-| make test       | Runs unit and integration tests                     |
-| make clean      | Removes build artifacts                     |
+| `make`            | Full pipeline (build -> test -> generate)    |
+| `make build`      | Compiles all C/C++ sources                  |
+| `make generate`   | Converts input.MF to assembly               |
+| `make run`        | Executes and validates generated map        |
+| `make test`       | Runs unit and integration tests                     |
+| `make clean`      | Removes build artifacts                     |
 | `make demo`    | Runs the integration demo (NASM assembly linked with C)   |
 
 ## Testing
