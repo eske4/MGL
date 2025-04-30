@@ -1,6 +1,10 @@
 # Detect the OS
 # 		@$(LINK_CMD)
 UNAME_S := $(shell uname -s)
+<<<<<<< Updated upstream
+=======
+Win := "Windows sucks"
+>>>>>>> Stashed changes
 
 ifeq ($(UNAME_S), Linux)
     ASM_FORMAT := elf64
@@ -13,6 +17,10 @@ else ifeq ($(UNAME_S), Darwin)
     LINK_CMD := clang -arch x86_64 -Wl,-e,_start -Wl, -o main.out main.o
     RUN_CMD := arch -x86_64 ./main.out
 else
+<<<<<<< Updated upstream
+=======
+	@echo $(Win)
+>>>>>>> Stashed changes
     $(error Unsupported OS: $(UNAME_S))
 endif
 
