@@ -75,22 +75,30 @@ make clean
 - Runtime problems: Ensure WSL 2 is updated if on Windows
 
 ## Integration
-The generated `map.asm` can be consumed by other languages such as C.
 
-Manual compilation example (Linux):
+A C-based integration example is included in the `usage/` directory to demonstrate how the generated `map.asm` can be linked into a working program.
 
-```bash
-nasm -f elf64 map.asm -o map.o
-gcc demo.c map.o -o demo
-```
+### Run the Example
 
-See the `usage/` directory for integration examples.  
-Example can be run using the command:
+Use the provided Makefile target:
 
 ```bash
 make demo
 ```
 
+### Manual Compilation
+
+Alternatively, you can compile it manually from the `usage/` directory:
+
+1. Linux:
+   
+```bash
+nasm -f elf64 map.asm -o map.o
+gcc demo.c map.o -o demo
+```
+
+2. Mac:
+   ...
 
 ## Original authors:
 1. [Eske Klintø] - [eske.larsen@gmail.com]
