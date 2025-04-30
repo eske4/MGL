@@ -1,5 +1,5 @@
 Map map {
-    Room A;
+    Room A;;
     Room B;
 
     Connect(A -> B);

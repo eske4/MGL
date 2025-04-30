@@ -65,22 +65,21 @@ CLoc findLoc(int pos)
         return loc;
 
     rewind(cs.infile);
-    for (int i = 0; i < pos; i++)
+    for (int i = 0; i <= pos; i++)
     {
         int c = fgetc(cs.infile);
-        if (c == EOF)
-            break;
-        if (c == '\n')
+        switch (c)
         {
-            loc.line++;
-            loc.column = 1;
+            case EOF: break;
+
+            case '\n':
+                ++loc.line;
+                loc.column = 1;
+                break;
+
+            case '\t': loc.column += 4 - (loc.column - 1) % 4; break;
+            default: ++loc.column;
         }
-
-        if (c == '\t')
-            loc.column += 4 - (loc.column - 1) % 4;
-
-        if (c != '\r')
-            loc.column++;
     }
     return loc;
 }
