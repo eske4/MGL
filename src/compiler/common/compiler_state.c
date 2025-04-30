@@ -41,10 +41,12 @@ int csIsFileOpen()
     return cs.infile != NULL;
 }
 
-int addStringToFile(const char* str){
-    FILE *temp = tmpfile(); 
+int addStringToFile(const char* str)
+{
+    FILE* temp = tmpfile();
 
-    if(!temp) {
+    if (!temp)
+    {
         perror("Failed to create temporary file");
         return 0;
     }
@@ -56,28 +58,29 @@ int addStringToFile(const char* str){
     return 1;
 }
 
-CLoc findLoc(int pos) {
-    CLoc loc = { .line = 1, .column = 1 };
-
-    if (!cs.infile || pos < 0) {
-        return loc; // fallback: start of file
-    }
+CLoc findLoc(int pos)
+{
+    CLoc loc = {1, 1};
+    if (!cs.infile || pos < 0)
+        return loc;
 
     rewind(cs.infile);
-
-    for (int i = 0; i < pos; i++) {
+    for (int i = 0; i < pos; i++)
+    {
         int c = fgetc(cs.infile);
-        if (c == EOF) {
-            break; // stop if end of file reached early
-        }
-        if (c == '\n') {
+        if (c == EOF)
+            break;
+        if (c == '\n')
+        {
             loc.line++;
             loc.column = 1;
-        } else {
-            loc.column++;
         }
-    }
 
+        if (c == '\t')
+            loc.column += 4 - (loc.column - 1) % 4;
+
+        if (c != '\r')
+            loc.column++;
+    }
     return loc;
 }
-
