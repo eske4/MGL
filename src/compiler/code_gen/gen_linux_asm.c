@@ -43,9 +43,10 @@ void generate_config(InstructionTable table)
 
     int stack_size = room_count + 1; // Leave room for terminal connection 0
 
+    fprintf(file, "%%define ID_LEN %d\n", MAX_INPUT_SIZE);
+    fprintf(file, "%%define ROOM_COUNT %d\n\n", room_count);
+
     fprintf(file, "section .data\n\n");
-    fprintf(file, "    id_len           dq %d\n", MAX_INPUT_SIZE);
-    fprintf(file, "    room_count       dq %d\n", room_count);
     fprintf(file, "    visited_count    dq 0\n\n");
 
     fprintf(file, "section .bss\n\n");
@@ -64,13 +65,36 @@ void generate_map(InstructionTable table)
     safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
     FILE* file = fopen(fileLoc, "w");
 
-    int hasEntry = 0;
-
     // Check if the table has any entries before proceeding
     if (table->count >= 1)
     {
-        fprintf(file, "section .data\n\n");
+        fprintf(file, "section .data\n");
+
+        // First collect all room names for the global declaration
+        int roomCount    = 0;
+        char** roomNames = calloc(table->count, sizeof(char*));
+
+        // First pass to collect room names
+        for (int i = 0; i < table->count; i++)
+        {
+            if (table->entries[i].InstrCode == IR_DECL_ROOM)
+            {
+                roomNames[roomCount++] = table->entries[i].args[0];
+            }
+        }
+
+        // Write global declarations
+        fprintf(file, "global entry");
+        for (int i = 0; i < roomCount; i++)
+        {
+            fprintf(file, ", room_%s", roomNames[i]);
+        }
+        fprintf(file, "\n\n");
+
+        free(roomNames);
     }
+
+    int hasEntry = 0;
 
     // Iterate through the instruction table and process room entries
     for (int i = 0; i < table->count; i++)
@@ -81,7 +105,8 @@ void generate_map(InstructionTable table)
         // Write entry information for the first room encountered
         if (!hasEntry)
         {
-            fprintf(file, "entry: dq room_%s\n\n", table->entries[i].args[0]);
+            fprintf(file, "align 8\n");
+            fprintf(file, "entry: dq room_%s\n", table->entries[i].args[0]);
             hasEntry = 1;
         }
 
@@ -141,6 +166,7 @@ void writeRoomAssembly(Room* room, FILE* file)
     if (room == NULL || room->id == NULL)
         return;
 
+    fprintf(file, "\nalign 8\n");
     fprintf(file, "room_%s:\n", room->id);
 
     int roomIdLength     = strlen(room->id);              // Length of the room ID string
@@ -162,7 +188,13 @@ void writeConnectAssembly(Room* room, FILE* file)
 {
     if (room == NULL || room->connCount < 1)
     {
-        fprintf(file, "    dq 0\n\n");
+        fprintf(file, "    dq 0");
+        for (int i = 0; i < MAX_CONNECTIONS - 1; i++)
+        {
+            fprintf(file, ", 0");
+        }
+        fprintf(file, "\n");
+
         return;
     }
 
@@ -176,5 +208,10 @@ void writeConnectAssembly(Room* room, FILE* file)
             fprintf(file, ", ");
         }
     }
-    fprintf(file, ", 0\n\n");
+
+    for (int i = 0; i < MAX_CONNECTIONS - room->connCount; i++)
+    {
+        fprintf(file, ", 0");
+    }
+    fprintf(file, "\n");
 }

@@ -1,6 +1,6 @@
-Map map (maxRooms=3; maxConnectPerRoom = 20;) {
-    Room A;
-    Room B;
+Map map {
+    Room A;C
+    Room B;C
 
     Connect(A -> B);
     Room E;

@@ -1,4 +1,4 @@
 #pragma once
 
 static const char GENERATED_ASM_DIR[]    = "@GENERATED_ASM_DIR@";
-static const char SOURCE_CODE_DIR[]    = "@SOURCE_CODE_DIR@";
+static const char SOURCE_CODE_FILE[]    = "@SOURCE_CODE_FILE@";

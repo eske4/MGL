@@ -1,6 +1,6 @@
 ; ====================== DATA SECTION ======================
 section .data
-    ; Messages
+    ; Status messages
     warning_msg:    dq "WARNING: Not all rooms could be traversed", 0
     success_msg:    dq "SUCCESS: All rooms are reachable", 0
     traverse_msg:   dq "Traversed room: ", 0
@@ -8,72 +8,78 @@ section .data
 ; ====================== CODE SECTION ======================
 section .text
 
-; ====================== DFS TRAVERSAL ======================
-; Performs depth-first search traversal of rooms
+; ====================== DFS TRAVERSAL =====================
+; Input: None
+; Output: None
+; Modifies: Stack, visited rooms list
+; 
+; Performs DFS starting from entry room until all reachable rooms are visited
+; Uses stack to track rooms to visit next
+; ===========================================================
+
 dfs_traversal:
-    ; Push starting room onto stack
     mov     rdi, [entry]
     call    stack_push
 
 .dfs_loop:
-    ; Check if stack is empty
+    ; Check for completion
     mov     rdi, [stack_top]
     cmp     rdi, stack
-    je      .dfs_done                ; If stack is empty, we're done
+    je      .dfs_done
 
-    ; Get current room
+    ; Process next room
     call    stack_pop
-    mov     rdi, rax                ; rdi now contains current room address
-
-    ; Check if already visited
+    mov     rdi, rax
+    
     call    check_visited
     cmp     rax, 1
-    je      .dfs_loop                ; Skip if already visited
+    je      .dfs_loop
 
-    ; Mark as visited
+    ; Mark and print room
     call    mark_room
-
     push    rdi
     mov     rdi, traverse_msg
-    ; Process current room (print it)
     call    print
-
     pop     rdi
     call    printl
 
-    ; Push all connected rooms onto stack
+    ; Queue connected rooms
     call    get_connections
-
     jmp     .dfs_loop
 
 .dfs_done:
     ret
 
 ; ====================== ROOM MARKING ======================
-; Marks a room as visited
-; Parameters: RDI - room address
+; Input: RDI - Room address to mark
+; Output: None
+; Modifies: visited_rooms, visited_count
+; ==========================================================
+
 mark_room:
     push    rdx
     push    rax
 
     mov     rax, visited_rooms
     mov     rdx, [visited_count]
-    mov     [rax + rdx * 8], rdi    ; Store room in visited list
-    inc     qword [visited_count]   ; Increment visited count
+    mov     [rax + rdx * 8], rdi
+    inc     qword [visited_count]
 
     pop     rax
     pop     rdx
     ret
 
-; ====================== TRAVERSAL CHECK ======================
-; Checks if all rooms were visited and prints appropriate message
+; ====================== TRAVERSAL CHECK ==================
+; Input: None
+; Output: None (prints result message)
+; Checks if all rooms were visited
+; ==========================================================
+
 all_room_traversed:
     mov     rax, [visited_count]
-    mov     rbx, [room_count]
-    cmp     rax, rbx
+    cmp     rax, ROOM_COUNT
     je      .all_visited
 
-    ; Not all rooms visited
     mov     rdi, warning_msg
     call    printl
     ret
@@ -81,34 +87,36 @@ all_room_traversed:
 .all_visited:
     mov     rdi, success_msg
     call    printl
+    call    print_line
     ret
 
-; ====================== CONNECTION HANDLING ======================
-; Gets all connections for the current room and pushes unvisited ones to stack
-; Parameters: RDI - current room address
+; ====================== CONNECTION HANDLING ==============
+; Input: RDI - Current room address
+; Output: None
+; Processes all connections for current room
+; ==========================================================
+
 get_connections:
     push    rsi
     push    rbx
     push    rcx
-    push    rdi                  ; Preserve current room pointer
+    push    rdi
 
-    mov     rsi, [id_len]       ; Get id length
-    lea     rbx, [rdi + rsi]      ; Point to first connection
+    mov     rsi, ID_LEN
+    lea     rbx, [rdi + rsi]    ; Point to connections list
 
 .process_connection:
-    mov     rcx, [rbx]            ; Get connection pointer
+    mov     rcx, [rbx]
     test    rcx, rcx
-    jz      .connections_done      ; End if null
+    jz      .connections_done
 
-    ; Check if visited - pass pointer in RSI
-    push    rbx                  ; Save connection pointer
-    mov     rsi, rcx              ; Set up for check_visited
+    push    rbx
+    mov     rsi, rcx
     call    check_visited
-    pop     rbx                   ; Restore connection pointer
+    pop     rbx
     cmp     rax, 1
-    je      .next_connection       ; Skip if visited
+    je      .next_connection
 
-    ; Push unvisited connection
     mov     rdi, rcx
     call    stack_push
 
@@ -123,15 +131,16 @@ get_connections:
     pop     rsi
     ret
 
-; ====================== VISITED CHECK ======================
-; Checks if a room has been visited
-; Parameters: RSI - room address to check
-; Returns: RAX - 1 if visited, 0 otherwise
+; ====================== VISITED CHECK ====================
+; Input: RSI - Room address to check
+; Output: RAX - 1 if visited, 0 otherwise
+; ==========================================================
+
 check_visited:
     push    rcx
     push    rdx
 
-    xor     rax, rax              ; Default to not visited
+    xor     rax, rax
     mov     rcx, [visited_count]
     test    rcx, rcx
     jz      .not_visited
@@ -139,7 +148,7 @@ check_visited:
     mov     rdx, visited_rooms
 
 .check_loop:
-    cmp     [rdx], rsi            ; Compare with room in RSI
+    cmp     [rdx], rsi
     je      .is_visited
     add     rdx, 8
     dec     rcx

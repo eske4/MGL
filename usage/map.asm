@@ -1,7 +1,9 @@
-section .data
-global entry, room_A, room_B, room_E, room_D
+%define ID_LEN 32
+%define ROOM_COUNT 4
+%define MAX_CONNECTIONS 64
 
 section .data
+global entry, room_A, room_B, room_E, room_D
 
 align 8
 entry: dq room_A
@@ -25,4 +27,3 @@ align 8
 room_D:
     db "D", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     dq room_E, room_A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-
