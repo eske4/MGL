@@ -1,13 +1,10 @@
 #include <stdio.h>
 
-#pragma pack(push, 1)
 typedef struct Room
 {
-    char name[30];
-    struct Room* connections[3];
+    char name[32];
+    struct Room* connections[64];
 } Room;
-
-#pragma pack(pop)
 
 extern Room entry;
 extern Room room_A, room_B, room_E, room_D;

@@ -111,6 +111,7 @@ void generate_map(InstructionTable table)
         // Write entry information for the first room encountered
         if (!hasEntry)
         {
+            fprintf(file, "align 8\n");
             fprintf(file, "entry: dq room_%s\n\n", table->entries[i].args[0]);
             hasEntry = 1;
         }
@@ -171,6 +172,7 @@ void writeRoomAssembly(Room* room, FILE* file)
     if (room == NULL || room->id == NULL)
         return;
 
+    fprintf(file, "align 8\n");
     fprintf(file, "room_%s:\n", room->id);
 
     int roomIdLength     = strlen(room->id);              // Length of the room ID string

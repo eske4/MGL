@@ -6,8 +6,7 @@ class Room(Structure):
     pass
 
 
-Room._pack_ = 1
-Room._fields_ = [("name", c_char * 30), ("connections", POINTER(Room) * 3)]
+Room._fields_ = [("name", c_char * 32), ("connections", POINTER(Room) * 3)]
 
 try:
     lib = CDLL("./map.so")

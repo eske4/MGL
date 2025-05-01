@@ -1,7 +1,7 @@
 #pragma once
 #include <stddef.h>
 
-#define MAX_INPUT_SIZE 30 
+#define MAX_INPUT_SIZE 32 
 // Input to set max token length preventing user to overload compiler fx
 // identifier with length of 2k
 
