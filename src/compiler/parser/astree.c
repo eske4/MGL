@@ -33,25 +33,113 @@ ASTNode* ASTCreateMap(ASTree tree, const char* id, int pos)
     ASTResizeChildren(mapNode);
 
     ASTAddChild(mapNode, ASTCreateIdentifier(id));
-
     return mapNode;
 }
-
-ASTNode* ASTCreateMapConstr(ASTree tree, const char* id, int pos)
+// Create an Identifier leaf node in the AST
+ASTNode* ASTCreateIdentifier(const char* value)
 {
-    ASTNode* mapConstrNode        = calloc(1, sizeof(ASTNode));
-    mapConstrNode->pos            = pos;
-    mapConstrNode->type           = AT_MAP_CONSTR;
-    mapConstrNode->child_capacity = 0;
-    mapConstrNode->child_count    = 0;
-    ASTResizeChildren(mapConstrNode);
+    // Allocate memory for the new AST node (initialize to 0)
+    ASTNode* idNode = calloc(1, sizeof(ASTNode));
 
-    char idConstr[MAX_INPUT_SIZE];
-    snprintf(idConstr, sizeof(idConstr), "%sConstr", id);
+    if (idNode == NULL)
+    {
+        // Handle memory allocation failure if needed
+        free(idNode);
+        return NULL;
+    }
 
-    ASTAddChild(mapConstrNode, ASTCreateIdentifier(idConstr));
+    // Ensure the string fits into the fixed-size array (truncate if needed)
+    safe_strcpy(idNode->data, value, MAX_INPUT_SIZE - 1);
 
-    return mapConstrNode;
+    idNode->child_count    = 0;
+    idNode->child_capacity = 0;
+    idNode->children       = NULL;
+    idNode->type           = AT_IDENTIFIER;
+
+    return idNode;
+}
+
+ASTNode* ASTCreateConstrValue(const char* value)
+{
+    // Allocate memory for the new AST node (initialize to 0)
+    ASTNode* idNode = calloc(1, sizeof(ASTNode));
+
+    if (idNode == NULL)
+    {
+        // Handle memory allocation failure if needed
+        free(idNode);
+        return NULL;
+    }
+
+    // Ensure the string fits into the fixed-size array (truncate if needed)
+    safe_strcpy(idNode->data, value, MAX_INPUT_SIZE - 1);
+
+    idNode->child_count    = 0;
+    idNode->child_capacity = 0;
+    idNode->children       = NULL;
+    idNode->type           = AT_CONSTR_VALUE;
+
+    return idNode;
+}
+
+ASTNode* ASTCreateTerminalNode(AbstractTokenDef op)
+{
+    // Allocate memory for the new AST node (initialize to 0)
+    ASTNode* terminalNode = calloc(1, sizeof(ASTNode));
+
+    if (terminalNode == NULL)
+        return NULL;
+
+    terminalNode->type           = op;
+    terminalNode->child_count    = 0;
+    terminalNode->children       = NULL;
+    terminalNode->child_capacity = 0;
+
+    return terminalNode;
+}
+
+void ASTCreateMapConstr(ASTNode *mapNode, const char* id, int pos, AbstractTokenDef type, const char* value){
+    //check if given mapNode is not null
+    if(!mapNode)
+        return; 
+    //check if given mapNode need more capasity for child nodes
+    if (mapNode->child_count >= mapNode->child_capacity)
+        ASTResizeChildren(mapNode);
+
+    //reserve memory for a map constraint node
+    ASTNode* mapConstrNode = calloc(1, sizeof(ASTNode));
+    
+    //check if resevation/allocation worked
+    if (mapConstrNode == NULL)
+        return; 
+
+    //check if constraint type is given and set mapCostrNode type to given type
+    if (type)
+        mapConstrNode->type = type;
+
+    //add id to mapConstrNode
+    if (id)
+        safe_strcpy(mapConstrNode->data, id, MAX_INPUT_SIZE - 1); 
+
+    //add data to mapConstrNode
+    int child_capacity              = 1;
+    mapConstrNode->pos              = pos; 
+    mapConstrNode->child_count      = 0;
+    mapConstrNode->child_capacity   = 1;
+    mapConstrNode->children         = calloc(child_capacity, sizeof(ASTNode*));
+
+    //free mapConstrNode if allocation did not work 
+    if (mapConstrNode->children == NULL){
+        free(mapConstrNode);
+        return; 
+    }
+
+    //add child ASTNode to the mapConstrNode 
+    ASTAddChild(mapConstrNode, ASTCreateConstrValue(value));
+
+    //add the mapContrNode as a child to Map 
+    ASTAddChild(mapNode, mapConstrNode);
+
 }
 
 void ASTCreateRoom(ASTNode* mapNode, const char* id, int pos)
@@ -116,46 +204,6 @@ void ASTCreateConnect(ASTNode* mapNode, const char* id, const AbstractTokenDef o
     ASTAddChild(mapNode, connectNode);
 }
 
-// Create an Identifier leaf node in the AST
-ASTNode* ASTCreateIdentifier(const char* value)
-{
-    // Allocate memory for the new AST node (initialize to 0)
-    ASTNode* idNode = calloc(1, sizeof(ASTNode));
-
-    if (idNode == NULL)
-    {
-        // Handle memory allocation failure if needed
-        free(idNode);
-        return NULL;
-    }
-
-    // Ensure the string fits into the fixed-size array (truncate if needed)
-    safe_strcpy(idNode->data, value, MAX_INPUT_SIZE - 1);
-
-    idNode->child_count    = 0;
-    idNode->child_capacity = 0;
-    idNode->children       = NULL;
-    idNode->type           = AT_IDENTIFIER;
-
-    return idNode;
-}
-
-ASTNode* ASTCreateTerminalNode(AbstractTokenDef op)
-{
-    // Allocate memory for the new AST node (initialize to 0)
-    ASTNode* terminalNode = calloc(1, sizeof(ASTNode));
-
-    if (terminalNode == NULL)
-        return NULL;
-
-    terminalNode->type           = op;
-    terminalNode->child_count    = 0;
-    terminalNode->children       = NULL;
-    terminalNode->child_capacity = 0;
-
-    return terminalNode;
-}
-
 void ASTAddChild(ASTNode* parentNode, ASTNode* child)
 {
     if (!parentNode || !child)
@@ -186,6 +234,8 @@ void ASTResizeChildren(ASTNode* parentNode)
     parentNode->child_capacity = new_capacity; // Update capacity
 }
 
+//=================print AST function=================
+
 void ASTreePrintNode(ASTNode* node, int indent)
 {
     if (!node)
@@ -197,13 +247,15 @@ void ASTreePrintNode(ASTNode* node, int indent)
     switch (node->type)
     {
         case AT_MAP: printf("\nMap\n"); break;
-        case AT_MAP_CONSTR: printf("\nMapConstr\n"); break;
         case AT_ROOM: printf("\n    Room\n"); break;
         case AT_CONNECT: printf("\n    Connect%s\n", node->data); break;
         case AT_DIRECTED_EDGE: printf("        ->\n"); break;
         case AT_BIDIRECTIONAL_EDGE: printf("        <->\n"); break;
         case AT_IDENTIFIER: printf("        %s\n", node->data); break;
-        default: printf("Unknown node type: %d\n", node->type); break;
+        case AT_MAP_CONSTR_ROOMS: printf("        %s\n", node->data); break;
+        case AT_MAP_CONSTR_CONNECT: printf("        %s\n", node->data); break;
+        case AT_CONSTR_VALUE: printf("            %s\n", node->data); break;
+        default: printf("Unknown node type: %d\n", node->type); break; //print in AST if a node exist with different type
     }
 
     // Recursively print children with correct indentation
@@ -212,15 +264,16 @@ void ASTreePrintNode(ASTNode* node, int indent)
         ASTreePrintNode(node->children[i], indent);
     }
 }
-
 // Print the entire AST
 void ASTreePrint(ASTree tree)
 {
     if (!tree || !tree->head)
         return;
-
+    printf("\nAbstract Syntax Tree:");
     ASTreePrintNode(tree->head, 0);
 }
+
+//=================free AST functions=================
 
 void ASTFreeNode(ASTNode* node)
 {

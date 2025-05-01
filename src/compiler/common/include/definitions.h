@@ -22,7 +22,7 @@ typedef enum {
   T_EOF,                  // End Of File 
   T_MAP_CONSTR_ROOMS,     // maxRooms
   T_MAP_CONSTR_CONNECT,   // maxConnecPerRoom 
-  T_EQUAL,                // = 
+  T_EQUAL,                // =
 } TokenDef;
 
 typedef enum {
@@ -32,9 +32,9 @@ typedef enum {
   AT_DIRECTED_EDGE = T_DIRECTED_EDGE,               // ->
   AT_BIDIRECTIONAL_EDGE = T_BIDIRECTIONAL_EDGE,     // <->
   AT_IDENTIFIER = T_IDENTIFIER,                     // Variable/function name
-  AT_MAP_CONSTR,                                    // map constraint absttract token definition
-  AT_MAP_CONSTR_ROOMS,                              // maxROOMS abstract token definition 
-  AT_MAP_CONSTR_CONNECT,                            // maxConnectPerRoom abstract token definition 
+  AT_MAP_CONSTR_ROOMS = T_MAP_CONSTR_ROOMS,                              // maxROOMS abstract token definition 
+  AT_MAP_CONSTR_CONNECT = T_MAP_CONSTR_CONNECT,                            // maxConnectPerRoom abstract token definition 
+  AT_CONSTR_VALUE,
 
 } AbstractTokenDef;
 

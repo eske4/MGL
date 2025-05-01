@@ -23,8 +23,8 @@ ASTree ASTInit();                  // Initialize a new tree
 void ASTFree(ASTree tree);         // Free all tree nodes and memory
 
 // Node creation functions for different types of nodes
-ASTNode* ASTCreateMapConstr(ASTree tree, const char* id, int pos);
 ASTNode* ASTCreateMap(ASTree tree, const char* id, int pos);
+void ASTCreateMapConstr(ASTNode *mapNode, const char* id, int pos, AbstractTokenDef type, const char* value);
 void ASTCreateRoom(ASTNode *mapNode, const char* id, int pos);
 void ASTCreateConnect(ASTNode *mapNode, const char* id, const AbstractTokenDef op, const char* id2, int pos);
 

@@ -34,7 +34,6 @@ int scan(Token* t)
     int c        = skip();
     int startPos = cs.pos;
     return tokenize(t, c, startPos);
-    printf("Lexical analysis successful!\n");
 }
 
 ////////////////////////////////////////
