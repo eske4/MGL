@@ -1,6 +1,5 @@
-%define ID_LEN 30
+%define ID_LEN 32
 %define ROOM_COUNT 4
-
 
 section .data
 
@@ -12,3 +11,4 @@ section .bss
     stack            resq stack_size
     stack_top        resq 1
     visited_rooms    resq stack_size
+

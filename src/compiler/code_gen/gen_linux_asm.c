@@ -96,12 +96,6 @@ void generate_map(InstructionTable table)
 
     int hasEntry = 0;
 
-    // Check if the table has any entries before proceeding
-    if (table->count >= 1)
-    {
-        fprintf(file, "section .data\n\n");
-    }
-
     // Iterate through the instruction table and process room entries
     for (int i = 0; i < table->count; i++)
     {
@@ -112,7 +106,7 @@ void generate_map(InstructionTable table)
         if (!hasEntry)
         {
             fprintf(file, "align 8\n");
-            fprintf(file, "entry: dq room_%s\n\n", table->entries[i].args[0]);
+            fprintf(file, "entry: dq room_%s\n", table->entries[i].args[0]);
             hasEntry = 1;
         }
 
@@ -172,7 +166,7 @@ void writeRoomAssembly(Room* room, FILE* file)
     if (room == NULL || room->id == NULL)
         return;
 
-    fprintf(file, "align 8\n");
+    fprintf(file, "\nalign 8\n");
     fprintf(file, "room_%s:\n", room->id);
 
     int roomIdLength     = strlen(room->id);              // Length of the room ID string
