@@ -1,12 +1,20 @@
 import sys
 from ctypes import *
 
+MAX_CONNECTIONS = 4
+ID_LEN = 32
+ROOM_COUNT = 4
+
 
 class Room(Structure):
     pass
 
 
-Room._fields_ = [("name", c_char * 32), ("connections", POINTER(Room) * 3)]
+Room._fields_ = [
+    ("name", c_char * ID_LEN),
+    ("connections", POINTER(Room) * MAX_CONNECTIONS),
+]
+
 
 try:
     lib = CDLL("./map.so")
@@ -19,16 +27,24 @@ except Exception as e:
 def get_room(name):
     try:
         room = Room.in_dll(lib, name)
-        # Validate by checking first byte of name
-        if not room.name[0]:
-            print(f"Warning: Room {name} has empty name", file=sys.stderr)
-        return room
+        # Return a pointer to the room
+        return pointer(room)
     except Exception as e:
         print(f"Failed to get room {name}: {e}", file=sys.stderr)
         return None
 
 
+def get_entry(name):
+    try:
+        # This is a POINTER(Room) in C, so treat it as such
+        return POINTER(Room).in_dll(lib, name)
+    except Exception as e:
+        print(f"Failed to get entry {name}: {e}", file=sys.stderr)
+        return None
+
+
 rooms = {
+    "entry": get_entry("entry"),
     "A": get_room("room_A"),
     "B": get_room("room_B"),
     "E": get_room("room_E"),
@@ -52,8 +68,8 @@ def print_room(room_ptr):
     print(f"Room: {room.name.decode('utf-8', errors='replace')}")
     print("Connections: ", end="")
 
-    for i in range(3):
-        exit_ptr = room.exits[i]
+    for i in range(MAX_CONNECTIONS):
+        exit_ptr = room.connections[i]
         exit_room = safe_deref(exit_ptr)
         if exit_room:
             print(f"{exit_room.name.decode('utf-8', errors='replace')} ", end="")
@@ -65,13 +81,19 @@ if __name__ == "__main__":
     for name, room in rooms.items():
         print(f"Room {name} at {addressof(room) if room else 'NULL'}")
 
-    print("\n=== Room Structure ===")
-    for room in rooms.values():
-        if room:
-            print_room(pointer(room))
+    print("\n=== Room Structure ===\n")
+    for name, room in rooms.items():
+        if name == "entry":
+            print(f"=== Entry Room ===")
+            # Directly use the address stored in entry and print the room it points to
+            print_room(room)  # Now it dereferences correctly and points to room_A
+            print(f"==================\n")
+
+        else:
+            print_room(room)  # Pass the room directly, since it's already a pointer
 
     print("=== Safe Traversal ===")
-    current = pointer(rooms["A"]) if rooms["A"] else None
+    current = rooms["A"] if rooms["A"] else None
     max_steps = 5
 
     while current and max_steps > 0:

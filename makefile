@@ -40,5 +40,5 @@ c_demo:
 	@cd $(USAGE_DIR) && $(MAKE) c_demo
 
 py_demo:
-	@cd $(USAGE_DIR) && $(MAKE) c_demo
+	@cd $(USAGE_DIR) && $(MAKE) py_demo
 

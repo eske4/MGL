@@ -1,12 +1,15 @@
 #include <stdio.h>
+#define ID_LEN         32
+#define MAX_CONNECTION 64
+#define ROOM_COUNT     4
 
 typedef struct Room
 {
-    char name[32];
-    struct Room* connections[64];
+    char name[ID_LEN];
+    struct Room* connections[MAX_CONNECTION];
 } Room;
 
-extern Room entry;
+extern Room* entry;
 extern Room room_A, room_B, room_E, room_D;
 
 void print_room(Room* room)
@@ -20,7 +23,7 @@ void print_room(Room* room)
     printf("Room: %s\n", room->name);
     printf("Connections: ");
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < ROOM_COUNT; i++)
     {
         if (room->connections[i])
         {
@@ -33,7 +36,13 @@ void print_room(Room* room)
 int main()
 {
     // Print all rooms
-    printf("=== Room Structure ===\n");
+    printf("=== Room Structure ===\n\n");
+
+    printf("=== Entry Room ===\n");
+    print_room(entry);
+
+    printf("===    Rooms   ===\n");
+    print_room(entry);
     print_room(&room_A);
     print_room(&room_B);
     print_room(&room_E);
@@ -42,7 +51,7 @@ int main()
     // Safe traversal demo
     printf("=== Safe Traversal ===\n");
     Room* current = &room_A;
-    int max_steps = 5;
+    int max_steps = ROOM_COUNT + 1;
 
     while (current && max_steps--)
     {
