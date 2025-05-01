@@ -36,3 +36,7 @@ desktop.ini
 compile_commands.json
 .cache
 CPM_modules/
+assembly/generated/map.asm
+assembly/generated/config.asm
+assembly/main.out
+assembly/main.o

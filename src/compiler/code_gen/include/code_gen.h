@@ -1,10 +1,17 @@
 #pragma once
 
 #include "instr_table.h"
-#include "definitions.h"
 
 #define MAX_CONNECTIONS 64
+#define MAX_PATH_SIZE 10000
 
-const char assembly_file[MAX_INPUT_SIZE] = "map_gen";
+typedef struct Room
+{
+    char* id;
+    char** connections;
+    int connCount;
+} Room;
+
+
 
 void generate_assembly(InstructionTable table);
