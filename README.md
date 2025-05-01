@@ -55,20 +55,20 @@ Computer Science Master's Project (Second Semester)
   
 4. **Use Generated Assembly**  
    The assembly code is saved to `data/map.asm`. This file can now be used in other applications as its assembly representation.  
-   You can integrate this `map.asm` file into your project or use it with any tool that supports assembly input. For more information, refer to the integration section.
+   You can integrate this `map.asm` file into tools that supports assembly input. For more information, refer to the integration section.
 
 ## Command Reference
 
-| Command          | Description                                  |
-|-----------------|---------------------------------------------|
-| `make`            | Full pipeline (build -> test -> generate)    |
-| `make build`      | Compiles all C/C++ sources                  |
-| `make generate`   | Converts input.MF to assembly               |
-| `make run`        | Executes and validates generated map        |
-| `make test`       | Runs unit and integration tests                     |
-| `make clean`      | Removes build artifacts                     |
-| `make py_demo`    | Runs Python integration demo (NASM assembly linked with Python)   |
-| `make c_demo`    | Runs C integration demo (NASM assembly linked with C)   |
+| Command          | Description                                                  |
+|------------------|--------------------------------------------------------------|
+| `make`           | Runs the full pipeline (build, test, and generate)            |
+| `make build`     | Compiles all C/C++ source files                              |
+| `make generate`  | Converts `input.MF` to assembly code                         |
+| `make run`       | Executes a map validation algorithm                        |
+| `make test`      | Runs unit and integration tests                              |
+| `make clean`     | Removes all build artifacts                                  |
+| `make py_demo`   | Runs a Python integration demo (NASM assembly linked with Python) |
+| `make c_demo`    | Runs a C integration demo (NASM assembly linked with C)      |
 
 ## Testing
 Run the verification suite:
