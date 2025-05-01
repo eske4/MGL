@@ -63,13 +63,14 @@ void PrintSymbolTable(const SymbolTable table)
 }
 
 //main typecheck function
-void TypeCheck(const ASTree tree)
+int TypeCheck(const ASTree tree)
 {
     SymbolTable table = InitSymbolTable(20); //initiate symboltable with a initial capacity of 20
     ASTNode* root     = tree->head;
     TraverseAST(root, table);
     PrintSymbolTable(table);
     FreeSymbolTable(table);
+    return 1;
 }
 
 //ceck if room is part of symboltalbe
