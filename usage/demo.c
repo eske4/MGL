@@ -4,7 +4,7 @@
 typedef struct Room
 {
     char name[30];
-    struct Room* exits[3];
+    struct Room* connections[3];
 } Room;
 
 #pragma pack(pop)
@@ -21,13 +21,13 @@ void print_room(Room* room)
     }
 
     printf("Room: %s\n", room->name);
-    printf("Exits: ");
+    printf("Connections: ");
 
     for (int i = 0; i < 3; i++)
     {
-        if (room->exits[i])
+        if (room->connections[i])
         {
-            printf("%s ", room->exits[i]->name);
+            printf("%s ", room->connections[i]->name);
         }
     }
     printf("\n\n");
@@ -50,7 +50,7 @@ int main()
     while (current && max_steps--)
     {
         print_room(current);
-        current = current->exits[0]; // Move to first exit
+        current = current->connections[0]; // Move to first exit
     }
 
     return 0;

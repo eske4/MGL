@@ -7,7 +7,7 @@ class Room(Structure):
 
 
 Room._pack_ = 1
-Room._fields_ = [("name", c_char * 30), ("exits", POINTER(Room) * 3)]
+Room._fields_ = [("name", c_char * 30), ("connections", POINTER(Room) * 3)]
 
 try:
     lib = CDLL("./map.so")
@@ -51,7 +51,7 @@ def print_room(room_ptr):
         return
 
     print(f"Room: {room.name.decode('utf-8', errors='replace')}")
-    print("Exits: ", end="")
+    print("Connections: ", end="")
 
     for i in range(3):
         exit_ptr = room.exits[i]
@@ -77,6 +77,6 @@ if __name__ == "__main__":
 
     while current and max_steps > 0:
         print_room(current)
-        next_ptr = safe_deref(current).exits[0] if safe_deref(current) else None
+        next_ptr = safe_deref(current).connections[0] if safe_deref(current) else None
         current = next_ptr if next_ptr else None
         max_steps -= 1
