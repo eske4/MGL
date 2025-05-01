@@ -1,4 +1,4 @@
-Map map (maxRooms=4; maxConnectPerRoom = 20;) {
+Map map (maxRooms=3; maxConnectPerRoom = 20;) {
     Room A;
     Room B;
 

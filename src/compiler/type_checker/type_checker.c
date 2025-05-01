@@ -17,7 +17,6 @@ void checkMap(SymbolTable table, const char *id, const ASTNode *node);
 void checkRoom(SymbolTable table, const char *id, const ASTNode *node);
 void checkRoomsInConnection(char *id, char *id2, SymbolTable table, const ASTNode *node);
 void checkConnection(SymbolTable table, const char *id, const ASTNode *node);
-void checkRoomConstr(SymbolTable table, int value);
 void checkConnectConstr(SymbolTable table, int value);
 void reportSemanticError(ErrorCode err, int pos, const char* msg);
 void PrintSymbolTable(const SymbolTable table);
@@ -43,7 +42,12 @@ void TraverseAST(const ASTNode* node, const SymbolTable table){
         case AT_ROOM: //if AT_ROOM type
             checkRoom(table, node->children[0]->data, node);
             AddSymbolTable(table, node->children[0]->data, node); 
-            roomCount ++; break;
+            if (roomConstr.first == 1){
+                roomCount ++;
+                if (roomCount > roomConstr.second) 
+                    reportSemanticError(ERR_SEMANTIC, 0, "Number of rooms exceeds room constraint"); // need better error message
+                break;
+            }
             
         case AT_CONNECT: //if AT_ROOM type
             char* connection_id = malloc(strlen(node->children[0]->data) + strlen(node->children[2]->data) + 2);
@@ -65,8 +69,6 @@ void TypeCheck(const ASTree tree){
     SymbolTable table = InitSymbolTable(20); //initiate symboltable with a initial capacity of 20
     ASTNode* root = tree->head;
     TraverseAST(root, table); 
-    if (roomConstr.first == 1)
-        checkRoomConstr(table, roomConstr.second);
     if (connectConstr.first == 1)
         checkConnectConstr(table, connectConstr.second);
     PrintSymbolTable(table); 
@@ -124,12 +126,6 @@ void checkRoomsInConnection(char *id, char *id2, SymbolTable table, const ASTNod
     if(strcmp(idRef->id, id2Ref->id) == 0)
         reportSemanticError(ERR_SEMANTIC, node->pos, "Can't connect a Room to itself");
     
-}
-
-void checkRoomConstr(SymbolTable table, int value){
-    if (roomCount > value) 
-        reportSemanticError(ERR_SEMANTIC, 0, "Number of rooms exceeds room constraint"); // need better error message
-
 }
 
 void checkConnectConstr(SymbolTable table, int value){
