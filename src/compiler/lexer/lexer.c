@@ -188,6 +188,14 @@ int match_map(const Map map[], const char* key, const int pos, Token* token, con
 //fill token struct with token info
 int set_token(Token* t, TokenDef type, const char* value, int pos)
 {
+    if (type == T_EOF) {
+        if (!t) return 0;
+        t->token    = T_EOF;
+        t->pos      = pos;
+        t->value[0] = '\0';
+        return 1;
+    }
+
     if (!t || !value || *value == '\0')
         return 0;
 

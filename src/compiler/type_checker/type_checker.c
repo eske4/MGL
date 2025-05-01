@@ -69,7 +69,7 @@ void TraverseAST(const ASTNode* node, const SymbolTable table){
 }
 
 //main typecheck function
-void TypeCheck(const ASTree tree)
+int TypeCheck(const ASTree tree)
 {
     SymbolTable table = InitSymbolTable(20); //initiate symboltable with a initial capacity of 20
     ASTNode* root = tree->head;
@@ -78,6 +78,7 @@ void TypeCheck(const ASTree tree)
         checkConnectConstr(table, connectConstr.second);
     PrintSymbolTable(table); 
     FreeSymbolTable(table);
+    return 1;
 }
 
 //ceck if map is part of symboltalbe

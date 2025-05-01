@@ -3,5 +3,4 @@
 #include "astree.h"
 
 // Analysis
-void TypeCheck(const ASTree tree);
-
+int TypeCheck(const ASTree tree);
