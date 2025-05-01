@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     print("=== Safe Traversal ===")
     current = rooms["A"] if rooms["A"] else None
-    max_steps = 5
+    max_steps = ROOM_COUNT + 1
 
     while current and max_steps > 0:
         print_room(current)
