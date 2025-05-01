@@ -15,7 +15,7 @@ void compile(const char* input)
 
     // --- STAGE 1: Lexing ---
     scan(&currentToken); // Initialize the Lexer
-
+    
     // --- STAGE 2: Parsing ---
     ASTree tree = parse(&currentToken);
     if (tree && tree->head)

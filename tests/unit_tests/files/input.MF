@@ -1,10 +1,8 @@
 Map map {
-    Room A;C
-    Room B;C
-
+    Room A;
+    Room B;
     Connect(A -> B);
     Room E;
     Room D;
     Connect(E <-> D);
-    Connect(A <-> D);
 }
