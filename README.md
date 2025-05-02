@@ -156,8 +156,7 @@ gcc -shared map.o -o map.so
 python demo.py
 ```
 
-
-#### macOS
+#### macOS (Apple Silicon – arm64 via Rosetta 2)
 
 **C:**
 
