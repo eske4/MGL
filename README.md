@@ -131,7 +131,8 @@ make c_demo    # C integration
 make py_demo   # Python integration
 ```
 **Note:** Win only support quickdemo on WSL2
-**Note:** On macOS, the Python demo requires setting up a Conda Enviroment(#conda-setup). If already done before running quickdemo conda activate my_x86_env 
+
+**Note:** On macOS, the Python demo requires setting up a [Conda Enviroment](#conda setup). If already done before running quickdemo conda activate my_x86_env 
 
 ### Manual Compilation
 
@@ -166,7 +167,7 @@ arch -x86_64 clang demo.c map.o -o c_demo
 ./c_demo
 ```
 
-**Conda Setup** {#conda-setup}
+**Conda Setup**
 ```bash
 conda create -n my_x86_env -y
 conda activate my_x86_env
