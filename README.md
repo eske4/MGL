@@ -96,7 +96,9 @@ Note: Windows users must use WSL2 to run this.
 ## Testing
 
 Run the verification suite:
+```bash
 make test
+```
 
 ---
 
