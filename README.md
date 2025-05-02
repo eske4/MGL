@@ -130,7 +130,8 @@ You’ll find example C and Python integrations under `usage/`.
 make c_demo    # C integration
 make py_demo   # Python integration
 ```
-Note: Win only support quickdemo on WSL2
+**Note:** Win only support quickdemo on WSL2
+**Note:** On macOS, the Python demo requires setting up a [Conda Enviroment](#conda-setup). 
 
 ### Manual Compilation
 
@@ -165,13 +166,19 @@ arch -x86_64 clang demo.c map.o -o c_demo
 ./c_demo
 ```
 
-**Python (with Conda):**
-
+**Conda Setup** {#conda-setup}
 ```bash
 conda create -n my_x86_env -y
 conda activate my_x86_env
 conda config --env --set subdir osx-64
 conda install python=3.10
+```
+
+**Python (with Conda):**
+
+```bash
+conda activate my_x86_env
+
 nasm -f macho64 map_mac.asm -o map.o
 arch -x86_64 clang -shared map.o -o map.so
 python demo.py
