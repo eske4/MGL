@@ -131,7 +131,7 @@ make c_demo    # C integration
 make py_demo   # Python integration
 ```
 **Note:** Win only support quickdemo on WSL2
-**Note:** On macOS, the Python demo requires setting up a [Conda Enviroment](#conda-setup). 
+**Note:** On macOS, the Python demo requires setting up a Conda Enviroment(#conda-setup). If already done before running quickdemo conda activate my_x86_env 
 
 ### Manual Compilation
 
