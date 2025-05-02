@@ -21,7 +21,7 @@ else ifeq ($(UNAME_S), Darwin)
 	@arch -x86_64 clang demo.c map.o -o c_demo
 	@echo "Make sure you have Conda environment installed to run python script! Reference to README 'Python Environment Setup'"
 else
-    $(error Unsupported OS: $(UNAME_S))
+	$(error USAGE demos: Unsupported OS: $(UNAME_S))
 endif
 
 py_demo:
