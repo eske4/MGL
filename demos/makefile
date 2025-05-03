@@ -8,7 +8,7 @@ C_DEMO = c_demo
 # Phony targets (don't create files with these names)
 .PHONY: all clean compile py_demo c_demo
 
-all: compile py_demo c_demo
+all: build py_demo c_demo
 
 build:
 ifeq ($(UNAME_S), Linux)
