@@ -1,15 +1,14 @@
 #include <gtest/gtest.h>
+#include "file_config.c"
 extern "C"{
     #include "compiler_state.h"
     #include "lexer.h"
-    #include "definitions.h"
     }
 
 TEST(LexerTest, FullFileTokenSequence) {
     // --- Arrange --------------------------------------------------
     csInit();
-
-    std::string path = "/home/toms/MGL/tests/unit_tests/files/input.MF";
+    std::string path = std::string(TEST_FILE_DIR) + "input_success.MF";
     ASSERT_EQ(1, csOpenFile(path.c_str()))
       << "couldn't open " << path;
   
@@ -63,4 +62,20 @@ TEST(LexerTest, FullFileTokenSequence) {
           << "at #" << i << ", lexeme";
       }
     }
+  }
+
+TEST(LexerTest, LexicalError) {
+    // --- Arrange --------------------------------------------------
+    setTestMode(1);
+
+    csInit();
+    std::string path = std::string(TEST_FILE_DIR) + "input_fail.MF";
+    ASSERT_EQ(1, csOpenFile(path.c_str()))
+      << "couldn't open " << path;
+  
+    Token t;
+  
+    int rc = scan(&t);
+    EXPECT_EQ(ERR_LEXER, rc)
+      << "Expected ERR_LEXER when the file starts with '@', got " << rc;
   }

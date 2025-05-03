@@ -1,9 +1,8 @@
-Map map {
+@Map map {
     Room A;
     Room B;
     Connect(A -> B);
     Room E;
     Room D;
     Connect(E <-> D);
-    Connect(A <-> D);
 }

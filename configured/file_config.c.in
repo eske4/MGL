@@ -2,3 +2,5 @@
 
 static const char GENERATED_ASM_DIR[]    = "@GENERATED_ASM_DIR@";
 static const char SOURCE_CODE_FILE[]    = "@SOURCE_CODE_FILE@";
+static const char TEST_FILE_DIR[]    = "@TEST_FILE_DIR@";
+
