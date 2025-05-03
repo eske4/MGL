@@ -121,7 +121,7 @@ make clean
 
 ## Integration
 
-You’ll find example C and Python integrations under `demo/`.
+You’ll find example C and Python integrations under `demos/`.
 
 ### Quick Demos
 
