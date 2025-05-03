@@ -45,10 +45,10 @@ assembly/main.o
 
 
 # Demo artefacts
-demo/c_demo.exe
-demo/c_demo
-demo/map.o
-demo/map.so
+demos/c_demo.exe
+demos/c_demo
+demos/map.o
+demos/map.so
 
 # Generated files
 generated/interfaces/mf_interface.h
