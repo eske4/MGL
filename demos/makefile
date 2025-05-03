@@ -14,11 +14,11 @@ build:
 ifeq ($(UNAME_S), Linux)
 	@nasm -f elf64 map.asm -o map.o
 	@gcc -shared map.o -o map.so
-	@gcc demo.c mgl_interface.h map.o -o c_demo
+	@gcc demo.c mf_interface.h map.o -o c_demo
 else ifeq ($(UNAME_S), Darwin)
 	@nasm -f macho64 map_mac.asm -o map.o
 	@arch -x86_64 clang -shared map.o -o map.so
-	@arch -x86_64 clang demo.c mgl_interface.h map.o -o c_demo
+	@arch -x86_64 clang demo.c mf_interface.h map.o -o c_demo
 	@echo "Make sure you have Conda environment installed to run python script! Reference to README 'Python Environment Setup'"
 else
 	$(error USAGE demos: Unsupported OS: $(UNAME_S))

@@ -3,7 +3,7 @@
 if "%1" == "build" (
     nasm -f win64 map.asm -o map.o
     gcc -shared map.o -o map.so
-    gcc demo.c mgl_interface.h map.so -o c_demo
+    gcc demo.c mf_interface.h map.so -o c_demo
 )
 
 if "%1" == "c_demo" (
