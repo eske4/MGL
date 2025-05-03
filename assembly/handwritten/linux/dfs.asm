@@ -1,8 +1,8 @@
 ; ====================== DATA SECTION ======================
 section .data
     ; Status messages
-    warning_msg:    dq "WARNING: Not all rooms could be traversed", 0
-    success_msg:    dq "SUCCESS: All rooms are reachable", 0
+    warning_msg:    dq "WARNING: The dungeon layout contains potential dead ends. Be mindful of your choices.", 0
+    success_msg:    dq "SUCCESS: The dungeon map has been designed without any dead ends. All paths lead somewhere.", 0
     traverse_msg:   dq "Traversed room: ", 0
 
 ; ====================== CODE SECTION ======================

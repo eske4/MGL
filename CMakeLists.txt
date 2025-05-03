@@ -21,7 +21,7 @@ include(Build)
 include(CPM)
 include(Packages)
 
-add_subdirectory(configured)
+add_subdirectory(config)
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(app)

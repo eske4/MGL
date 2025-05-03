@@ -3,7 +3,7 @@ from ctypes import *
 
 MAX_CONNECTIONS = 4
 ID_LEN = 32
-ROOM_COUNT = 4
+ROOM_COUNT = 5
 
 
 class Room(Structure):
@@ -45,10 +45,11 @@ def get_entry(name):
 
 rooms = {
     "entry": get_entry("entry"),
-    "A": get_room("room_A"),
-    "B": get_room("room_B"),
-    "E": get_room("room_E"),
-    "D": get_room("room_D"),
+    "start": get_room("room_start"),
+    "dungeon1": get_room("room_dungeon_1"),
+    "dungeon2": get_room("room_dungeon_2"),
+    "trap": get_room("room_trap"),
+    "end": get_room("room_end"),
 }
 
 
@@ -93,7 +94,7 @@ if __name__ == "__main__":
             print_room(room)  # Pass the room directly, since it's already a pointer
 
     print("=== Safe Traversal ===")
-    current = rooms["A"] if rooms["A"] else None
+    current = rooms["entry"] if rooms["entry"] else None
     max_steps = ROOM_COUNT + 1
 
     while current and max_steps > 0:
