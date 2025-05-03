@@ -1,10 +1,16 @@
 Map map {
-    Room A;
-    Room B;
+    Room start;
+    Room dungeon_1;
+    Room dungeon_2;
 
-    Connect(A -> B);
-    Room E;
-    Room D;
-    Connect(E <-> D);
-    Connect(A <-> D);
+    Connect(start -> dungeon_1);
+    Connect(start -> dungeon_2);
+
+    Room end;
+    Room trap;
+
+    Connect(trap -> start);
+
+    Connect(dungeon_1 -> trap);
+    Connect(dungeon_2 -> end);
 }

@@ -4,7 +4,6 @@ Computer Science Master's Project (Second Semester)
 
 **MGL** is a simple domain-specific language (DSL) for defining and compiling graph-based map structures. It was developed as a university project using C/C++, with inspiration drawn from how maps are represented in computer games.
 
-
 ---
 
 ## Installation & Setup
@@ -65,37 +64,37 @@ make run
 ```
 
 The validator checks:
-- All rooms are traversable
 
+- All rooms are traversable
 
 Note: Windows users must use WSL2 to run this.
 
 ### 4. Use Generated Assembly
 
-- Output: `data/map.asm`
+- Output: `generated/map.asm` file, along with interfaces for communication with the assembly code.
 - Can be embedded in C, Python, or other tools supporting assembly
-
 
 ---
 
 ## Command Reference
 
-| Command         | Description                                                       |
-|----------------|-------------------------------------------------------------------|
-| `make`          | Full pipeline: (build -> test -> generate)                        |
-| `make build`    | Compile all C/C++ source files                                    |
-| `make generate` | Convert `.MF` map into assembly code                              |
-| `make run`      | Validate map traversal and integrity                              |
-| `make test`     | Run unit and integration tests                                    |
-| `make clean`    | Remove all build artifacts                                        |
-| `make py_demo`  | Run Python integration demo (NASM + Python)                       |
-| `make c_demo`   | Run C integration demo (NASM + C)                                 |
+| Command         | Description                                 |
+| --------------- | ------------------------------------------- |
+| `make`          | Full pipeline: (build -> test -> generate)  |
+| `make build`    | Compile all C/C++ source files              |
+| `make generate` | Convert `.MF` map into assembly code        |
+| `make run`      | Validate map traversal and integrity        |
+| `make test`     | Run unit and integration tests              |
+| `make clean`    | Remove all build artifacts                  |
+| `make py_demo`  | Run Python integration demo (NASM + Python) |
+| `make c_demo`   | Run C integration demo (NASM + C)           |
 
 ---
 
 ## Testing
 
 Run the verification suite:
+
 ```bash
 make test
 ```
@@ -118,13 +117,11 @@ make clean
 - **Build issues**: Confirm compiler supports C++23/C23
 - **WSL2 users**: Make sure it's updated and properly configured
 
-
 ---
 
 ## Integration
 
-You’ll find example C and Python integrations under `usage/`.
-
+You’ll find example C and Python integrations under `demo/`.
 
 ### Quick Demos
 
@@ -132,13 +129,14 @@ You’ll find example C and Python integrations under `usage/`.
 make c_demo    # C integration
 make py_demo   # Python integration
 ```
+
 **Note:** Win only support quickdemo on WSL2
 
-**Note:** On macOS, the Python demo requires setting up a Conda Enviroment [See Conda Setup](#conda-setup). If already done before running quickdemo `conda activate my_x86_env` 
+**Note:** On macOS, the Python demo requires setting up a Conda Enviroment [See Conda Setup](#conda-setup). If already done before running quickdemo `conda activate my_x86_env`
 
 ### Manual Compilation
 
-Prefer to build it yourself? Here's how to compile everything manually from the `usage/` directory:
+Prefer to build it yourself? Here's how to compile everything manually from the `demo/` directory:
 
 #### Linux
 
@@ -169,6 +167,7 @@ arch -x86_64 clang demo.c map.o -o c_demo
 ```
 
 **Conda Setup**
+
 ```bash
 conda create -n my_x86_env -y
 conda activate my_x86_env
@@ -208,10 +207,11 @@ winmake.bat c_demo
 winmake.bat py_demo
 ```
 
+For manual compilation, refer to the commands inside `winmake.bat`
+
 If Python demo fails, ensure MSYS2’s Python is being used, not the system default.
 
 ---
-
 
 ## Original authors:
 

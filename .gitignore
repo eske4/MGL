@@ -36,11 +36,20 @@ desktop.ini
 compile_commands.json
 .cache
 CPM_modules/
+
+# Assembly game and analysis tool artefacts
 assembly/generated/map.asm
 assembly/generated/config.asm
 assembly/main.out
 assembly/main.o
-usage/c_demo.exe
-usage/c_demo
-usage/map.o
-usage/map.so
+
+
+# Demo artefacts
+demo/c_demo.exe
+demo/c_demo
+demo/map.o
+demo/map.so
+
+# Generated files
+generated/interfaces/mf_interface.h
+generated/asm/map.asm
