@@ -1,4 +1,4 @@
-set(GENERATED_ASM_DIR "${CMAKE_SOURCE_DIR}/assembly/generated/")
+set(ASM_DIR "${CMAKE_SOURCE_DIR}/assembly/generated/")
 set(SOURCE_CODE_FILE "${CMAKE_SOURCE_DIR}/data/input.MF")
 set(GENERATED_DIR "${CMAKE_SOURCE_DIR}/generated/")
 

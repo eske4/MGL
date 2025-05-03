@@ -21,7 +21,7 @@ void generate_assembly(InstructionTable table)
 {
     printf("Code Generation\n");
 
-    const char* asmVerificationPath[] = {GENERATED_ASM_DIR, "map.asm"};
+    const char* asmVerificationPath[] = {ASM_DIR, "map.asm"};
     const char* generatedPath[]       = {GENERATED_DIR, "asm/map.asm"};
 
     printf("\n");
@@ -51,7 +51,7 @@ void generate_config(InstructionTable table)
 {
 
     char fileLoc[MAX_PATH_SIZE] = {0};
-    const char* path[]          = {GENERATED_ASM_DIR, "config.asm"};
+    const char* path[]          = {ASM_DIR, "config.asm"};
     safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
     FILE* file     = fopen(fileLoc, "w");
     int room_count = countRooms(table);
