@@ -136,7 +136,7 @@ make py_demo   # Python integration
 
 ### Manual Compilation
 
-Prefer to build it yourself? Here's how to compile everything manually from the `demo/` directory:
+Prefer to build it yourself? Here's how to compile everything manually from the `demos/` directory:
 
 #### Linux
 
