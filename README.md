@@ -1,30 +1,40 @@
 # MGL - Map Generation Language
+
 Computer Science Master's Project (Second Semester)
 
 **MGL** is a simple domain-specific language (DSL) for defining and compiling graph-based map structures. It was developed as a university project using C/C++, with inspiration drawn from how maps are represented in computer games.
 
+---
+
 ## Installation & Setup
 
 ### System Requirements
-| Component      | Linux(Arch, Ubuntu)                  | macOS                  | Windows (WSL2)        |
-|---------------|------------------------|------------------------|-----------------------|
-| **Compiler**  | GCC ≥ 14.2.1           | GCC 16+              | GCC via Ubuntu/Arch   |
-| **Assembler**  | NASM ≥ 2.16.03          | NASM ≥ 2.16.03       | NASM via Ubuntu/Arch   |
-| **Build Tools**| CMake ≥ 3.25.1         | CMake ≥ 3.25.1         | CMake ≥ 3.25.1        |
-|               | GNU Make ≥ 4.4.1         | GNU Make ≥ 4.4.1       | GNU Make ≥ 4.4.1        |
-| **Demo Tools**  | Python ≥ 3.13.3         | Python ≥ 3.13.3       | Python ≥ 3.13.3        |
-| **Environment**| -                      | Ventura+ recommended   | WSL2 with Ubuntu/Arch |
 
-*Note: All platforms require standard C23/C++23 toolchain support.*
+| Component       | Linux(Arch, Ubuntu) | macOS                  | Windows (WSL2)        |
+| --------------- | ------------------- | ---------------------- | --------------------- |
+| **Compiler**    | GCC ≥ 14.2.1        | CLANG 16+              | GCC via Ubuntu/Arch   |
+| **Assembler**   | NASM ≥ 2.16.03      | NASM ≥ 2.16.03         | NASM via Ubuntu/Arch  |
+| **Build Tools** | CMake ≥ 3.25.1      | CMake ≥ 3.25.1         | CMake ≥ 3.25.1        |
+|                 | GNU Make ≥ 4.4.1    | GNU Make ≥ 4.4.1       | GNU Make ≥ 4.4.1      |
+| **Demo Tools**  | Python ≥ 3.13.3     | Python Anaconda ≥ 3.10 | Python ≥ 3.13.3       |
+| **Environment** | -                   | Sequoia Recommended    | WSL2 with Ubuntu/Arch |
+
+_Note: All platforms require standard C23/C++23 toolchain support._
+
+---
 
 ### Building from Source
+
 1. git clone https://github.com/eske4/MGL.git
 2. cd MGL
 3. make build
 
+---
+
 ## Usage Workflow
 
-1. **Design your map**  
+1. **Design your map**
+
    - File location: `data/input.MF`
    - Basic syntax:
      ```
@@ -35,92 +45,175 @@ Computer Science Master's Project (Second Semester)
      }
      ```
    - Key rules:
-     * **Map declaration**: `Map mapname { ... }`
-     * **Rooms**: `Room RoomName;`
-     * **Connections**:  
-       - `->` for one-way  
-       - `<->` for two-way  
-     * End all statements with a semicolon (`;`)
-     * See `data/input_example.MF` for complete examples.
+     - **Map declaration**: `Map mapname { ... }`
+     - **Rooms**: `Room RoomName;`
+     - **Connections**:
+       - `->` for one-way
+       - `<->` for two-way
+     - End all statements with a semicolon (`;`)
+     - See `data/input_example.MF` for complete examples.
 
 2. **Generate assembly**  
    To generate assembly code:  
    `make generate`
 
-3. **Validate map**  
-   Run the validation process:  
-   `make run`  
-   Validator checks:
-   * All rooms are traversable.
-  
-4. **Use Generated Assembly**  
-   The assembly code is saved to `data/map.asm`. This file can now be used in other applications as its assembly representation.  
-   You can integrate this `map.asm` file into tools that supports assembly input. For more information, refer to the integration section.
+### 3. Validate the Map
+
+```bash
+make run
+```
+
+The validator checks:
+
+- All rooms are traversable
+
+Note: Windows users must use WSL2 to run this.
+
+### 4. Use Generated Assembly
+
+- Output: `generated/map.asm` file, along with interfaces for communication with the assembly code.
+- Can be embedded in C, Python, or other tools supporting assembly
+
+---
 
 ## Command Reference
 
-| Command          | Description                                                  |
-|------------------|--------------------------------------------------------------|
-| `make`           | Runs the full pipeline (build, test, and generate)            |
-| `make build`     | Compiles all C/C++ source files                              |
-| `make generate`  | Converts `input.MF` to assembly code                         |
-| `make run`       | Executes a map validation algorithm                        |
-| `make test`      | Runs unit and integration tests                              |
-| `make clean`     | Removes all build artifacts                                  |
-| `make py_demo`   | Runs a Python integration demo (NASM assembly linked with Python) |
-| `make c_demo`    | Runs a C integration demo (NASM assembly linked with C)      |
+| Command         | Description                                 |
+| --------------- | ------------------------------------------- |
+| `make`          | Full pipeline: (build -> test -> generate)  |
+| `make build`    | Compile all C/C++ source files              |
+| `make generate` | Convert `.MF` map into assembly code        |
+| `make run`      | Validate map traversal and integrity        |
+| `make test`     | Run unit and integration tests              |
+| `make clean`    | Remove all build artifacts                  |
+| `make py_demo`  | Run Python integration demo (NASM + Python) |
+| `make c_demo`   | Run C integration demo (NASM + C)           |
+
+---
 
 ## Testing
+
 Run the verification suite:
+
+```bash
 make test
+```
+
+---
 
 ## Maintenance
-Clean build artifacts:
+
+Clean up build artifacts:
+
+```bash
 make clean
+```
+
+---
 
 ## Troubleshooting
-- Map generation errors: Check data/input.MF syntax
-- Build issues: Verify compiler versions support C++23/C23
-- Runtime problems: Ensure WSL 2 is updated if on Windows
+
+- **Map generation error**: Check `data/input.MF` syntax
+- **Build issues**: Confirm compiler supports C++23/C23
+- **WSL2 users**: Make sure it's updated and properly configured
+
+---
 
 ## Integration
 
-Example integrations using **C** and **Python** can be found in the `usage/` directory. These demos show how to link the generated `map.asm` file into a working program.
+You’ll find example C and Python integrations under `demos/`.
 
-### Run the Examples
-
-To quickly build and run the demos, use the provided Makefile (all can be done from the root project):
+### Quick Demos
 
 ```bash
-make c_demo    # Build and run the C demo
-make py_demo   # Build and run the Python demo
+make c_demo    # C integration
+make py_demo   # Python integration
 ```
+
+**Note:** Win only support quickdemo on WSL2
+
+**Note:** On macOS, the Python demo requires setting up a Conda Enviroment [See Conda Setup](#conda-setup). If already done before running quickdemo `conda activate my_x86_env`
 
 ### Manual Compilation
 
-Prefer to build it yourself? Here's how to compile everything manually from the `usage/` directory:
+Prefer to build it yourself? Here's how to compile everything manually from the `demos/` directory:
 
-#### 1. Linux:
+#### Linux
 
-C Integration
+**C:**
+
 ```bash
 nasm -f elf64 map.asm -o map.o
 gcc demo.c map.o -o demo
 ./demo
 ```
 
+**Python:**
 
-Python Integration
 ```bash
 nasm -f elf64 map.asm -o map.o
 gcc -shared map.o -o map.so
 python demo.py
 ```
 
-#### 2. Mac:
-   ...
+#### macOS (Apple Silicon – arm64 via Rosetta 2)
+
+**C:**
+
+```bash
+nasm -f macho64 map_mac.asm -o map.o
+arch -x86_64 clang demo.c map.o -o c_demo
+./c_demo
+```
+
+**Conda Setup**
+
+```bash
+conda create -n my_x86_env -y
+conda activate my_x86_env
+conda config --env --set subdir osx-64
+conda install python=3.10
+```
+
+**Python (with Conda):**
+
+```bash
+conda activate my_x86_env
+
+nasm -f macho64 map_mac.asm -o map.o
+arch -x86_64 clang -shared map.o -o map.so
+python demo.py
+```
+
+#### Windows
+
+Use WSL2 and follow Linux instructions.
+
+Alternatively, for native Windows builds:
+
+1. Install Chocolatey
+2. Use Chocolatey to install MSYS2
+3. Add to PATH: `C:\tools\msys64\mingw64\bin`
+4. In MSYS2 terminal:
+   ```bash
+   pacman -S make gcc cmake nasm python
+   ```
+
+Then:
+
+```cmd
+winmake.bat build
+winmake.bat c_demo
+winmake.bat py_demo
+```
+
+For manual compilation, refer to the commands inside `winmake.bat`
+
+If Python demo fails, ensure MSYS2’s Python is being used, not the system default.
+
+---
 
 ## Original authors:
-1. [Eske Klintø] - [eske.larsen@gmail.com]
-2. ...
 
+1. [Eske Klintø] - [eske.larsen@gmail.com]
+2. [Faustas Anulis] - [faustis1337@gmail.com]

@@ -1,6 +1,6 @@
 # # The build directory
 BUILD_DIR = build
-USAGE_DIR = usage
+DEMOS_DIR = demos
 ASSEMBLY_DIR = assembly
 MAKEFLAGS += --no-print-directory
 
@@ -14,7 +14,7 @@ all: build test generate
 build:
 	@mkdir -p $(BUILD_DIR)
 	@cd $(BUILD_DIR) && cmake .. && cmake --build .
-	@cd $(USAGE_DIR) && $(MAKE) build
+	@cd $(DEMOS_DIR) && $(MAKE) build
 	@ln -sf "build/compile_commands.json"
 
 # Generates the assembly files through compiler
@@ -29,7 +29,7 @@ run:
 clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Build directory cleaned."
-	@cd $(USAGE_DIR) && $(MAKE) clean
+	@cd $(DEMOS_DIR) && $(MAKE) clean
 	@echo "Clean Usage artifacts"
 
 # Run the tests (if you have tests set up with CTest)
@@ -37,8 +37,8 @@ test:
 	@cd $(BUILD_DIR)/tests && ctest --output-on-failure
 
 c_demo:
-	@cd $(USAGE_DIR) && $(MAKE) c_demo
+	@cd $(DEMOS_DIR) && $(MAKE) c_demo
 
 py_demo:
-	@cd $(USAGE_DIR) && $(MAKE) py_demo
+	@cd $(DEMOS_DIR) && $(MAKE) py_demo
 

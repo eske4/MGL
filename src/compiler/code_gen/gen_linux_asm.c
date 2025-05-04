@@ -7,40 +7,54 @@
 #include <stdlib.h>
 #include <string.h>
 
-void generate_map(InstructionTable table);
+void generate_map(InstructionTable table, const char* path[]);
 void generate_config(InstructionTable table);
+void generate_interfaces(InstructionTable table);
+int countRooms(InstructionTable table);
+char** getRoomNames(InstructionTable table);
 void getConnections(InstructionTable table, Room* room, int startIndex);
 void writeConnectAssembly(Room* room, FILE* file);
 void writeRoomAssembly(Room* room, FILE* file);
+void writeCInterface(char** rooms, int roomCount, int roomNameSize, int maxConnections);
 
 void generate_assembly(InstructionTable table)
 {
+    printf("Code Generation\n");
+
+    const char* asmVerificationPath[] = {ASM_DIR, "map.asm"};
+    const char* generatedPath[]       = {GENERATED_DIR, "asm/map.asm"};
+
     printf("\n");
     printf("Generating map...\n");
-    generate_map(table);
+    generate_map(table, asmVerificationPath);
+    generate_map(table, generatedPath);
     printf("SUCCESSFULLY: generated map\n\n");
+
+    printf("Generating interfaces...\n");
+    generate_interfaces(table);
+    printf("SUCCESSFULLY: generated interfaces\n\n");
 
     printf("Generating configs...\n");
     generate_config(table);
     printf("SUCCESSFULLY: generated configs\n\n");
 }
 
+void generate_interfaces(InstructionTable table)
+{
+    int roomCount = countRooms(table);
+    char** rooms  = getRoomNames(table);
+    writeCInterface(rooms, roomCount, MAX_INPUT_SIZE, MAX_CONNECTIONS);
+    free(rooms);
+}
+
 void generate_config(InstructionTable table)
 {
 
     char fileLoc[MAX_PATH_SIZE] = {0};
-    const char* path[]          = {GENERATED_ASM_DIR, "config.asm"};
+    const char* path[]          = {ASM_DIR, "config.asm"};
     safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
     FILE* file     = fopen(fileLoc, "w");
-    int room_count = 0;
-
-    // Count rooms in the instruction table
-    for (int i = 0; i < table->count; i++)
-    {
-        if (table->entries[i].InstrCode == IR_DECL_ROOM)
-            ++room_count;
-    }
-
+    int room_count = countRooms(table);
     int stack_size = room_count + 1; // Leave room for terminal connection 0
 
     fprintf(file, "%%define ID_LEN %d\n", MAX_INPUT_SIZE);
@@ -58,10 +72,9 @@ void generate_config(InstructionTable table)
     fclose(file);
 }
 
-void generate_map(InstructionTable table)
+void generate_map(InstructionTable table, const char* path[])
 {
     char fileLoc[MAX_PATH_SIZE] = {0};
-    const char* path[]          = {GENERATED_ASM_DIR, "map.asm"};
     safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
     FILE* file = fopen(fileLoc, "w");
 
@@ -71,19 +84,9 @@ void generate_map(InstructionTable table)
         fprintf(file, "section .data\n");
 
         // First collect all room names for the global declaration
-        int roomCount    = 0;
-        char** roomNames = calloc(table->count, sizeof(char*));
+        int roomCount    = countRooms(table);
+        char** roomNames = getRoomNames(table);
 
-        // First pass to collect room names
-        for (int i = 0; i < table->count; i++)
-        {
-            if (table->entries[i].InstrCode == IR_DECL_ROOM)
-            {
-                roomNames[roomCount++] = table->entries[i].args[0];
-            }
-        }
-
-        // Write global declarations
         fprintf(file, "global entry");
         for (int i = 0; i < roomCount; i++)
         {
@@ -135,8 +138,36 @@ void generate_map(InstructionTable table)
         free(currentRoom->connections);
         free(currentRoom);
     }
-
     fclose(file);
+}
+
+int countRooms(InstructionTable table)
+{
+    int room_count = 0;
+
+    // Count rooms in the instruction table
+    for (int i = 0; i < table->count; i++)
+    {
+        if (table->entries[i].InstrCode == IR_DECL_ROOM)
+            ++room_count;
+    }
+    return room_count;
+}
+
+char** getRoomNames(InstructionTable table)
+{
+    int roomCount    = 0;
+    char** roomNames = calloc(table->count, sizeof(char*));
+
+    // First pass to collect room names
+    for (int i = 0; i < table->count; i++)
+    {
+        if (table->entries[i].InstrCode == IR_DECL_ROOM)
+        {
+            roomNames[roomCount++] = table->entries[i].args[0];
+        }
+    }
+    return roomNames;
 }
 
 void getConnections(InstructionTable table, Room* room, int startIndex)
@@ -176,11 +207,7 @@ void writeRoomAssembly(Room* room, FILE* file)
     fprintf(file, "    db \"%s\"", room->id);
 
     // Add the remaining ", 0" to reach the required length
-    for (int i = 0; i < remainingPadding; i++)
-    {
-        fprintf(file, ", 0");
-    }
-
+    fprintf(file, "\n    times %d db 0", remainingPadding);
     fprintf(file, "\n");
 }
 
@@ -188,13 +215,7 @@ void writeConnectAssembly(Room* room, FILE* file)
 {
     if (room == NULL || room->connCount < 1)
     {
-        fprintf(file, "    dq 0");
-        for (int i = 0; i < MAX_CONNECTIONS - 1; i++)
-        {
-            fprintf(file, ", 0");
-        }
-        fprintf(file, "\n");
-
+        fprintf(file, "    times %d dq 0\n", MAX_CONNECTIONS);
         return;
     }
 
@@ -209,9 +230,31 @@ void writeConnectAssembly(Room* room, FILE* file)
         }
     }
 
-    for (int i = 0; i < MAX_CONNECTIONS - room->connCount; i++)
-    {
-        fprintf(file, ", 0");
-    }
+    fprintf(file, "\n    times %d dq 0", MAX_CONNECTIONS - room->connCount);
     fprintf(file, "\n");
+}
+
+void writeCInterface(char** rooms, int roomCount, int roomNameSize, int maxConnections)
+{
+    char fileLoc[MAX_PATH_SIZE] = {0};
+    const char* path[]          = {GENERATED_DIR, "/interfaces/mf_interface.h"};
+    safe_multi_strcat(fileLoc, path, 2, MAX_PATH_SIZE);
+    FILE* file = fopen(fileLoc, "w");
+
+    fprintf(file, "#pragma once\n\n");
+
+    // Write the Room struct definition
+    fprintf(file, "typedef struct Room {\n");
+    fprintf(file, "    char name[%d];           // Room name\n", roomNameSize);
+    fprintf(file, "    struct Room* connections[%d]; // Connections to other rooms\n", maxConnections);
+    fprintf(file, "} Room;\n\n");
+
+    // Write extern declarations for all rooms (example)
+    fprintf(file, "extern Room* entry;\n");
+
+    for (int i = 0; i < roomCount; i++)
+    {
+        fprintf(file, "extern Room room_%s;\n", rooms[i]);
+    }
+    fclose(file);
 }

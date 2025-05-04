@@ -6,11 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//define duble struct for constr
-typedef struct {
-    int first;
-    int second;
-} Duple;
 
 //declaration to let program know these function/declaration exist (top-down compiled )
 void checkMap(SymbolTable table, const char *id, const ASTNode *node);
@@ -20,34 +15,34 @@ void checkConnection(SymbolTable table, const char *id, const ASTNode *node);
 void checkConnectConstr(SymbolTable table, int value);
 void reportSemanticError(ErrorCode err, int pos, const char* msg);
 void PrintSymbolTable(const SymbolTable table);
-static Duple roomConstr = {0, 0};
-static Duple connectConstr = {0, 0};
-static int roomCount = 0;
+
+static char current_map_id[MAX_INPUT_SIZE]; //keep track of what map is being treversed 
+int  max_connections_global = 64;
 
 //function to treverse AST and add to symboltable
-void TraverseAST(const ASTNode* node, const SymbolTable table){
+void TraverseAST(const ASTNode* node, const SymbolTable table, ConstrTable* constr_table){
     if(!node) return; //safty to check if node exist in AST
 
     switch(node->type){  //use switch to check multible cases for the type
         case AT_MAP: //if AT_MAP type
-            AddSymbolTable(table, node->children[0]->data, node); break;
+            AddSymbolTable(table, node->children[0]->data, node); 
+            strncpy(current_map_id, node->children[0]->data, sizeof(current_map_id) - 1);
+            current_map_id[sizeof(current_map_id) - 1] = '\0';  // Ensure null termination
+            AddMap(constr_table, current_map_id);
+            break;
         case AT_MAP_CONSTR_ROOMS:
-            roomConstr.first = 1; 
-            roomConstr.second = atoi(node->children[0]->data); break; //rewrite to make safer conversion
+            SetRoomConstr(constr_table, current_map_id, atoi(node->children[0]->data));
+            break; 
         
         case AT_MAP_CONSTR_CONNECT: 
-            connectConstr.first = 1;
-            connectConstr.second = atoi(node->children[0]->data); break;//rewrite to make safer conversion
+            SetConnectConstr(constr_table, current_map_id, atoi(node->children[0]->data));   
+            break;
 
         case AT_ROOM: //if AT_ROOM type
             checkRoom(table, node->children[0]->data, node);
             AddSymbolTable(table, node->children[0]->data, node); 
-            if (roomConstr.first == 1){
-                roomCount ++;
-                if (roomCount > roomConstr.second) 
-                    reportSemanticError(ERR_SEMANTIC, 0, "Number of rooms exceeds room constraint"); // need better error message
-                break;
-            }
+            AddRoomToMap(constr_table, current_map_id, node->children[0]->data);  
+            break;
             
         case AT_CONNECT: //if AT_ROOM type
         { 
@@ -57,6 +52,8 @@ void TraverseAST(const ASTNode* node, const SymbolTable table){
             checkConnection(table, connection_id, node);
             checkRoomsInConnection(node->children[0]->data, node->children[2]->data, table, node);
             AddSymbolTable(table, connection_id, node);
+            IncrementConnectCount(constr_table, current_map_id, node->children[0]->data);
+            IncrementConnectCount(constr_table, current_map_id, node->children[2]->data);
         }
         default: break;
         
@@ -64,7 +61,7 @@ void TraverseAST(const ASTNode* node, const SymbolTable table){
 
     for (int i = 0; i < node->child_count; i++)
     { //recursively go throug each node in AST
-        TraverseAST(node->children[i], table);
+        TraverseAST(node->children[i], table, constr_table);
     }
 }
 
@@ -72,12 +69,15 @@ void TraverseAST(const ASTNode* node, const SymbolTable table){
 int TypeCheck(const ASTree tree)
 {
     SymbolTable table = InitSymbolTable(20); //initiate symboltable with a initial capacity of 20
+    ConstrTable constr_table = InitConstrTable(2); //initiate constraint table
     ASTNode* root = tree->head;
-    TraverseAST(root, table); 
-    if (connectConstr.first == 1)
-        checkConnectConstr(table, connectConstr.second);
+    TraverseAST(root, table, &constr_table); 
+    CheckRoomConstr(&constr_table);
+    CheckConnectConstr(&constr_table);
+    max_connections_global = FindMaxConnectionCount(&constr_table);
     PrintSymbolTable(table); 
     FreeSymbolTable(table);
+    FreeConstrTable(&constr_table); 
     return 1;
 }
 

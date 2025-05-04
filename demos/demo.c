@@ -1,16 +1,8 @@
 #include <stdio.h>
+#include "mf_interface.h"
 #define ID_LEN         32
-#define MAX_CONNECTION 64
-#define ROOM_COUNT     4
-
-typedef struct Room
-{
-    char name[ID_LEN];
-    struct Room* connections[MAX_CONNECTION];
-} Room;
-
-extern Room* entry;
-extern Room room_A, room_B, room_E, room_D;
+#define MAX_CONNECTION 8
+#define ROOM_COUNT     5
 
 void print_room(Room* room)
 {
@@ -42,15 +34,15 @@ int main()
     print_room(entry);
 
     printf("===    Rooms   ===\n");
-    print_room(entry);
-    print_room(&room_A);
-    print_room(&room_B);
-    print_room(&room_E);
-    print_room(&room_D);
+    print_room(&room_start);
+    print_room(&room_dungeon_1);
+    print_room(&room_dungeon_2);
+    print_room(&room_trap);
+    print_room(&room_end);
 
     // Safe traversal demo
     printf("=== Safe Traversal ===\n");
-    Room* current = &room_A;
+    Room* current = &room_start;
     int max_steps = ROOM_COUNT + 1;
 
     while (current && max_steps--)
