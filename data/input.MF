@@ -1,4 +1,4 @@
-Map map {
+Map map (maxConnectPerRoom = 9;) {
     Room start;
     Room dungeon_1;
     Room dungeon_2;

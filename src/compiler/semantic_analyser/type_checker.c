@@ -6,11 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int max_connections2 = 8;
+
 //declaration to let program know these function exist (top-down compiled )
 void checkRoom(SymbolTable table, const char* id, const ASTNode* node);
 void checkRoomsInConnection(char* id, char* id2, SymbolTable table, const ASTNode* node);
 void checkConnection(SymbolTable table, const char* id, const ASTNode* node);
 void reportSemanticError(ErrorCode err, int pos, const char* msg);
+void checkConnectionConstrain(const ASTNode* node);
 
 //function to
 void TraverseAST(const ASTNode* node, const SymbolTable table)
@@ -29,8 +32,11 @@ void TraverseAST(const ASTNode* node, const SymbolTable table)
             AddSymbolTable(table, node->children[0]->data, node);
             break;
 
+        case AT_MAP_CONSTR_CONNECT: checkConnectionConstrain(node); break;
+
+        case AT_MAP_CONSTR_ROOMS: break;
         case AT_CONNECT: //if AT_ROOM type
-        { 
+        {
             char* connection_id = calloc(1, strlen(node->children[0]->data) + strlen(node->children[2]->data) + 2);
             sprintf(connection_id, "#%s%s", node->children[0]->data, node->children[2]->data);
 
@@ -39,7 +45,6 @@ void TraverseAST(const ASTNode* node, const SymbolTable table)
             AddSymbolTable(table, connection_id, node);
         }
         default: break;
-        
     }
 
     for (int i = 0; i < node->child_count; i++)
@@ -63,13 +68,16 @@ void PrintSymbolTable(const SymbolTable table)
 }
 
 //main typecheck function
-void TypeCheck(const ASTree tree)
+int TypeCheck(const ASTree tree)
 {
+    max_connections2  = 8;
     SymbolTable table = InitSymbolTable(20); //initiate symboltable with a initial capacity of 20
     ASTNode* root     = tree->head;
     TraverseAST(root, table);
     PrintSymbolTable(table);
     FreeSymbolTable(table);
+    printf("the final connection limit is: %d", max_connections2);
+    return 1;
 }
 
 //ceck if room is part of symboltalbe
@@ -113,6 +121,26 @@ void checkRoomsInConnection(char* id, char* id2, SymbolTable table, const ASTNod
     //check if rooms are the same -- (maybe not an error in future since it could be a feature in game)
     if (strcmp(idRef->id, id2Ref->id) == 0)
         reportSemanticError(ERR_SEMANTIC, node->pos, "Can't connect a Room to itself");
+}
+
+void checkConnectionConstrain(const ASTNode* node)
+{
+    if (!node || node->type != AT_MAP_CONSTR_CONNECT)
+        return;
+
+    printf("Got AT_MAP_CONSTR_CONNECT node\n");
+
+    const char* raw = node->children[0]->data;
+    int length      = atoi(raw);
+
+    printf("Raw constraint string: %s\n", raw);
+    printf("Parsed length: %d\n", length);
+    printf("Old max_connections2: %d\n", max_connections2);
+
+    while (length > max_connections2)
+    {
+        max_connections2 *= 2;
+    }
 }
 
 //error message function
