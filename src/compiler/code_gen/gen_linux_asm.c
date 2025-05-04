@@ -43,7 +43,7 @@ void generate_interfaces(InstructionTable table)
 {
     int roomCount = countRooms(table);
     char** rooms  = getRoomNames(table);
-    writeCInterface(rooms, roomCount, MAX_INPUT_SIZE, MAX_CONNECTIONS);
+    writeCInterface(rooms, roomCount, MAX_INPUT_SIZE, max_connections_global);
     free(rooms);
 }
 
@@ -120,7 +120,7 @@ void generate_map(InstructionTable table, const char* path[])
         currentRoom->connCount = 0;
 
         // Allocate memory for room's connections
-        currentRoom->connections = calloc(MAX_CONNECTIONS, sizeof(char*));
+        currentRoom->connections = calloc(max_connections_global, sizeof(char*));
 
         if (!currentRoom->connections)
         {
@@ -183,7 +183,7 @@ void getConnections(InstructionTable table, Room* room, int startIndex)
             continue;
 
         // If max connections are reached, stop adding more
-        if (room->connCount >= MAX_CONNECTIONS)
+        if (room->connCount >= max_connections_global)
         {
             fprintf(stderr, "Too many connections for room %s\n", room->id);
             break;
@@ -216,7 +216,7 @@ void writeConnectAssembly(Room* room, FILE* file)
 {
     if (room == NULL || room->connCount < 1)
     {
-        fprintf(file, "    times %d dq 0\n", MAX_CONNECTIONS);
+        fprintf(file, "    times %d dq 0\n", max_connections_global);
         return;
     }
 
@@ -231,7 +231,7 @@ void writeConnectAssembly(Room* room, FILE* file)
         }
     }
 
-    fprintf(file, "\n    times %d dq 0", MAX_CONNECTIONS - room->connCount);
+    fprintf(file, "\n    times %d dq 0", max_connections_global - room->connCount);
     fprintf(file, "\n");
 }
 
