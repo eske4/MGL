@@ -57,9 +57,6 @@ void generate_config(InstructionTable table)
     int room_count = countRooms(table);
     int stack_size = room_count + 1; // Leave room for terminal connection 0
 
-    fprintf(file, "%%define ID_LEN %d\n", MAX_INPUT_SIZE);
-    fprintf(file, "%%define ROOM_COUNT %d\n\n", room_count);
-
     fprintf(file, "section .data\n\n");
     fprintf(file, "    visited_count    dq 0\n\n");
 
@@ -81,6 +78,10 @@ void generate_map(InstructionTable table, const char* path[])
     // Check if the table has any entries before proceeding
     if (table->count >= 1)
     {
+        int room_count = countRooms(table);
+        fprintf(file, "%%define ID_LEN %d\n", ID_LEN);
+        fprintf(file, "%%define ROOM_COUNT %d\n\n", room_count);
+
         fprintf(file, "section .data\n");
 
         // First collect all room names for the global declaration
@@ -243,10 +244,14 @@ void writeCInterface(char** rooms, int roomCount, int roomNameSize, int maxConne
 
     fprintf(file, "#pragma once\n\n");
 
+    fprintf(file, "#define ROOM_COUNT %d\n", roomCount);
+    fprintf(file, "#define MAX_CONNECTION %d\n", MAX_CONNECTIONS);
+    fprintf(file, "#define ID_LEN %d\n\n", ID_LEN);
+
     // Write the Room struct definition
     fprintf(file, "typedef struct Room {\n");
-    fprintf(file, "    char name[%d];           // Room name\n", roomNameSize);
-    fprintf(file, "    struct Room* connections[%d]; // Connections to other rooms\n", maxConnections);
+    fprintf(file, "    char name[ID_LEN];           // Room name\n");
+    fprintf(file, "    struct Room* connections[MAX_CONNECTION]; // Connections to other rooms\n");
     fprintf(file, "} Room;\n\n");
 
     // Write extern declarations for all rooms (example)

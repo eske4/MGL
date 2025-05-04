@@ -22,4 +22,4 @@ run:
 	@$(RUN_CMD)
 
 clean:
-	@rm -f main.o main.out
+	@rm -f main.o main.out generated/map.asm generated/config.asm

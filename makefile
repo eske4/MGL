@@ -29,6 +29,8 @@ run:
 clean:
 	@rm -rf $(BUILD_DIR)
 	@echo "Build directory cleaned."
+	@cd $(ASSEMBLY_DIR) && $(MAKE) clean
+	@echo "Assembly artefacts cleaned"
 	@cd $(DEMOS_DIR) && $(MAKE) clean
 	@echo "Clean Usage artifacts"
 
