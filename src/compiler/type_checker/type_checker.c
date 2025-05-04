@@ -17,7 +17,7 @@ void reportSemanticError(ErrorCode err, int pos, const char* msg);
 void PrintSymbolTable(const SymbolTable table);
 
 static char current_map_id[MAX_INPUT_SIZE]; //keep track of what map is being treversed 
-int  max_connections_global = 64;
+int  max_connections_global = 8;
 
 //function to treverse AST and add to symboltable
 void TraverseAST(const ASTNode* node, const SymbolTable table, ConstrTable* constr_table){
@@ -71,7 +71,7 @@ int TypeCheck(const ASTree tree)
     SymbolTable table = InitSymbolTable(20); //initiate symboltable with a initial capacity of 20
     ConstrTable constr_table = InitConstrTable(2); //initiate constraint table
     ASTNode* root = tree->head;
-    TraverseAST(root, table, &constr_table); 
+   TraverseAST(root, table, &constr_table); 
     CheckRoomConstr(&constr_table);
     CheckConnectConstr(&constr_table);
     max_connections_global = FindMaxConnectionCount(&constr_table);
@@ -80,6 +80,7 @@ int TypeCheck(const ASTree tree)
     FreeConstrTable(&constr_table); 
     return 1;
 }
+ 
 
 //ceck if map is part of symboltalbe
 void checkMap(SymbolTable table, const char *id, const ASTNode* node){
