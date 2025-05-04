@@ -1,9 +1,6 @@
 #include <gtest/gtest.h>
-#include <vector>
-#include <cstddef>
 extern "C"{
     #include "parser.h"
-    #include "error_handler.h" 
     }
 
 // A helper to hold fake token stream
@@ -21,13 +18,9 @@ extern "C" int scan(Token* out) {
   out->value[0] = '\0';
   return T_EOF;
 }
-
-extern "C" CLoc findLoc(int pos) {
-  return CLoc{ .line = 1, .column = pos };
-}
 #endif
 
-TEST(ParserUnit, FullMapStructure) {
+TEST(ParserUnitTest, HappyPathFullMap) {
     // --- Arrange ----------------------------------------------------
   
     __fakeTokens = {
@@ -124,9 +117,9 @@ TEST(ParserUnit, FullMapStructure) {
     }
   
     ASTFree(tree);
-  }
+}
   
-TEST(ParserUnit, UnexpectedTokenInMapBody) {
+TEST(ParserUnitTest, UnexpectedTokenInMapBody) {
     // --- Arrange ----------------------------------------------------
 
     // Build tokens:  Map map { map }
@@ -141,12 +134,11 @@ TEST(ParserUnit, UnexpectedTokenInMapBody) {
     __fakeIndex = 0;
     Token cur = __fakeTokens[__fakeIndex++];  // prime the first token
   
-  // --- Act & Assert ---------------------------------------
-  // We expect parse(&cur) to call exit(1) and print our error.
-  EXPECT_EXIT(
-    parse(&cur),
-    ::testing::ExitedWithCode(1),
-    ".*"
-  );
-  }
+    // --- Act & Assert ---------------------------------------
+    EXPECT_EXIT(
+      parse(&cur),
+      ::testing::ExitedWithCode(1),
+      ".*"
+    );
+}
   

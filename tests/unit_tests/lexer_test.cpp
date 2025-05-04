@@ -5,7 +5,7 @@ extern "C"{
     #include "lexer.h"
     }
 
-TEST(LexerTest, FullFileTokenSequence) {
+TEST(LexerUnitTest, HappyPathFullMap) {
     // --- Arrange --------------------------------------------------
     csInit();
     std::string path = std::string(TEST_FILE_DIR) + "input_success.MF";
@@ -62,9 +62,9 @@ TEST(LexerTest, FullFileTokenSequence) {
           << "at #" << i << ", lexeme";
       }
     }
-  }
+}
 
-TEST(LexerTest, LexicalError) {
+TEST(LexerUnitTest, LexicalError) {
     // --- Arrange --------------------------------------------------
     setTestMode(1);
 
@@ -78,4 +78,4 @@ TEST(LexerTest, LexicalError) {
     int rc = scan(&t);
     EXPECT_EQ(ERR_LEXER, rc)
       << "Expected ERR_LEXER when the file starts with '@', got " << rc;
-  }
+}
