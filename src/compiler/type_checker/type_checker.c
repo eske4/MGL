@@ -61,7 +61,7 @@ void TraverseAST(const ASTNode* node, const SymbolTable table, ConstrTable* cons
             AddSymbolTable(table, connection_id, node);
 
             IncrementConnectCount(constr_table, current_map_id, node->children[0]->data);
-            IncrementConnectCount(constr_table, current_map_id, node->children[2]->data);
+            if (node->children[1]->type == T_BIDIRECTIONAL_EDGE) IncrementConnectCount(constr_table, current_map_id, node->children[2]->data);
             break;
 
         default: break;
