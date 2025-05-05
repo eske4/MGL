@@ -17,7 +17,7 @@ void reportSemanticError(ErrorCode err, int pos, const char* msg);
 void PrintSymbolTable(const SymbolTable table);
 
 static char current_map_id[MAX_INPUT_SIZE];             // Varibale to keep track of what Map is being treversed 
-int  max_connections_global = 2;                        // Initilize global variable for max connection ("definitions.h")
+int  max_connections_global = 8;                        // Initilize global variable for max connection ("definitions.h")
 
 // Function to treverse AST and add to symboltable
 void TraverseAST(const ASTNode* node, const SymbolTable table, ConstrTable* constr_table){
@@ -90,7 +90,7 @@ int TypeCheck(const ASTree tree)
     if (CheckRoomConstr(&constr_table)==0) reportSemanticError(ERR_SEMANTIC, 0, "Rooms exceed constraint limit");
     if (CheckConnectConstr(&constr_table)==0) reportSemanticError(ERR_SEMANTIC, 0, "Room connections exceeds constraint limit");
     // Define the max connection for a room (for code gen)
-    max_connections_global = FindMaxConnectCount(&constr_table, 2);
+    max_connections_global = FindMaxConnectCount(&constr_table, 8);
 
     // Print Symbol table
     PrintSymbolTable(table); 
