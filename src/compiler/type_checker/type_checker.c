@@ -51,7 +51,7 @@ void TraverseAST(const ASTNode* node, const SymbolTable table, ConstrTable* cons
             AddRoomConstrTable(constr_table, current_map_id, node->children[0]->data);  
             break;
             
-        case AT_CONNECT:
+        case AT_CONNECT: {
             // Define unique connection name for connection 
             char* connection_id = calloc(1, strlen(node->children[0]->data) + strlen(node->children[2]->data) + 2);
             sprintf(connection_id, "#%s%s", node->children[0]->data, node->children[2]->data);
@@ -63,7 +63,7 @@ void TraverseAST(const ASTNode* node, const SymbolTable table, ConstrTable* cons
             IncrementConnectCount(constr_table, current_map_id, node->children[0]->data);
             if (node->children[1]->type == T_BIDIRECTIONAL_EDGE) IncrementConnectCount(constr_table, current_map_id, node->children[2]->data);
             break;
-
+        }
         default: break;
         
     }
