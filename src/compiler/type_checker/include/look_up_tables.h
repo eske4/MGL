@@ -1,24 +1,27 @@
-#pragma once  // ensure header file is only included once in compilation 
+// Ensure header file is only included once in compilation 
+#pragma once
 
+// Included header files:
 #include "definitions.h" 
 #include "astree.h"
 
-//=====================================symboltable====================================
-//declare which structs and function are used for the look up tables:
+//=====================================Symboltable====================================
+// Declare which structs and function are used for the look up tables:
 
-//structs:
-typedef struct SymbolTableEntry {   //struct for single entry in the symbol table 
-    const char* id;                     //entry id        
-    const ASTNode* ast_location;        //pointer to AST node
+//data structure for each entry in symboltable: 
+typedef struct SymbolTableEntry {    
+    const char* id;                     // Entry id                         
+    const ASTNode* ast_location;        // Pointer to Abstract syntax tree node
 } SymbolTableEntry;
 
-typedef struct SymbolTableStruct {  //struct for entire symboltable
-    SymbolTableEntry* entries;          // First entry in table
-    size_t count;                       // Number of entries
-    size_t capacity;                    // maximum number of entries to be hold without reaallocating
+//data structure symboltable: 
+typedef struct SymbolTableStruct {  
+    SymbolTableEntry* entries;          // Entrities in the symboltable
+    size_t count;                       // Number of entetries in the symboltable
+    size_t capacity;                    // Entetry capacity of the symboltable
 } *SymbolTable;
 
-//functions (see logic in look_up_tables.c):
+//Helper functions for symboltable (see logic in look_up_tables.c)
 SymbolTable InitSymbolTable(size_t initial_capacity);   
 void FreeSymbolTable(SymbolTable table);    
 void AddSymbolTable(SymbolTable table, const char* id, const ASTNode* node);
@@ -28,39 +31,39 @@ const SymbolTableEntry* LookUpSymbolTable(const SymbolTable table, const char* i
 
 //=================================Constraint table====================================
 
-//structur to represent a room 
+// Structur to represent a room 
 typedef struct {
-    const char* room_id;
-    int connect_count; 
+    const char* room_id;                // Room id 
+    int connect_count;                  // Number of connection to other rooms
 } ConstrTableRoom; 
 
-//structure to hold information about each map function 
+// Structure to hold information about each map function 
 typedef struct {
-    const char* map_id;
-    int room_constr;
-    int connect_constr;
-    int room_constr_value;
-    int connect_constr_value;
-    size_t room_count;
-    size_t capacity;
-    ConstrTableRoom* rooms; 
+    const char* map_id;                 // Map id
+    int room_constr;                    // Bool for if max room constraint is activated 
+    int connect_constr;                 // Bool for if max connection constraint is activated 
+    int room_constr_value;              // Number of rooms allowed by max room constraint
+    int connect_constr_value;           // Number of connections allowed by max connection constraint
+    size_t room_count;                  // Number of rooms in map
+    size_t capacity;                    // Number of rooms the struct can hold 
+    ConstrTableRoom* rooms;             // Rooms in map
 } ConstrTableMap;
 
-//structore for constraint table
-typedef struct { 
-    size_t map_count;
-    size_t capacity;
-    ConstrTableMap* maps;
+// Structore for constraint table
+typedef struct {                        
+    size_t map_count;                   // Number of maps 
+    size_t capacity;                    // Number of maps the struct can hold
+    ConstrTableMap* maps;               // Maps in the struct
 } ConstrTable; 
 
-//constraint table helper functions: 
+// Constraint table helper functions (see logic in look_up_tables.c): 
 ConstrTable InitConstrTable(size_t initial_capacity); 
 void AddMap(ConstrTable* table, const char* map_id);
-void AddRoomToMap(ConstrTable* table, const char* map_id, const char* room_id);
+void AddRoomConstrTable(ConstrTable* table, const char* map_id, const char* room_id);
 void IncrementConnectCount(ConstrTable* table, const char* map_id, const char*  room_id);
 void SetRoomConstr(ConstrTable* table, const char*  map_id, int value);
 void SetConnectConstr(ConstrTable* table, const char*  map_id, int value);
 int CheckRoomConstr (ConstrTable* table);
 int CheckConnectConstr(ConstrTable* table);
-int FindMaxConnectionCount(const ConstrTable* table);
+int FindMaxConnectCount(const ConstrTable* table, int max_connect);
 void FreeConstrTable(ConstrTable* table);
