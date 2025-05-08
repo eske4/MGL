@@ -10,7 +10,7 @@ Computer Science Master's Project (Second Semester)
 
 ### System Requirements
 
-| Component       | Linux(Arch, Ubuntu) | macOS                  | Windows ([WSL2](https://learn.microsoft.com/en-us/windows/wsl/install))        |
+| Component       | Linux(Arch, Ubuntu) | MacOS                  | Windows ([WSL2](https://learn.microsoft.com/en-us/windows/wsl/install))        |
 | --------------- | ------------------- | ---------------------- | --------------------- |
 | **Compiler**    | GCC ≥ 14.2.1        | CLANG 16+              | GCC via Ubuntu/Arch   |
 | **Assembler**   | NASM ≥ 2.16.03      | NASM ≥ 2.16.03         | NASM via Ubuntu/Arch  |
