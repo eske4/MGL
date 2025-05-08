@@ -1,4 +1,5 @@
-#include "type_checker.h"
+// Included header files:
+#include "semantic_analyzer.h"
 #include "error_handler.h"
 #include "look_up_tables.h"
 #include "definitions.h"
@@ -6,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//declaration to let program know these function/declaration exist (top-down compiled )
+// Declaration to let program know these function/declaration exist (top-down compiled )
 void checkMap(SymbolTable table, const char* id, const ASTNode* node);
 void checkRoom(SymbolTable table, const char* id, const ASTNode* node);
 void checkRoomsInConnection(char* id, char* id2, SymbolTable table, const ASTNode* node);
@@ -15,70 +16,94 @@ void checkConnectConstr(SymbolTable table, int value);
 void reportSemanticError(ErrorCode err, int pos, const char* msg);
 void PrintSymbolTable(const SymbolTable table);
 
-static char current_map_id[MAX_INPUT_SIZE]; //keep track of what map is being treversed
-int max_connections_global = 64;
+static char current_map_id[MAX_INPUT_SIZE]; // Varibale to keep track of what Map is being treversed
+int max_connections_global = 8;             // Initilize global variable for max connection ("definitions.h")
 
-//function to treverse AST and add to symboltable
+// Function to treverse AST and add to symboltable
 void TraverseAST(const ASTNode* node, const SymbolTable table, ConstrTable* constr_table)
 {
     if (!node)
         return; //safty to check if node exist in AST
 
     switch (node->type)
-    {                //use switch to check multible cases for the type
-        case AT_MAP: //if AT_MAP type
-            AddSymbolTable(table, node->children[0]->data, node);
+    {
+        case AT_MAP:
+            // Check if Map exist in symbol table
+            checkMap(table, node->children[0]->data, node);
+
+            // Let the file know what Map it handels (update "current_map_id" variable)
             strncpy(current_map_id, node->children[0]->data, sizeof(current_map_id) - 1);
-            current_map_id[sizeof(current_map_id) - 1] = '\0'; // Ensure null termination
+            current_map_id[sizeof(current_map_id) - 1] = '\0';
+
+            // Add to symbol and constraint table
+            AddSymbolTable(table, node->children[0]->data, node);
             AddMap(constr_table, current_map_id);
             break;
+
         case AT_MAP_CONSTR_ROOMS: SetRoomConstr(constr_table, current_map_id, atoi(node->children[0]->data)); break;
 
         case AT_MAP_CONSTR_CONNECT: SetConnectConstr(constr_table, current_map_id, atoi(node->children[0]->data)); break;
 
-        case AT_ROOM: //if AT_ROOM type
+        case AT_ROOM:
             checkRoom(table, node->children[0]->data, node);
             AddSymbolTable(table, node->children[0]->data, node);
-            AddRoomToMap(constr_table, current_map_id, node->children[0]->data);
+            AddRoomConstrTable(constr_table, current_map_id, node->children[0]->data);
             break;
 
-        case AT_CONNECT: //if AT_ROOM type
+        case AT_CONNECT:
         {
+            // Define unique connection name for connection
             char* connection_id = calloc(1, strlen(node->children[0]->data) + strlen(node->children[2]->data) + 2);
             sprintf(connection_id, "#%s%s", node->children[0]->data, node->children[2]->data);
 
             checkConnection(table, connection_id, node);
             checkRoomsInConnection(node->children[0]->data, node->children[2]->data, table, node);
             AddSymbolTable(table, connection_id, node);
+
             IncrementConnectCount(constr_table, current_map_id, node->children[0]->data);
-            IncrementConnectCount(constr_table, current_map_id, node->children[2]->data);
+            if (node->children[1]->type == T_BIDIRECTIONAL_EDGE)
+                IncrementConnectCount(constr_table, current_map_id, node->children[2]->data);
+            break;
         }
         default: break;
     }
 
+    // Recursively go throug each node in AST
     for (int i = 0; i < node->child_count; i++)
-    { //recursively go throug each node in AST
+    {
         TraverseAST(node->children[i], table, constr_table);
     }
 }
 
-//main typecheck function
+// Main function for semantic check
 int TypeCheck(const ASTree tree)
 {
-    SymbolTable table        = InitSymbolTable(20); //initiate symboltable with a initial capacity of 20
-    ConstrTable constr_table = InitConstrTable(2);  //initiate constraint table
-    ASTNode* root            = tree->head;
+    // Initiate the symbol and constraint tables
+    SymbolTable table        = InitSymbolTable(20);
+    ConstrTable constr_table = InitConstrTable(2);
+
+    // Treverse Abstract syntax tree from top node
+    ASTNode* root = tree->head;
     TraverseAST(root, table, &constr_table);
-    CheckRoomConstr(&constr_table);
-    CheckConnectConstr(&constr_table);
-    max_connections_global = FindMaxConnectionCount(&constr_table);
+
+    // Functions to do constraint checks
+    if (CheckRoomConstr(&constr_table) == 0)
+        reportSemanticError(ERR_SEMANTIC, 0, "Rooms exceed constraint limit");
+    if (CheckConnectConstr(&constr_table) == 0)
+        reportSemanticError(ERR_SEMANTIC, 0, "Room connections exceeds constraint limit");
+    // Define the max connection for a room (for code gen)
+    max_connections_global = FindMaxConnectCount(&constr_table, 8);
+
+    // Print Symbol table
     PrintSymbolTable(table);
+
+    // Free both tables from memory
     FreeSymbolTable(table);
     FreeConstrTable(&constr_table);
     return 1;
 }
 
-//ceck if map is part of symboltalbe
+// Function to check if Map is part of symboltable
 void checkMap(SymbolTable table, const char* id, const ASTNode* node)
 {
     const SymbolTableEntry* val = LookUpSymbolTable(table, id);
@@ -93,7 +118,7 @@ void checkMap(SymbolTable table, const char* id, const ASTNode* node)
         }
 }
 
-//ceck if room is part of symboltalbe
+// Function to check if Room is part of symboltalbe
 void checkRoom(SymbolTable table, const char* id, const ASTNode* node)
 {
     const SymbolTableEntry* val = LookUpSymbolTable(table, id);
@@ -108,7 +133,7 @@ void checkRoom(SymbolTable table, const char* id, const ASTNode* node)
         }
 }
 
-//ceck if connection is part of symboltalbe
+// Function to check if Connection is part of symboltalbe
 void checkConnection(SymbolTable table, const char* id, const ASTNode* node)
 {
     const SymbolTableEntry* val = LookUpSymbolTable(table, id);
@@ -116,7 +141,7 @@ void checkConnection(SymbolTable table, const char* id, const ASTNode* node)
         reportSemanticError(ERR_SEMANTIC, node->pos, "Connection is already declared");
 }
 
-//check for for rooms in connection
+// Function to check for if Rooms in connection is part of symboltable
 void checkRoomsInConnection(char* id, char* id2, SymbolTable table, const ASTNode* node)
 {
     //lookup rooms in symboltable
@@ -136,15 +161,14 @@ void checkRoomsInConnection(char* id, char* id2, SymbolTable table, const ASTNod
         reportSemanticError(ERR_SEMANTIC, node->pos, "Can't connect a Room to itself");
 }
 
-void checkConnectConstr(SymbolTable table, int value) {}
-//error message function
+// Error message function
 void reportSemanticError(ErrorCode err, int pos, const char* msg)
 {
     const char* message[] = {msg};
     reportError(err, pos, message, 1);
 }
 
-//function to print the symboltable
+// Function to print the symboltable
 void PrintSymbolTable(const SymbolTable table)
 {
     if (!table)

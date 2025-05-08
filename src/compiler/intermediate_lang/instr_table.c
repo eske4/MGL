@@ -67,5 +67,3 @@ void instr_print(InstructionTable table) {
         }
     }
 }
-
-

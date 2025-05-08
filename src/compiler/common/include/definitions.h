@@ -2,6 +2,7 @@
 #include <stddef.h>
 
 #define MAX_INPUT_SIZE 32 
+extern int max_connections_global;
 // Input to set max token length preventing user to overload compiler fx
 // identifier with length of 2k
 

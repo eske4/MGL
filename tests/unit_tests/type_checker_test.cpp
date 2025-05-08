@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 extern "C" {
   #include "astree.h"
-  #include "type_checker.h"
+  #include "semantic_analyzer.h"
 }
 
 TEST(TypeCheckerUnitTest, HappyPathFullMap) {

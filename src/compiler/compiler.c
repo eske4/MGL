@@ -2,7 +2,7 @@
 #include "compiler_state.h"
 #include "lexer.h"
 #include "parser.h"
-#include "type_checker.h"
+#include "semantic_analyzer.h"
 #include "il.h"
 #include "code_gen.h"
 
@@ -15,7 +15,7 @@ void compile(const char* input)
 
     // --- STAGE 1: Lexing ---
     scan(&currentToken); // Initialize the Lexer
-    
+
     // --- STAGE 2: Parsing ---
     ASTree tree = parse(&currentToken);
     if (tree && tree->head)

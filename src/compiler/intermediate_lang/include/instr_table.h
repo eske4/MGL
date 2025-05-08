@@ -26,5 +26,3 @@ Instruction instr_create(InstructionCode IRCode, char **args, int argc); // Crea
 void instr_add(InstructionTable table, Instruction instr); // Append the specified instruction to the instruction table.
 void instr_free(InstructionTable table); // Free all memory associated with the instruction table and its entries.
 void instr_print(InstructionTable table); // Print out the IL instructions in a human-readable format.
-
-

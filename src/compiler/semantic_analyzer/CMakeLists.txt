@@ -1,4 +1,4 @@
-set(TYPE_CHECKER_SOURCES type_checker.c look_up_tables.c)
+set(TYPE_CHECKER_SOURCES semantic_analyzer.c look_up_tables.c)
 
 add_library(Type_Checker ${TYPE_CHECKER_SOURCES})
 
