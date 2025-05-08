@@ -8,7 +8,7 @@ extern "C"{
 TEST(LexerUnitTest, HappyPathFullMap) {
     // --- Arrange --------------------------------------------------
     csInit();
-    std::string path = std::string(TEST_FILE_DIR) + "input_success.MF";
+    std::string path = std::string(UNIT_TEST_FILE_DIR) + "input_success.MF";
     ASSERT_EQ(1, csOpenFile(path.c_str()))
       << "couldn't open " << path;
   
@@ -69,7 +69,7 @@ TEST(LexerUnitTest, LexicalError) {
     setTestMode(1);
 
     csInit();
-    std::string path = std::string(TEST_FILE_DIR) + "input_fail.MF";
+    std::string path = std::string(UNIT_TEST_FILE_DIR) + "input_fail.MF";
     ASSERT_EQ(1, csOpenFile(path.c_str()))
       << "couldn't open " << path;
   
