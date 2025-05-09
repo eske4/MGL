@@ -217,3 +217,6 @@ If Python demo fails, ensure MSYS2’s Python is being used, not the system defa
 
 1. [Eske Klintø] - [eske.larsen@gmail.com]
 2. [Faustas Anulis] - [faustis1337@gmail.com]
+3. [Mathias Holm Mariager] - [math214j@hotmail.com]
+4. [Toms Vanders] - [toms.vanders@gmail.com]
+5. [Thormod Jakob Schøn Merstrand] - [thormodx@gmail.com]
