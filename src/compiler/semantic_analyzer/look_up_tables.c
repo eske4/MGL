@@ -14,7 +14,7 @@ const SymbolTableEntry* LookUpSymbolTable(const SymbolTable table, const char* i
 
     for (size_t i = 0; i < table->count; i++)
     { //use for loop to go through each element in the SymbolTable table
-        if (strcmp(table->entries[i].id, id) == 0)
+        if (strcmp(table->entries[i].ast_location->children[0]->data, id) == 0)
         {                              //use strcmp (string compare) to see if the id match (returns 0 if equal)
             return &table->entries[i]; //Return address of entry if match
         }
@@ -22,8 +22,33 @@ const SymbolTableEntry* LookUpSymbolTable(const SymbolTable table, const char* i
     return NULL; // if not found function return null
 }
 
+// Function to look up entries in symbol table
+int LookUpConnectSymbolTable(const SymbolTable table, const char* first_room, const char* second_room)
+{
+    if (!table || !first_room || !second_room)
+        return 0; // Safety check (to see if there exist an table or id)
+
+    for (size_t i = 0; i < table->count; i++)
+    { //use for loop to go through each element in the SymbolTable table
+        if (table->entries[i].ast_location->type == AT_CONNECT){
+            if (table->entries[i].ast_location->children[1]->type == AT_BIDIRECTIONAL_EDGE) 
+            {
+                if (strcmp(table->entries[i].ast_location->children[0]->data, first_room)     == 0 
+                    && strcmp(table->entries[i].ast_location->children[2]->data, second_room) == 0 
+                    || strcmp(table->entries[i].ast_location->children[2]->data, first_room)  == 0 
+                    && strcmp(table->entries[i].ast_location->children[0]->data, second_room) == 0  
+                ) return 1; 
+            }
+            else if (strcmp(table->entries[i].ast_location->children[0]->data, first_room)    == 0 
+                    && strcmp(table->entries[i].ast_location->children[2]->data, second_room) == 0  
+                ) return 1; 
+        }
+    }
+    return 0; // if not found function return null
+}
+
 // Function to add entry to symbol table (identifier + location)
-void AddSymbolTable(SymbolTable table, const char* id, const ASTNode* node)
+void AddSymbolTable(SymbolTable table, const ASTNode* node)
 {
     // if statement to grow capasity of symboltable if needed
     if (table->count >= table->capacity)
@@ -38,7 +63,6 @@ void AddSymbolTable(SymbolTable table, const char* id, const ASTNode* node)
 
     // add 1 more more entry to symboltable with the id and location
     table->entries[table->count++] = (SymbolTableEntry){
-        .id           = id,
         .ast_location = node,
     };
 }

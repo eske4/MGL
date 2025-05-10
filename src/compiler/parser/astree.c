@@ -26,8 +26,9 @@ ASTree ASTInit()
 ASTNode* ASTCreateMap(ASTree tree, const char* id, int pos)
 {
     ASTNode* mapNode        = calloc(1, sizeof(ASTNode));
-    mapNode->pos            = pos;
     mapNode->type           = AT_MAP;
+    mapNode->pos            = pos;
+    safe_strcpy(mapNode->data, "Map", MAX_INPUT_SIZE - 1);
     mapNode->child_capacity = 0;
     mapNode->child_count    = 0;
     ASTResizeChildren(mapNode);
@@ -183,12 +184,12 @@ void ASTCreateConnect(ASTNode* mapNode, const char* id, const AbstractTokenDef o
         ASTResizeChildren(mapNode);
 
     ASTNode* connectNode        = calloc(1, sizeof(ASTNode));
-    connectNode->pos            = pos;
     connectNode->type           = AT_CONNECT;
-    int new_child_capacity      = 3;
+    connectNode->pos            = pos;
+    safe_strcpy(connectNode->data, "Connect", MAX_INPUT_SIZE - 1);
     connectNode->child_count    = 0;
-    connectNode->child_capacity = new_child_capacity;
-    connectNode->children       = calloc(new_child_capacity, sizeof(ASTNode*));
+    connectNode->child_capacity = 3;
+    connectNode->children       = calloc(3, sizeof(ASTNode*));
 
     if (connectNode->children == NULL)
     {

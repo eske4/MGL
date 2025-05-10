@@ -9,8 +9,7 @@
 // Declare which structs and function are used for the look up tables:
 
 //data structure for each entry in symboltable: 
-typedef struct SymbolTableEntry {    
-    const char* id;                     // Entry id                         
+typedef struct SymbolTableEntry {                 
     const ASTNode* ast_location;        // Pointer to Abstract syntax tree node
 } SymbolTableEntry;
 
@@ -24,8 +23,9 @@ typedef struct SymbolTableStruct {
 //Helper functions for symboltable (see logic in look_up_tables.c)
 SymbolTable InitSymbolTable(size_t initial_capacity);   
 void FreeSymbolTable(SymbolTable table);    
-void AddSymbolTable(SymbolTable table, const char* id, const ASTNode* node);
+void AddSymbolTable(SymbolTable table, const ASTNode* node);
 const SymbolTableEntry* LookUpSymbolTable(const SymbolTable table, const char* id);
+int LookUpConnectSymbolTable(const SymbolTable table, const char* first_room, const char* second_room);
 
 //=====================================================================================
 
