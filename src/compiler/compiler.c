@@ -32,7 +32,7 @@ void compile(const char* input)
     // Cleanup ASTreee
     if (tree)
         ASTFree(tree);
-
+        
     // --- STAGE 5: Codegen ---
     generate_assembly(ilTable); // Outputs assembly directly
 
