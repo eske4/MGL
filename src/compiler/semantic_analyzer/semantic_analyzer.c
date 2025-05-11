@@ -28,6 +28,12 @@ int TypeCheck(const ASTree tree)
     ASTNode* root = tree->head;
     TraverseAST(root, table);
 
+    // Define global parameter after number of connections in the map function (ignore constraint value - faster to generate assembly?)
+    max_connections_global = CheckConstrSymbolTable(table);
+
+    // Do constraint check of symboltable
+    if (max_connections_global == -1) reportSemanticError(ERR_SEMANTIC, 1, "Constraint of Map function violated");
+
     // Print Symbol table
     PrintSymbolTable(table);
 
@@ -51,6 +57,14 @@ void TraverseAST(const ASTNode* ast_node, const SymbolTable symbol_table)
             checkMap(symbol_table, ast_node);
             AddSymbolTable(symbol_table, ast_node);
             break;
+
+        case AT_MAP_CONSTR_ROOMS: 
+            ConstrSymbolTable(symbol_table, ast_node); 
+            break;
+
+        case AT_MAP_CONSTR_CONNECT: 
+            ConstrSymbolTable(symbol_table, ast_node); 
+            break; 
 
         case AT_ROOM:
             checkRoom(symbol_table, ast_node);
@@ -123,7 +137,6 @@ void checkConnection(SymbolTable table, const ASTNode* node)
 
 }
 
-
 // Error message function
 void reportSemanticError(ErrorCode err, int pos, const char* msg)
 {
@@ -137,7 +150,7 @@ void PrintSymbolTable(const SymbolTable table)
     if (!table)
         return;
 
-    printf("\n Symbol Table (%zu entries):\n", table->count);
+    printf("\n Symbol Table (%zu entries):\n", table->count); 
     for (size_t i = 0; i < table->count; i++)
     {
         SymbolTableEntry entry = table->entries[i];

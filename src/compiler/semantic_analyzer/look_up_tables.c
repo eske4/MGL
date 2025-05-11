@@ -67,13 +67,80 @@ void AddSymbolTable(SymbolTable table, const ASTNode* node)
     };
 }
 
+// Function to put on constraint for symbol table
+void ConstrSymbolTable(SymbolTable table, const ASTNode* node) 
+{
+    if (!table) return; 
+    if (node->type == AT_MAP_CONSTR_ROOMS) table->room_constr = atoi(node->children[0]->data); 
+    if (node->type == AT_MAP_CONSTR_CONNECT) table->connect_constr = atoi(node->children[0]->data); 
+}
+
+// Function to count the number of rooms in the symboltable
+int CountRoomsSymbolTable(SymbolTable table)
+{ 
+    int count = 0; 
+    for (int i = 0; i < table->count; i++) if (table->entries[i].ast_location->type == AT_ROOM) count += 1; 
+    return count; 
+}
+
+// Function to find the number of connection the room with the most connection have
+int FindMaxConnectSymbolTable (SymbolTable table)
+{
+    int max = 0;
+    for (int i = 0; i < table->count; i++)
+    {
+        if (table->entries[i].ast_location->type == AT_ROOM) 
+        { 
+           const char* current_room_id = table->entries[i].ast_location->children[0]->data;
+           int current_max = 0; 
+           for (int j = 0; j < table->count; j++)
+           {
+                if (table->entries[j].ast_location->type == AT_CONNECT){
+                    if (table->entries[j].ast_location->children[1]->type == AT_BIDIRECTIONAL_EDGE) 
+                    {
+                        if (strcmp(table->entries[j].ast_location->children[0]->data, current_room_id) == 0) current_max += 1;
+                        if (strcmp(table->entries[j].ast_location->children[2]->data, current_room_id) == 0) current_max += 1;
+                    } else 
+                        if (strcmp(table->entries[j].ast_location->children[0]->data, current_room_id) == 0) current_max += 1;
+                }
+           }
+           if (current_max > max) max = current_max;
+        }
+        
+    }
+    return max;
+}
+
+// Function to check if the symbol table does not violate (eventuelle) constraints 
+int CheckConstrSymbolTable (SymbolTable table)
+{
+    if (table->room_constr != -1)
+    {
+        if (table->room_constr < CountRoomsSymbolTable(table)) return -1; 
+    }
+    
+    int max_connect = FindMaxConnectSymbolTable(table);
+
+    if (table->connect_constr != -1)
+    {
+        if (table->connect_constr < max_connect) return -1; 
+    }
+
+    int i = 8;
+    while (i < max_connect)
+        i *= 2;
+    return i;
+}
+
 // Function to initiate the symbol table
 SymbolTable InitSymbolTable(size_t initial_capacity)
 {                                                  //function takes argument initial_capacity (how many entries the table should be able to hold)
-    SymbolTable table = calloc(1, sizeof(*table)); //use calloc function (contiguous allocation) to create space for 1 entry with the size of the table
-    table->entries    = calloc(1, initial_capacity * sizeof(SymbolTableEntry));
-    table->count      = 0;
-    table->capacity   = initial_capacity;
+    SymbolTable table       = calloc(1, sizeof(*table)); //use calloc function (contiguous allocation) to create space for 1 entry with the size of the table
+    table->entries          = calloc(1, initial_capacity * sizeof(SymbolTableEntry));
+    table->count            = 0;
+    table->capacity         = initial_capacity;
+    table->room_constr      = -1;
+    table->connect_constr   = -1;  
     return table;
 }
 
@@ -83,6 +150,11 @@ void FreeSymbolTable(SymbolTable table)
     free(table->entries);
     free(table);
 }
+
+
+
+
+
 
 //=====================Helper functions for constraint table)==========================
 
