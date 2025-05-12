@@ -1,14 +1,16 @@
-Map map (maxRooms=10; maxConnectPerRoom=9;){
-    Room A;
-    Room B;
-    
+Map map (maxRooms=10; maxConnectPerRoom=9;) {
+    Room start;
+    Room dungeon_1;
+    Room dungeon_2;
 
+    Connect(start -> dungeon_1);
+    Connect(start -> dungeon_2);
 
-    Connect(A -> B);
-    
-    Room C;
+    Room end;
+    Room trap;
 
-    Connect(B -> A);
+    Connect(trap -> start);
+
+    Connect(dungeon_1 -> trap);
+    Connect(dungeon_2 -> end);
 }
-
-
