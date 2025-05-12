@@ -44,7 +44,7 @@ int LookUpConnectSymbolTable(const SymbolTable table, const char* first_room, co
                 ) return 1; 
         }
     }
-    return 0; // if not found function return null
+    return 0; // if not found, return 0 (FALSE)
 }
 
 // Function to add entry to symbol table (identifier + location)
@@ -114,17 +114,10 @@ int FindMaxConnectSymbolTable (SymbolTable table)
 // Function to check if the symbol table does not violate (eventuelle) constraints 
 int CheckConstrSymbolTable (SymbolTable table)
 {
-    if (table->room_constr != -1)
-    {
-        if (table->room_constr < CountRoomsSymbolTable(table)) return -1; 
-    }
+    if (table->room_constr != -1 && table->room_constr < CountRoomsSymbolTable(table)) return -1;
     
     int max_connect = FindMaxConnectSymbolTable(table);
-
-    if (table->connect_constr != -1)
-    {
-        if (table->connect_constr < max_connect) return -1; 
-    }
+    if (table->connect_constr != -1 && table->connect_constr < max_connect) return -1;
 
     int i = 8;
     while (i < max_connect)

@@ -28,7 +28,7 @@ int TypeCheck(const ASTree tree)
     ASTNode* root = tree->head;
     TraverseAST(root, table);
 
-    // Define global parameter after number of connections in the map function (ignore constraint value - faster to generate assembly?)
+    // Define global parameter after number of connections in the map function
     max_connections_global = CheckConstrSymbolTable(table);
 
     // Do constraint check of symboltable
@@ -114,7 +114,6 @@ void checkRoom(SymbolTable table, const ASTNode* node)
 // Function to check if Connection is part of symboltalbe
 void checkConnection(SymbolTable table, const ASTNode* node)
 {
-
     //lookup rooms in symboltable
     const SymbolTableEntry* first_room = LookUpSymbolTable(table, node->children[0]->data);
     const SymbolTableEntry* secound_room = LookUpSymbolTable(table, node->children[2]->data);
@@ -124,7 +123,11 @@ void checkConnection(SymbolTable table, const ASTNode* node)
         reportSemanticError(ERR_SEMANTIC, node->pos, "Cant connect undeclared Room reference");
 
     //check if connection is already in symbol table
-    if (LookUpConnectSymbolTable (table, first_room->ast_location->children[0]->data, secound_room->ast_location->children[0]->data)) 
+    if (LookUpConnectSymbolTable (table, node->children[0]->data, node->children[2]->data)) 
+        reportSemanticError(ERR_SEMANTIC, node->pos, "Connection already declared");
+    
+    // if a bidirectional connection check if both direction is not already declared 
+    if (node->children[1]->type == AT_BIDIRECTIONAL_EDGE && LookUpConnectSymbolTable (table, node->children[2]->data, node->children[0]->data)) 
         reportSemanticError(ERR_SEMANTIC, node->pos, "Connection already declared");
 
     //check if Rooms are of correct type
