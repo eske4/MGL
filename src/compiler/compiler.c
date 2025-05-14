@@ -23,7 +23,6 @@ void compile(const char* input)
 
     // --- STAGE 3: Semantic check ---
     TypeCheck(tree); // TypeChecker prints its own debug info
-    // Move print out to here
 
     // --- STAGE 4: IL Generation ---
     InstructionTable ilTable = compile_to_il(tree);
