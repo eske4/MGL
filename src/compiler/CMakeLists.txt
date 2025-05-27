@@ -10,4 +10,6 @@ set(PARSER_SOURCES compiler.c)
 add_library(Compiler ${PARSER_SOURCES})
 target_include_directories(Compiler PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(Compiler PRIVATE Lexer Parser Type_Checker Intermediate_Language Code_Gen)
+target_link_libraries(
+  Compiler PRIVATE Lexer Parser Semantic_Analyzer Intermediate_Language Code_Gen
+)
