@@ -5,9 +5,9 @@ add_subdirectory(semantic_analyzer)
 add_subdirectory(intermediate_lang)
 add_subdirectory(code_gen)
 
-set(PARSER_SOURCES compiler.c)
+set(COMPILER_SOURCES compiler.c)
 
-add_library(Compiler ${PARSER_SOURCES})
+add_library(Compiler ${COMPILER_SOURCES})
 target_include_directories(Compiler PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(
